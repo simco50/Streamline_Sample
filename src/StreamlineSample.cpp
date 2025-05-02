@@ -186,11 +186,10 @@ StreamlineSample::~StreamlineSample()
 
 void StreamlineSample::SetLatewarpOptions()
 {
-#ifdef STREAMLINE_FEATURE_LATEWARP
+#if STREAMLINE_FEATURE_LATEWARP
     sl::LatewarpOptions lwOptions;
     lwOptions.latewarpActive = m_ui.Latewarp_active;
     SLWrapper::Get().SetLatewarpOptions(lwOptions);
-#endif
 
     if (!m_View || !m_ViewPrevious || !m_ui.Latewarp_active)
     {
@@ -219,6 +218,7 @@ void StreamlineSample::SetLatewarpOptions()
     sl::FrameToken *frameToken = SLWrapper::Get().GetCurrentFrameToken();
 
     SLWrapper::Get().SetReflexCameraData(*frameToken, cameraData);
+#endif
 }
 
 bool StreamlineSample::SetupView()

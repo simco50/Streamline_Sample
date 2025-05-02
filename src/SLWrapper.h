@@ -54,7 +54,9 @@
 #include <sl_nis.h>
 #include <sl_dlss_g.h>
 #include <sl_deepdvc.h>
+#if STREAMLINE_FEATURE_LATEWARP
 #include <sl_latewarp.h>
+#endif
 
 #include "RenderTargets.h"
 
@@ -309,7 +311,9 @@ public:
 
     void SetReflexCameraData(sl::FrameToken& frameToken, const sl::ReflexCameraData& cameraData);
     bool GetLatewarpAvailable() { return m_latewarp_available; }
+#if STREAMLINE_FEATURE_LATEWARP
     void SetLatewarpOptions(const sl::LatewarpOptions& options);
+#endif
     void Set_Latewarp_SwapChainRecreation(bool on) { m_latewarp_triggerSwapchainRecreation = true; m_latewarp_shouldLoad = on; }
     bool Get_Latewarp_SwapChainRecreation(bool &turn_on) const { turn_on = m_latewarp_shouldLoad; return m_latewarp_triggerSwapchainRecreation; }
     void Quiet_Latewarp_SwapChainRecreation() { m_latewarp_triggerSwapchainRecreation = false; }

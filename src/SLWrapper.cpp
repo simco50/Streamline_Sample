@@ -1313,7 +1313,7 @@ void SLWrapper::QueryReflexStats(bool& reflex_lowLatencyAvailable, bool& reflex_
     }
 
 }
-
+#if STREAMLINE_FEATURE_LATEWARP
 void SLWrapper::SetLatewarpOptions(const sl::LatewarpOptions& options) {
     static bool toggle = options.latewarpActive;
     if (toggle != options.latewarpActive)
@@ -1322,7 +1322,7 @@ void SLWrapper::SetLatewarpOptions(const sl::LatewarpOptions& options) {
         toggle = options.latewarpActive;
     }
 }
-
+#endif
 void SLWrapper::SetReflexCameraData(sl::FrameToken &frameToken, const sl::ReflexCameraData& cameraData) {
     slReflexSetCameraData(m_viewport, frameToken, cameraData);
 }
