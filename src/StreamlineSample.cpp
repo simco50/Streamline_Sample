@@ -46,7 +46,6 @@
 #include <../src/vulkan/vulkan-backend.h>
 #endif
 
-
 using namespace donut;
 using namespace donut::math;
 using namespace donut::engine;
@@ -67,12 +66,14 @@ StreamlineSample::StreamlineSample(
     , m_ScriptingConfig(scriptingConfig)
 {
 
-    m_ui.DLSS_Supported = SLWrapper::Get().GetDLSSAvailable();
-    m_ui.REFLEX_Supported = SLWrapper::Get().GetReflexAvailable();
-    m_ui.NIS_Supported = SLWrapper::Get().GetNISAvailable();
-    m_ui.DeepDVC_Supported = SLWrapper::Get().GetDeepDVCAvailable();
-    m_ui.DLSSG_Supported = SLWrapper::Get().GetDLSSGAvailable();
-    m_ui.Latewarp_Supported = SLWrapper::Get().GetLatewarpAvailable();
+    m_ui.DLSS_Supported = NVWrapper::Get().GetDLSSAvailable();
+    m_ui.REFLEX_Supported = NVWrapper::Get().GetReflexAvailable();
+    m_ui.NIS_Supported = NVWrapper::Get().GetNISAvailable();
+    m_ui.DeepDVC_Supported = NVWrapper::Get().GetDeepDVCAvailable();
+    m_ui.DLSSG_Supported = NVWrapper::Get().GetDLSSGAvailable();
+#if STREAMLINE_FEATURE_LATEWARP
+    m_ui.Latewarp_Supported = NVWrapper::Get().GetLatewarpAvailable();
+#endif
 
     std::shared_ptr<NativeFileSystem> nativeFS = std::make_shared<NativeFileSystem>();
 
@@ -128,25 +129,25 @@ StreamlineSample::StreamlineSample(
         SetCurrentSceneName("/native/" + sceneName);
 
     // Set the callbacks for Reflex
-    deviceManager->m_callbacks.beforeFrame   = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_Sleep(m, f); };
-    deviceManager->m_callbacks.beforeAnimate = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_SimStart(m, f); };
-    deviceManager->m_callbacks.afterAnimate  = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_SimEnd(m, f); };
-    deviceManager->m_callbacks.beforeRender  = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_RenderStart(m, f); };
-    deviceManager->m_callbacks.afterRender   = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_RenderEnd(m, f); };
-    deviceManager->m_callbacks.beforePresent = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_PresentStart(m, f); };
-    deviceManager->m_callbacks.afterPresent  = [](donut::app::DeviceManager &m, uint32_t f){ SLWrapper::Get().ReflexCallback_PresentEnd(m, f); };
+    deviceManager->m_callbacks.beforeFrame   = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_Sleep(m, f); };
+    deviceManager->m_callbacks.beforeAnimate = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_SimStart(m, f); };
+    deviceManager->m_callbacks.afterAnimate  = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_SimEnd(m, f); };
+    deviceManager->m_callbacks.beforeRender  = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_RenderStart(m, f); };
+    deviceManager->m_callbacks.afterRender   = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_RenderEnd(m, f); };
+    deviceManager->m_callbacks.beforePresent = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_PresentStart(m, f); };
+    deviceManager->m_callbacks.afterPresent  = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_PresentEnd(m, f); };
 
-    if (m_ScriptingConfig.Reflex_mode != -1 && SLWrapper::Get().GetReflexAvailable()) {
+    if (m_ScriptingConfig.Reflex_mode != -1 && NVWrapper::Get().GetReflexAvailable()) {
         static constexpr std::array<int, 3> ValidReflexIndices{ 0,1,2 };
         if (std::find(ValidReflexIndices.begin(), ValidReflexIndices.end(), m_ScriptingConfig.Reflex_mode) != ValidReflexIndices.end()) { // CHECK IF THE DLSS MODE IS VALID
             m_ui.REFLEX_Mode = m_ScriptingConfig.Reflex_mode;
         }
     }
 
-    if (m_ScriptingConfig.Reflex_fpsCap > 0 && SLWrapper::Get().GetReflexAvailable())
+    if (m_ScriptingConfig.Reflex_fpsCap > 0 && NVWrapper::Get().GetReflexAvailable())
         m_ui.REFLEX_CapedFPS = m_ScriptingConfig.Reflex_fpsCap;
 
-    if (m_ScriptingConfig.DLSS_mode != -1 && SLWrapper::Get().GetDLSSAvailable()) {
+    if (m_ScriptingConfig.DLSS_mode != -1 && NVWrapper::Get().GetDLSSAvailable()) {
         static constexpr std::array<int, 6> ValidDLLSIndices{ 0,1,2,3,4,6 };
         if (std::find(ValidDLLSIndices.begin(), ValidDLLSIndices.end(), m_ScriptingConfig.DLSS_mode) != ValidDLLSIndices.end()) { // CHECK IF THE DLSS MODE IS VALID
             m_ui.AAMode = AntiAliasingMode::DLSS;
@@ -155,17 +156,21 @@ StreamlineSample::StreamlineSample(
     }
     m_ui.DLSSPresetsReset();
 
-    if (m_ScriptingConfig.DLSSG_on != -1 && SLWrapper::Get().GetDLSSGAvailable() && SLWrapper::Get().GetReflexAvailable()) {
+    if (m_ScriptingConfig.DLSSG_on != -1 && NVWrapper::Get().GetDLSSGAvailable() && NVWrapper::Get().GetReflexAvailable()) {
         if (m_ui.REFLEX_Mode == 0) 
             m_ui.REFLEX_Mode = 1;
         m_ui.DLSSG_mode = sl::DLSSGMode::eOn;
+        if (m_ScriptingConfig.DLSSG_numFrameToGenerate != -1)
+        {
+            m_ui.DLSSG_numFrames = m_ScriptingConfig.DLSSG_numFrameToGenerate + 1;
+        }
     }
 
-    if (m_ScriptingConfig.DeepDVC_on != -1 && SLWrapper::Get().GetDeepDVCAvailable()) {
+    if (m_ScriptingConfig.DeepDVC_on != -1 && NVWrapper::Get().GetDeepDVCAvailable()) {
         m_ui.DeepDVC_Mode = sl::DeepDVCMode::eOn;
     }
 
-    if (m_ScriptingConfig.Latewarp_on != -1 && SLWrapper::Get().GetLatewarpAvailable() && SLWrapper::Get().GetReflexAvailable() && SLWrapper::Get().GetPCLAvailable()) {
+    if (m_ScriptingConfig.Latewarp_on != -1 && NVWrapper::Get().GetLatewarpAvailable() && NVWrapper::Get().GetReflexAvailable() && NVWrapper::Get().GetPCLAvailable()) {
         if (m_ui.Latewarp_active == 0) 
             m_ui.Latewarp_active = 1;
     }
@@ -179,9 +184,12 @@ StreamlineSample::StreamlineSample(
 
 StreamlineSample::~StreamlineSample()
 {
-    SLWrapper::Get().SetViewportHandle(m_viewport);
-    SLWrapper::Get().CleanupDLSS(true);
-    SLWrapper::Get().CleanupDLSSG(false);
+    NVWrapper::Get().SetViewportHandle(m_viewport);
+    NVWrapper::Get().CleanupDLSS(true);
+    NVWrapper::Get().CleanupDLSSG(false);
+#if STREAMLINE_FEATURE_LATEWARP
+    NVWrapper::Get().CleanupLatewarp(true);
+#endif
 }
 
 void StreamlineSample::SetLatewarpOptions()
@@ -189,7 +197,8 @@ void StreamlineSample::SetLatewarpOptions()
 #if STREAMLINE_FEATURE_LATEWARP
     sl::LatewarpOptions lwOptions;
     lwOptions.latewarpActive = m_ui.Latewarp_active;
-    SLWrapper::Get().SetLatewarpOptions(lwOptions);
+    NVWrapper::Get().SetLatewarpOptions(lwOptions);
+#endif
 
     if (!m_View || !m_ViewPrevious || !m_ui.Latewarp_active)
     {
@@ -197,28 +206,21 @@ void StreamlineSample::SetLatewarpOptions()
     }
 
     sl::ReflexCameraData cameraData{};
-    std::shared_ptr<PlanarView> planarView = std::dynamic_pointer_cast<PlanarView, IView>(m_View);
-    dm::affine3 viewMatrix = m_FirstPersonCamera.GetWorldToViewMatrix();
-    
-    float verticalFov = dm::radians(m_CameraVerticalFov);
-    float2 pixelOffset = m_ui.AAMode != AntiAliasingMode::NONE && m_TemporalAntiAliasingPass ? m_TemporalAntiAliasingPass->GetCurrentPixelOffset() : float2(0.f);
-    float zNear = 0.01f;
-    float4x4 projection = perspProjD3DStyleReverse(verticalFov, float(m_RenderingRectSize.x) / m_RenderingRectSize.y, zNear);
-    planarView->SetViewport(nvrhi::Viewport((float) m_RenderingRectSize.x, (float)m_RenderingRectSize.y));
-    planarView->SetPixelOffset(pixelOffset);
-    planarView->SetMatrices(viewMatrix, projection);
-    planarView->UpdateCache();
+    // m_ViewPrevious is set at the end of Render(), so we need to use a local copy
+    std::shared_ptr<PlanarView> &planarView = std::dynamic_pointer_cast<PlanarView, IView>(m_View);
+    std::shared_ptr<PlanarView> &planarViewPrev = std::dynamic_pointer_cast<PlanarView, IView>(m_ViewPrevious);
     cameraData.worldToViewMatrix = make_sl_float4x4(affineToHomogeneous(planarView->GetViewMatrix()));
-    cameraData.viewToClipMatrix = make_sl_float4x4(planarView->GetProjectionMatrix());
+    cameraData.viewToClipMatrix = make_sl_float4x4(planarView->GetProjectionMatrix(false));
+    static sl::float4x4 prevRenderedWorldToViewMatrix = cameraData.worldToViewMatrix;
+    static sl::float4x4 prevRenderedViewToClipMatrix = cameraData.viewToClipMatrix;
+    cameraData.prevRenderedWorldToViewMatrix = prevRenderedWorldToViewMatrix;
+    cameraData.prevRenderedViewToClipMatrix = prevRenderedViewToClipMatrix;
 
-    std::shared_ptr<PlanarView> planarViewPrev = std::dynamic_pointer_cast<PlanarView, IView>(m_ViewPrevious);
-    cameraData.prevRenderedWorldToViewMatrix = make_sl_float4x4(affineToHomogeneous(planarViewPrev->GetViewMatrix()));
-    cameraData.prevRenderedViewToClipMatrix = make_sl_float4x4(planarViewPrev->GetProjectionMatrix());
+    sl::FrameToken *frameToken = NVWrapper::Get().GetCurrentFrameToken();
+    NVWrapper::Get().SetReflexCameraData(*frameToken, cameraData);
 
-    sl::FrameToken *frameToken = SLWrapper::Get().GetCurrentFrameToken();
-
-    SLWrapper::Get().SetReflexCameraData(*frameToken, cameraData);
-#endif
+    prevRenderedWorldToViewMatrix = cameraData.worldToViewMatrix;
+    prevRenderedViewToClipMatrix = cameraData.viewToClipMatrix;
 }
 
 bool StreamlineSample::SetupView()
@@ -459,7 +461,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_DisplaySize = int2(windowWidth, windowHeight);
     }
 
-    SLWrapper::Get().SetViewportHandle(m_viewport);
+    NVWrapper::Get().SetViewportHandle(m_viewport);
 
     float lodBias = 0.f;
 
@@ -475,14 +477,14 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
     }
 
     // DeepDVC VRAM Usage
-    SLWrapper::Get().QueryDeepDVCState(m_ui.DeepDVC_VRAM);
+    NVWrapper::Get().QueryDeepDVCState(m_ui.DeepDVC_VRAM);
 
     // DLSS-G Setup
-    if (SLWrapper::Get().GetDLSSGAvailable())
+    if (NVWrapper::Get().GetDLSSGAvailable())
     {
-        // Query whether SLWrapper thinks that DLSS-FG is wanted
+        // Query whether NVWrapper thinks that DLSS-FG is wanted
         bool prevDlssgWanted;
-        SLWrapper::Get().Get_DLSSG_SwapChainRecreation(prevDlssgWanted);
+        NVWrapper::Get().Get_DLSSG_SwapChainRecreation(prevDlssgWanted);
 
         // Query whether the UI "wants" DLSS-FG to be active
         bool dlssgWanted = (m_ui.DLSSG_mode != sl::DLSSGMode::eOff);
@@ -490,7 +492,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         // If there is a change, trigger a swapchain recreation
         if (prevDlssgWanted != dlssgWanted)
         {
-            SLWrapper::Get().Set_DLSSG_SwapChainRecreation(dlssgWanted);
+            NVWrapper::Get().Set_DLSSG_SwapChainRecreation(dlssgWanted);
         }
 
         // This is where DLSS-G is toggled On and Off (using dlssgConst.mode) and where we set DLSS-G parameters.  
@@ -522,9 +524,9 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         int numFramesMaxMultiplier = 0;
         void* pDLSSGInputsProcessingFence{};
         uint64_t lastPresentDLSSGInputsProcessingFenceValue{};
-        auto lastDLSSGFenceValue = SLWrapper::Get().GetDLSSGLastFenceValue();
-        SLWrapper::Get().QueryDLSSGState(estimatedVramUsage, fps_multiplier, status, minSize, numFramesMaxMultiplier, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
-        m_ui.DLSSG_numFramesMaxMultiplier = (numFramesMaxMultiplier + 1);
+        auto lastDLSSGFenceValue = NVWrapper::Get().GetDLSSGLastFenceValue();
+        NVWrapper::Get().QueryDLSSGState(estimatedVramUsage, fps_multiplier, status, minSize, numFramesMaxMultiplier, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
+        m_ui.DLSSG_numFramesMaxMultiplier = dm::max(numFramesMaxMultiplier + 1, 2);
 
         if (static_cast<int>(framebuffer->getFramebufferInfo().width) < minSize || 
             static_cast<int>(framebuffer->getFramebufferInfo().height) < minSize) {
@@ -532,12 +534,12 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
             dlssgConst.mode = sl::DLSSGMode::eOff;
         }
 
-        auto dlssgEnabledLastFrame = SLWrapper::Get().GetDLSSGLastEnable();
-        SLWrapper::Get().SetDLSSGOptions(dlssgConst);
+        auto dlssgEnabledLastFrame = NVWrapper::Get().GetDLSSGLastEnable();
+        NVWrapper::Get().SetDLSSGOptions(dlssgConst);
 
         auto fenceValue = lastPresentDLSSGInputsProcessingFenceValue;
         // This is where we query DLSS-G FPS, estimated VRAM usage and status
-        SLWrapper::Get().QueryDLSSGState(estimatedVramUsage, fps_multiplier, status, minSize, numFramesMaxMultiplier, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
+        NVWrapper::Get().QueryDLSSGState(estimatedVramUsage, fps_multiplier, status, minSize, numFramesMaxMultiplier, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
         assert(fenceValue == lastPresentDLSSGInputsProcessingFenceValue);
 
         if (pDLSSGInputsProcessingFence != nullptr)
@@ -548,7 +550,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
                 {
                     // This wait is redundant until SL DLSS FG allows SMSCG but done for now for demonstration purposes.
                     // It needs to be queued before any of the inputs are modified in the subsequent command list submission.
-                    SLWrapper::Get().QueueGPUWaitOnSyncObjectSet(GetDevice(), nvrhi::CommandQueue::Graphics, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
+                    NVWrapper::Get().QueueGPUWaitOnSyncObjectSet(GetDevice(), nvrhi::CommandQueue::Graphics, pDLSSGInputsProcessingFence, lastPresentDLSSGInputsProcessingFenceValue);
                 }
             }
             else
@@ -566,7 +568,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
             }
         }
 
-        m_ui.DLSSG_fps = static_cast<float>(fps_multiplier * 1.0 / GetDeviceManager()->GetAverageFrameTimeSeconds());
+        m_ui.DLSSG_fps = static_cast<float>(fps_multiplier * 1.0f / GetDeviceManager()->GetAverageFrameTimeSeconds());
 
         if (status != sl::DLSSGStatus::eOk) {
             if (status == sl::DLSSGStatus::eFailResolutionTooLow)
@@ -589,20 +591,31 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
     // After we've actually set DLSS-G on/off, free resources
     if (m_ui.DLSSG_cleanup_needed)
     {
-        SLWrapper::Get().CleanupDLSSG(false);
+        NVWrapper::Get().CleanupDLSSG(false);
         m_ui.DLSSG_cleanup_needed = false;
     }
-
-
-    // Latewarp
-    bool prevLatewarpWanted;
-    SLWrapper::Get().Get_Latewarp_SwapChainRecreation(prevLatewarpWanted);
-    // If there is a change, trigger a swapchain recreation
-    if (prevLatewarpWanted != !!m_ui.Latewarp_active)
+#if STREAMLINE_FEATURE_LATEWARP
+    if (NVWrapper::Get().GetLatewarpAvailable())
     {
-        SLWrapper::Get().Set_Latewarp_SwapChainRecreation(m_ui.Latewarp_active);
-    }
+        // Latewarp
+        bool prevLatewarpWanted;
+        NVWrapper::Get().Get_Latewarp_SwapChainRecreation(prevLatewarpWanted);
 
+        bool latewarpWanted = m_ui.Latewarp_active != 0;
+
+        // If there is a change, trigger a swapchain recreation
+        if (prevLatewarpWanted != latewarpWanted)
+        {
+            NVWrapper::Get().Set_Latewarp_SwapChainRecreation(latewarpWanted);
+        }
+        
+    }
+    if (m_ui.Latewarp_cleanup_needed)
+    {
+        NVWrapper::Get().CleanupLatewarp(true);
+        m_ui.Latewarp_cleanup_needed = false;
+    }
+#endif
 
     // REFLEX Setup
 
@@ -611,16 +624,16 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
     reflexConst.useMarkersToOptimize = true;
     reflexConst.virtualKey = VK_F13;
     reflexConst.frameLimitUs = m_ui.REFLEX_CapedFPS==0 ? 0 : int(1000000./m_ui.REFLEX_CapedFPS);
-    SLWrapper::Get().SetReflexConsts(reflexConst);
+    NVWrapper::Get().SetReflexConsts(reflexConst);
 
     bool flashIndicatorDriverAvailable;
-    SLWrapper::Get().QueryReflexStats(m_ui.REFLEX_LowLatencyAvailable, flashIndicatorDriverAvailable, m_ui.REFLEX_Stats);
-    SLWrapper::Get().SetReflexFlashIndicator(flashIndicatorDriverAvailable);
+    NVWrapper::Get().QueryReflexStats(m_ui.REFLEX_LowLatencyAvailable, flashIndicatorDriverAvailable, m_ui.REFLEX_Stats);
+    NVWrapper::Get().SetReflexFlashIndicator(flashIndicatorDriverAvailable);
 
     // DLSS SETUP
 
     //Make sure DLSS is available
-    if (m_ui.AAMode == AntiAliasingMode::DLSS && !SLWrapper::Get().GetDLSSAvailable())
+    if (m_ui.AAMode == AntiAliasingMode::DLSS && !NVWrapper::Get().GetDLSSAvailable())
     {
         log::warning("DLSS antialiasing is not available. Switching to TAA. ");
         m_ui.AAMode = AntiAliasingMode::TEMPORAL;
@@ -631,7 +644,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         DLSS_Last_Mode = sl::DLSSMode::eOff;
         m_ui.DLSS_Mode = sl::DLSSMode::eOff;
         m_DLSS_Last_DisplaySize = { 0,0 };
-        SLWrapper::Get().CleanupDLSS(true); // We can also expressly tell SL to cleanup DLSS resources.
+        NVWrapper::Get().CleanupDLSS(true); // We can also expressly tell SL to cleanup DLSS resources.
     }
     // If we turn on DLSS then we set its default values
     else if (m_ui.DLSS_Last_AA != AntiAliasingMode::DLSS && m_ui.AAMode == AntiAliasingMode::DLSS) {
@@ -664,17 +677,17 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
 
         // Changing presets requires a restart of DLSS
         if (m_ui.DLSSPresetsChanged())
-            SLWrapper::Get().CleanupDLSS(true);
+            NVWrapper::Get().CleanupDLSS(true);
 
         m_ui.DLSSPresetsUpdate();
 
-        SLWrapper::Get().SetDLSSOptions(dlssConstants);
+        NVWrapper::Get().SetDLSSOptions(dlssConstants);
 
         // Check if we need to update the rendertarget size.
         bool DLSS_resizeRequired = (m_ui.DLSS_Mode != DLSS_Last_Mode) || (m_DisplaySize.x != m_DLSS_Last_DisplaySize.x) || (m_DisplaySize.y != m_DLSS_Last_DisplaySize.y);
         if (DLSS_resizeRequired) {
             // Only quality, target width and height matter here
-            SLWrapper::Get().QueryDLSSOptimalSettings(m_RecommendedDLSSSettings);
+            NVWrapper::Get().QueryDLSSOptimalSettings(m_RecommendedDLSSSettings);
 
             if (m_RecommendedDLSSSettings.optimalRenderSize.x <= 0 || m_RecommendedDLSSSettings.optimalRenderSize.y <= 0) {
                 m_ui.AAMode = AntiAliasingMode::NONE;
@@ -740,7 +753,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
     else {
         sl::DLSSOptions dlssConstants = {};
         dlssConstants.mode = sl::DLSSMode::eOff;
-        SLWrapper::Get().SetDLSSOptions(dlssConstants);
+        NVWrapper::Get().SetDLSSOptions(dlssConstants);
         m_RenderingRectSize = m_DisplaySize;
     }
 
@@ -925,11 +938,11 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         slConstants.motionVectors3D = sl::Boolean::eFalse;
         slConstants.motionVectorsInvalidValue = FLT_MIN;
 
-        SLWrapper::Get().SetSLConsts(slConstants);
+        NVWrapper::Get().SetSLConsts(slConstants);
     }
 
     // TAG STREAMLINE RESOURCES
-    SLWrapper::Get().TagResources_General(m_CommandList,
+    NVWrapper::Get().TagResources_General(m_CommandList,
         m_View->GetChildView(ViewType::PLANAR, 0),
         m_RenderTargets->MotionVectors,
         m_RenderTargets->Depth,
@@ -938,7 +951,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
     // ANTI-ALIASING
 
     // TAG STREAMLINE RESOURCES
-    SLWrapper::Get().TagResources_DLSS_NIS(m_CommandList,
+    NVWrapper::Get().TagResources_DLSS_NIS(m_CommandList,
         m_View->GetChildView(ViewType::PLANAR, 0),
         m_RenderTargets->AAResolvedColor,
         m_RenderTargets->HdrColor);
@@ -949,7 +962,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
 
         if (m_ui.AAMode == AntiAliasingMode::DLSS && !m_ui.DLSS_DebugShowFullRenderingBuffer)
         {
-            SLWrapper::Get().EvaluateDLSS(m_CommandList);
+            NVWrapper::Get().EvaluateDLSS(m_CommandList);
         }
 
         if (m_ui.AAMode == AntiAliasingMode::DLSS && m_ui.DLSS_DebugShowFullRenderingBuffer) {
@@ -1003,7 +1016,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         auto nisConsts = sl::NISOptions{};
         nisConsts.mode = m_ui.NIS_Mode;
         nisConsts.sharpness = m_ui.NIS_Sharpness;
-        SLWrapper::Get().SetNISOptions(nisConsts);
+        NVWrapper::Get().SetNISOptions(nisConsts);
 
         // Use PreUI Color and restore resources state after copy
         m_CommandList->copyTexture(m_RenderTargets->NisColor, nvrhi::TextureSlice(), m_RenderTargets->PreUIColor, nvrhi::TextureSlice());
@@ -1014,16 +1027,16 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_CommandList->commitBarriers();
 
         // TAG STREAMLINE RESOURCES
-        SLWrapper::Get().TagResources_DLSS_NIS(m_CommandList,
+        NVWrapper::Get().TagResources_DLSS_NIS(m_CommandList,
             m_View->GetChildView(ViewType::PLANAR, 0),
             m_RenderTargets->PreUIColor,
             m_RenderTargets->NisColor);
 
-        SLWrapper::Get().EvaluateNIS(m_CommandList);
+        NVWrapper::Get().EvaluateNIS(m_CommandList);
     }
 
 
-    SLWrapper::Get().TagResources_DLSS_FG(m_CommandList, validViewportExtent, m_backbufferViewportExtent);
+    NVWrapper::Get().TagResources_DLSS_FG(m_CommandList, validViewportExtent, m_backbufferViewportExtent);
 
     //
     // DO DEEPDVC
@@ -1034,26 +1047,29 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         deepdvcConsts.mode = m_ui.DeepDVC_Mode;
         deepdvcConsts.intensity = m_ui.DeepDVC_Intensity;
         deepdvcConsts.saturationBoost = m_ui.DeepDVC_SaturationBoost;
-        SLWrapper::Get().SetDeepDVCOptions(deepdvcConsts);
+        NVWrapper::Get().SetDeepDVCOptions(deepdvcConsts);
 
         // TAG STREAMLINE RESOURCES
-        SLWrapper::Get().TagResources_DeepDVC(m_CommandList,
+        NVWrapper::Get().TagResources_DeepDVC(m_CommandList,
             m_View->GetChildView(ViewType::PLANAR, 0),
             m_RenderTargets->PreUIColor);
-        SLWrapper::Get().EvaluateDeepDVC(m_CommandList);
+        NVWrapper::Get().EvaluateDeepDVC(m_CommandList);
     }
 
+#if STREAMLINE_FEATURE_LATEWARP
     if (m_ui.Latewarp_active)
     {
-        SLWrapper::Get().TagResources_Latewarp(m_CommandList,
+        NVWrapper::Get().TagResources_Latewarp(m_CommandList,
             m_View->GetChildView(ViewType::PLANAR, 0),
             framebufferTexture,
             nullptr,
             nullptr,
             m_backbufferViewportExtent
         );
-        SLWrapper::Get().EvaluateLatewarp(m_CommandList, m_RenderTargets.get(), m_ui.EnableToneMapping ? m_RenderTargets->ColorspaceCorrectionColor : m_RenderTargets->AAResolvedColor, m_RenderTargets->PreUIColor, m_View->GetChildView(ViewType::PLANAR, 0));
+        NVWrapper::Get().EvaluateLatewarp(*GetDeviceManager(), m_CommandList, m_RenderTargets.get(), m_ui.EnableToneMapping ? m_RenderTargets->ColorspaceCorrectionColor : m_RenderTargets->AAResolvedColor, m_RenderTargets->PreUIColor, m_View->GetChildView(ViewType::PLANAR, 0));
     }
+#endif
+
     if (validViewportExtent)
     {
         // blit to target framebuffer viewport
@@ -1164,7 +1180,7 @@ bool StreamlineSample::KeyboardUpdate(int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F13 && action == GLFW_PRESS) {
         // As GLFW abstracts away from Windows messages
         // We instead set the F13 as the PC_Ping key in the constants and compare against that.
-        SLWrapper::Get().ReflexTriggerPcPing();
+        NVWrapper::Get().ReflexTriggerPcPing();
     }
     
     if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
@@ -1185,7 +1201,7 @@ bool StreamlineSample::MouseButtonUpdate(int button, int action, int mods)
 {
 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        SLWrapper::Get().ReflexTriggerFlash();
+        NVWrapper::Get().ReflexTriggerFlash();
     }
 
     m_FirstPersonCamera.MouseButtonUpdate(button, action, mods);

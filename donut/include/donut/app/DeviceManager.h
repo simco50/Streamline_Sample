@@ -69,6 +69,10 @@ freely, subject to the following restrictions:
 #include "AftermathCrashDump.h"
 #endif
 
+#if DONUT_WITH_STREAMLINE
+#include <donut/app/StreamlineInterface.h>
+#endif
+
 #define GLFW_INCLUDE_NONE // Do not include any OpenGL headers
 #include <GLFW/glfw3.h>
 #ifdef _WIN32
@@ -94,27 +98,52 @@ namespace donut::app
     struct InstanceParameters
     {
         bool enableDebugRuntime = false;
+        bool enableWarningsAsErrors = false;
         bool enableGPUValidation = false; // Affects only DX12
         bool headlessDevice = false;
 #if DONUT_WITH_AFTERMATH
         bool enableAftermath = false;
 #endif
+        bool logBufferLifetime = false;
+        bool enableHeapDirectlyIndexed = false; // Allows ResourceDescriptorHeap on DX12
+
+        // Enables per-monitor DPI scale support.
+        //
+        // If set to true, the app will receive DisplayScaleChanged() events on DPI change and can read
+        // the scaling factors using GetDPIScaleInfo(...). The window may be resized when DPI changes if
+        // DeviceCreationParameters::resizeWindowWithDisplayScale is true.
+        //
+        // If set to false, the app will see DPI scaling factors being 1.0 all the time, but the OS
+        // may scale the contents of the window based on DPI.
+        //
+        // This field is located in InstanceParameters and not DeviceCreationParameters because it is needed
+        // in the CreateInstance() function to override the glfwInit() behavior.
+        bool enablePerMonitorDPI = false;
 
         // Severity of the information log messages from the device manager, like the device name or enabled extensions.
         log::Severity infoLogSeverity = log::Severity::Info;
 
 #if DONUT_WITH_VULKAN
+        // Allows overriding the Vulkan library name with something custom, useful for Streamline
+        std::string vulkanLibraryName;
+        
         std::vector<std::string> requiredVulkanInstanceExtensions;
         std::vector<std::string> requiredVulkanLayers;
         std::vector<std::string> optionalVulkanInstanceExtensions;
         std::vector<std::string> optionalVulkanLayers;
 #endif
+
+#if DONUT_WITH_STREAMLINE
+        int streamlineAppId = 0;
+        bool enableStreamlineLog = false;
+#endif
     };
 
     struct DeviceCreationParameters : public InstanceParameters
     {
-        bool startMaximized = false;
+        bool startMaximized = false; // ignores backbuffer width/height to be monitor size
         bool startFullscreen = false;
+        bool startBorderless = false;
         bool allowModeSwitch = true;
         int windowPosX = -1;            // -1 means use default placement
         int windowPosY = -1;
@@ -137,16 +166,23 @@ namespace donut::app
         // The order of indices matches that returned by DeviceManager::EnumerateAdapters.
         int adapterIndex = -1;
 
-        // set to true to enable DPI scale factors to be computed per monitor
-        // this will keep the on-screen window size in pixels constant
+        // Set this to true if the application implements UI scaling for DPI explicitly instead of relying
+        // on ImGUI's DisplayFramebufferScale. This produces crisp text and lines at any scale
+        // but requires considerable changes to applications that rely on the old behavior:
+        // all UI sizes and offsets need to be computed as multiples of some scaled parameter,
+        // such as ImGui::GetFontSize(). Note that the ImGUI style is automatically reset and scaled in 
+        // ImGui_Renderer::DisplayScaleChanged(...).
         //
-        // if set to false, the DPI scale factors will be constant but the system
-        // may scale the contents of the window based on DPI
-        //
-        // note that the backbuffer size is never updated automatically; if the app
-        // wishes to scale up rendering based on DPI, then it must set this to true
-        // and respond to DPI scale factor changes by resizing the backbuffer explicitly
-        bool enablePerMonitorDPI = false;
+        // See ImGUI FAQ for more info:
+        //   https://github.com/ocornut/imgui/blob/master/docs/FAQ.md#q-how-should-i-handle-dpi-in-my-application
+        bool supportExplicitDisplayScaling = false;
+
+        // Enables automatic resizing of the application window according to the DPI scaling of the monitor
+        // that it is located on. When set to true and the app launches on a monitor with >100% scale, 
+        // the initial window size will be larger than specified in 'backBufferWidth' and 'backBufferHeight' parameters.
+        bool resizeWindowWithDisplayScale = false;
+
+        nvrhi::IMessageCallback *messageCallback = nullptr;
 
 #if DONUT_WITH_DX11 || DONUT_WITH_DX12
         DXGI_USAGE swapChainUsage = DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -241,6 +277,8 @@ namespace donut::app
         // current DPI scale info (updated when window moves)
         float m_DPIScaleFactorX = 1.f;
         float m_DPIScaleFactorY = 1.f;
+        float m_PrevDPIScaleFactorX = 0.f;
+        float m_PrevDPIScaleFactorY = 0.f;
         bool m_RequestedVSync = false;
         bool m_InstanceCreated = false;
 
@@ -260,6 +298,7 @@ namespace donut::app
 
         void BackBufferResizing();
         void BackBufferResized();
+        void DisplayScaleChanged();
 
         void Animate(double elapsedTime);
         void Render();
@@ -337,6 +376,10 @@ namespace donut::app
             std::function<void(DeviceManager&, uint32_t)> afterPresent = nullptr;
         } m_callbacks;
 
+#if DONUT_WITH_STREAMLINE
+        static StreamlineInterface& GetStreamline();
+#endif
+
     private:
         static DeviceManager* CreateD3D11();
         static DeviceManager* CreateD3D12();
@@ -366,6 +409,9 @@ namespace donut::app
         virtual void Animate(float fElapsedTimeSeconds) { }
         virtual void BackBufferResizing() { }
         virtual void BackBufferResized(const uint32_t width, const uint32_t height, const uint32_t sampleCount) { }
+
+        // Called before Animate() when a DPI change was detected
+        virtual void DisplayScaleChanged(float scaleX, float scaleY) { }
 
         // all of these pass in GLFW constants as arguments
         // see http://www.glfw.org/docs/latest/input.html

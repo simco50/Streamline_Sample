@@ -65,9 +65,23 @@ freely, subject to the following restrictions:
 #include <d3d12.h>
 #endif
 
+#if DONUT_WITH_STREAMLINE
+#include <StreamlineIntegration.h>
+#endif
+
 #ifdef _WINDOWS
 #include <ShellScalingApi.h>
 #pragma comment(lib, "shcore.lib")
+#endif
+
+#if defined(_WINDOWS) && DONUT_FORCE_DISCRETE_GPU
+extern "C"
+{
+    // Declaring this symbol makes the OS run the app on the discrete GPU on NVIDIA Optimus laptops by default
+    __declspec(dllexport) DWORD NvOptimusEnablement = 1;
+    // Same as above, for laptops with AMD GPUs
+    __declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 1;
+}
 #endif
 
 using namespace donut::app;
@@ -217,10 +231,20 @@ bool DeviceManager::CreateInstance(const InstanceParameters& params)
     if (m_InstanceCreated)
         return true;
 
+
     static_cast<InstanceParameters&>(m_DeviceParams) = params;
 
     if (!params.headlessDevice)
     {
+#ifdef _WINDOWS
+        if (!params.enablePerMonitorDPI)
+        {
+            // glfwInit enables the maximum supported level of DPI awareness unconditionally.
+            // If the app doesn't need it, we have to call this function before glfwInit to override that behavior.
+            SetProcessDpiAwareness(PROCESS_DPI_UNAWARE);
+        }
+#endif
+
         if (!glfwInit())
             return false;
     }
@@ -249,17 +273,6 @@ bool DeviceManager::CreateHeadlessDevice(const DeviceCreationParameters& params)
 
 bool DeviceManager::CreateWindowDeviceAndSwapChain(const DeviceCreationParameters& params, const char *windowTitle)
 {
-#ifdef _WINDOWS
-    if (params.enablePerMonitorDPI)
-    {
-        // this needs to happen before glfwInit in order to override GLFW behavior
-        SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
-    }
-    else {
-        SetProcessDpiAwareness(PROCESS_DPI_UNAWARE);
-    }
-#endif
-
     m_DeviceParams = params;
     m_DeviceParams.headlessDevice = false;
     m_RequestedVSync = params.vsyncEnabled;
@@ -291,10 +304,16 @@ bool DeviceManager::CreateWindowDeviceAndSwapChain(const DeviceCreationParameter
 
     glfwWindowHint(GLFW_SAMPLES, params.swapChainSampleCount);
     glfwWindowHint(GLFW_REFRESH_RATE, params.refreshRate);
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, params.resizeWindowWithDisplayScale);
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-
+    
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);   // Ignored for fullscreen
+
+    if (params.startBorderless)
+    {
+        glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Borderless window
+    }
 
     m_Window = glfwCreateWindow(params.backBufferWidth, params.backBufferHeight,
                                 windowTitle ? windowTitle : "",
@@ -328,12 +347,7 @@ bool DeviceManager::CreateWindowDeviceAndSwapChain(const DeviceCreationParameter
     {
         glfwSetWindowPos(m_Window, params.windowPosX, params.windowPosY);
     }
-
-    if (params.startMaximized)
-    {
-        glfwMaximizeWindow(m_Window);
-    }
-
+    
     glfwSetWindowPosCallback(m_Window, WindowPosCallback_GLFW);
     glfwSetWindowCloseCallback(m_Window, WindowCloseCallback_GLFW);
     glfwSetWindowRefreshCallback(m_Window, WindowRefreshCallback_GLFW);
@@ -357,6 +371,11 @@ bool DeviceManager::CreateWindowDeviceAndSwapChain(const DeviceCreationParameter
         return false;
 
     glfwShowWindow(m_Window);
+    
+    if (m_DeviceParams.startMaximized)
+    {
+        glfwMaximizeWindow(m_Window);
+    }
 
     // reset the back buffer size state to enforce a resize event
     m_DeviceParams.backBufferWidth = 0;
@@ -424,6 +443,14 @@ void DeviceManager::BackBufferResized()
     }
 }
 
+void DeviceManager::DisplayScaleChanged()
+{
+    for(auto it : m_vRenderPasses)
+    {
+        it->DisplayScaleChanged(m_DPIScaleFactorX, m_DPIScaleFactorY);
+    }
+}
+
 void DeviceManager::Animate(double elapsedTime)
 {
     for(auto it : m_vRenderPasses)
@@ -477,6 +504,9 @@ void DeviceManager::RunMessageLoop()
 #endif
     while(!glfwWindowShouldClose(m_Window))
     {
+#if DONUT_WITH_STREAMLINE
+        StreamlineIntegration::Get().SimStart(*this);
+#endif
         if (m_callbacks.beforeFrame) m_callbacks.beforeFrame(*this, m_FrameIndex);
         glfwPollEvents();
         UpdateWindowSize();
@@ -509,8 +539,18 @@ bool DeviceManager::AnimateRenderPresent()
 
     if (m_windowVisible && (m_windowIsInFocus || ShouldRenderUnfocused()))
     {
+        if (m_PrevDPIScaleFactorX != m_DPIScaleFactorX || m_PrevDPIScaleFactorY != m_DPIScaleFactorY)
+        {
+            DisplayScaleChanged();
+            m_PrevDPIScaleFactorX = m_DPIScaleFactorX;
+            m_PrevDPIScaleFactorY = m_DPIScaleFactorY;
+        }
+
         if (m_callbacks.beforeAnimate) m_callbacks.beforeAnimate(*this, m_FrameIndex);
         Animate(elapsedTime);
+#if DONUT_WITH_STREAMLINE
+        StreamlineIntegration::Get().SimEnd(*this);
+#endif
         if (m_callbacks.afterAnimate) m_callbacks.afterAnimate(*this, m_FrameIndex);
 
         // normal rendering           : A0    R0 P0 A1 R1 P1
@@ -523,6 +563,10 @@ bool DeviceManager::AnimateRenderPresent()
             {
                 // first time entering this loop, m_FrameIndex is 1 for m_SkipRenderOnFirstFrame, 0 otherwise;
                 uint32_t frameIndex = m_FrameIndex;
+
+#if DONUT_WITH_STREAMLINE
+                StreamlineIntegration::Get().RenderStart(*this);
+#endif
                 if (m_SkipRenderOnFirstFrame)
                 {
                     frameIndex--;
@@ -531,9 +575,16 @@ bool DeviceManager::AnimateRenderPresent()
                 if (m_callbacks.beforeRender) m_callbacks.beforeRender(*this, frameIndex);
                 Render();
                 if (m_callbacks.afterRender) m_callbacks.afterRender(*this, frameIndex);
+#if DONUT_WITH_STREAMLINE
+                StreamlineIntegration::Get().RenderEnd(*this);
+                StreamlineIntegration::Get().PresentStart(*this);
+#endif
                 if (m_callbacks.beforePresent) m_callbacks.beforePresent(*this, frameIndex);
                 bool presentSuccess = Present();
                 if (m_callbacks.afterPresent) m_callbacks.afterPresent(*this, frameIndex);
+#if DONUT_WITH_STREAMLINE
+                StreamlineIntegration::Get().PresentEnd(*this);
+#endif
                 if (!presentSuccess)
                 {
                     return false;
@@ -609,9 +660,14 @@ void DeviceManager::UpdateWindowSize()
 
 void DeviceManager::WindowPosCallback(int x, int y)
 {
-#ifdef _WINDOWS
     if (m_DeviceParams.enablePerMonitorDPI)
     {
+#ifdef _WINDOWS
+        // Use Windows-specific implementation of DPI query because GLFW has issues:
+        // glfwGetWindowMonitor(window) returns NULL for non-fullscreen applications.
+        // This custom code allows us to adjust DPI scaling when a window is moved
+        // between monitors with different scales.
+        
         HWND hwnd = glfwGetWin32Window(m_Window);
         auto monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
 
@@ -621,8 +677,23 @@ void DeviceManager::WindowPosCallback(int x, int y)
 
         m_DPIScaleFactorX = dpiX / 96.f;
         m_DPIScaleFactorY = dpiY / 96.f;
+#else
+        // Linux support for display scaling using GLFW.
+        // This has limited utility due to the issue described above (NULL monitor),
+        // and because GLFW doesn't support fractional scaling properly.
+        // For example, on a system with 150% scaling it will report scale = 2.0
+        // but the window will be either too small or too big, depending on 'resizeWindowWithDisplayScale'
+
+        GLFWmonitor* monitor = glfwGetWindowMonitor(m_Window);
+
+        // Non-fullscreen windows have NULL monitor, let's use the primary monitor in this case
+        if (!monitor)
+            monitor = glfwGetPrimaryMonitor();
+
+        glfwGetMonitorContentScale(monitor, &m_DPIScaleFactorX, &m_DPIScaleFactorY);
+#endif
     }
-#endif    
+
     if (m_EnableRenderDuringWindowMovement && m_SwapChainFramebuffers.size() > 0)
     {
         if (m_callbacks.beforeFrame) m_callbacks.beforeFrame(*this, m_FrameIndex);
@@ -658,9 +729,12 @@ void DeviceManager::KeyboardCharInput(unsigned int unicode, int mods)
 
 void DeviceManager::MousePosUpdate(double xpos, double ypos)
 {
-    xpos /= m_DPIScaleFactorX;
-    ypos /= m_DPIScaleFactorY;
-
+    if (!m_DeviceParams.supportExplicitDisplayScaling)
+    {
+        xpos /= m_DPIScaleFactorX;
+        ypos /= m_DPIScaleFactorY;
+    }
+    
     for (auto it = m_vRenderPasses.crbegin(); it != m_vRenderPasses.crend(); it++)
     {
         bool ret = (*it)->MousePosUpdate(xpos, ypos);
@@ -783,6 +857,11 @@ void JoyStickManager::UpdateJoystick(int j, const std::list<IRenderPass*>& passe
 
 void DeviceManager::Shutdown()
 {
+#if DONUT_WITH_STREAMLINE
+    // Shut down Streamline before destroying swapchain and device.
+    StreamlineIntegration::Get().Shutdown();
+#endif
+
     m_SwapChainFramebuffers.clear();
 
     DestroyDeviceAndSwapChain();
@@ -911,3 +990,11 @@ void DefaultMessageCallback::message(nvrhi::MessageSeverity severity, const char
     
     donut::log::message(donutSeverity, "%s", messageText);
 }
+
+#if DONUT_WITH_STREAMLINE
+StreamlineInterface& DeviceManager::GetStreamline()
+{
+    // StreamlineIntegration doesn't support instances
+    return StreamlineIntegration::Get();
+}
+#endif

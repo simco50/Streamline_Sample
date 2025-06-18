@@ -80,6 +80,7 @@ namespace donut::engine
         constants.materialID = materialID;
         constants.occlusionStrength = occlusionStrength;
         constants.transmissionFactor = transmissionFactor;
+        constants.normalTextureTransformScale = normalTextureTransformScale;
         
         switch (domain)  // NOLINT(clang-diagnostic-switch-enum)
         {
@@ -117,6 +118,31 @@ namespace donut::engine
             break;
         }
 
+        if (enableSubsurfaceScattering)
+        {
+            constants.flags |= MaterialFlags_SubsurfaceScattering;
+
+            constants.sssTransmissionColor = subsurface.transmissionColor;
+            constants.sssScatteringColor = subsurface.scatteringColor;
+            constants.sssScale = subsurface.scale;
+            constants.sssAnisotropy = subsurface.anisotropy;
+        }
+
+        if (enableHair)
+        {
+            constants.flags |= MaterialFlags_Hair;
+
+            constants.hairBaseColor = hair.baseColor;
+            constants.hairMelanin = hair.melanin;
+            constants.hairMelaninRedness = hair.melaninRedness;
+            constants.hairLongitudinalRoughness = hair.longitudinalRoughness;
+            constants.hairAzimuthalRoughness = hair.azimuthalRoughness;
+            constants.hairIor = hair.ior;
+            constants.hairCuticleAngle = hair.cuticleAngle;
+            constants.hairDiffuseReflectionWeight = hair.diffuseReflectionWeight;
+            constants.hairDiffuseReflectionTint = hair.diffuseReflectionTint;
+        }
+
         // bindless textures
 
         constants.baseOrDiffuseTextureIndex = GetBindlessTextureIndex(baseOrDiffuseTexture);
@@ -127,14 +153,14 @@ namespace donut::engine
         constants.transmissionTextureIndex = GetBindlessTextureIndex(transmissionTexture);
         constants.opacityTextureIndex = GetBindlessTextureIndex(opacityTexture);
 
-        constants.padding1 = 0;
-        constants.padding2 = 0;
+        constants.padding1 = uint3(0, 0, 0);
     }
 
     bool Material::SetProperty(const std::string& name, const dm::float4& value)
     {
 #define FLOAT3_PROPERTY(pname) if (name == #pname) { pname = value.xyz(); dirty = true; return true; }
 #define FLOAT_PROPERTY(pname) if (name == #pname) { pname = value.x; dirty = true; return true; }
+#define FLOAT2_PROPERTY(pname) if (name == #pname) { pname = value.xy(); dirty = true; return true; }
 #define BOOL_PROPERTY(pname) if (name == #pname) { pname = (value.x > 0.5f); dirty = true; return true; }
         FLOAT3_PROPERTY(baseOrDiffuseColor);
         FLOAT3_PROPERTY(specularColor);
@@ -147,6 +173,7 @@ namespace donut::engine
         FLOAT_PROPERTY(transmissionFactor);
         FLOAT_PROPERTY(normalTextureScale);
         FLOAT_PROPERTY(occlusionStrength);
+        FLOAT2_PROPERTY(normalTextureTransformScale);
         BOOL_PROPERTY(enableBaseOrDiffuseTexture);
         BOOL_PROPERTY(enableMetalRoughOrSpecularTexture);
         BOOL_PROPERTY(enableNormalTexture);

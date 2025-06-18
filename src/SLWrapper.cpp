@@ -4,7 +4,7 @@
 // Email:       StreamlineSupport@nvidia.com
 // Site:        http://developer.nvidia.com/
 //
-// Copyright (c) 2022, NVIDIA CORPORATION. All rights reserved.
+// Copyright (c) 2022-2025, NVIDIA CORPORATION. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions
@@ -85,50 +85,50 @@ void logFunctionCallback(sl::LogType type, const char* msg) {
     }
 }
 
+static const std::map< const sl::Result, const std::string> errors = {
+        {sl::Result::eErrorIO,"eErrorIO"},
+        {sl::Result::eErrorDriverOutOfDate,"eErrorDriverOutOfDate"},
+        {sl::Result::eErrorOSOutOfDate,"eErrorOSOutOfDate"},
+        {sl::Result::eErrorOSDisabledHWS,"eErrorOSDisabledHWS"},
+        {sl::Result::eErrorDeviceNotCreated,"eErrorDeviceNotCreated"},
+        {sl::Result::eErrorAdapterNotSupported,"eErrorAdapterNotSupported"},
+        {sl::Result::eErrorNoPlugins,"eErrorNoPlugins"},
+        {sl::Result::eErrorVulkanAPI,"eErrorVulkanAPI"},
+        {sl::Result::eErrorDXGIAPI,"eErrorDXGIAPI"},
+        {sl::Result::eErrorD3DAPI,"eErrorD3DAPI"},
+        {sl::Result::eErrorNRDAPI,"eErrorNRDAPI"},
+        {sl::Result::eErrorNVAPI,"eErrorNVAPI"},
+        {sl::Result::eErrorReflexAPI,"eErrorReflexAPI"},
+        {sl::Result::eErrorNGXFailed,"eErrorNGXFailed"},
+        {sl::Result::eErrorJSONParsing,"eErrorJSONParsing"},
+        {sl::Result::eErrorMissingProxy,"eErrorMissingProxy"},
+        {sl::Result::eErrorMissingResourceState,"eErrorMissingResourceState"},
+        {sl::Result::eErrorInvalidIntegration,"eErrorInvalidIntegration"},
+        {sl::Result::eErrorMissingInputParameter,"eErrorMissingInputParameter"},
+        {sl::Result::eErrorNotInitialized,"eErrorNotInitialized"},
+        {sl::Result::eErrorComputeFailed,"eErrorComputeFailed"},
+        {sl::Result::eErrorInitNotCalled,"eErrorInitNotCalled"},
+        {sl::Result::eErrorExceptionHandler,"eErrorExceptionHandler"},
+        {sl::Result::eErrorInvalidParameter,"eErrorInvalidParameter"},
+        {sl::Result::eErrorMissingConstants,"eErrorMissingConstants"},
+        {sl::Result::eErrorDuplicatedConstants,"eErrorDuplicatedConstants"},
+        {sl::Result::eErrorMissingOrInvalidAPI,"eErrorMissingOrInvalidAPI"},
+        {sl::Result::eErrorCommonConstantsMissing,"eErrorCommonConstantsMissing"},
+        {sl::Result::eErrorUnsupportedInterface,"eErrorUnsupportedInterface"},
+        {sl::Result::eErrorFeatureMissing,"eErrorFeatureMissing"},
+        {sl::Result::eErrorFeatureNotSupported,"eErrorFeatureNotSupported"},
+        {sl::Result::eErrorFeatureMissingHooks,"eErrorFeatureMissingHooks"},
+        {sl::Result::eErrorFeatureFailedToLoad,"eErrorFeatureFailedToLoad"},
+        {sl::Result::eErrorFeatureWrongPriority,"eErrorFeatureWrongPriority"},
+        {sl::Result::eErrorFeatureMissingDependency,"eErrorFeatureMissingDependency"},
+        {sl::Result::eErrorFeatureManagerInvalidState,"eErrorFeatureManagerInvalidState"},
+        {sl::Result::eErrorInvalidState,"eErrorInvalidState"},
+        {sl::Result::eWarnOutOfVRAM,"eWarnOutOfVRAM"} };
+
 bool successCheck(sl::Result result, char* location) {
 
     if (result == sl::Result::eOk)
         return true;
-
-    const std::map< const sl::Result, const std::string> errors = {
-            {sl::Result::eErrorIO,"eErrorIO"},
-            {sl::Result::eErrorDriverOutOfDate,"eErrorDriverOutOfDate"},
-            {sl::Result::eErrorOSOutOfDate,"eErrorOSOutOfDate"},
-            {sl::Result::eErrorOSDisabledHWS,"eErrorOSDisabledHWS"},
-            {sl::Result::eErrorDeviceNotCreated,"eErrorDeviceNotCreated"},
-            {sl::Result::eErrorAdapterNotSupported,"eErrorAdapterNotSupported"},
-            {sl::Result::eErrorNoPlugins,"eErrorNoPlugins"},
-            {sl::Result::eErrorVulkanAPI,"eErrorVulkanAPI"},
-            {sl::Result::eErrorDXGIAPI,"eErrorDXGIAPI"},
-            {sl::Result::eErrorD3DAPI,"eErrorD3DAPI"},
-            {sl::Result::eErrorNRDAPI,"eErrorNRDAPI"},
-            {sl::Result::eErrorNVAPI,"eErrorNVAPI"},
-            {sl::Result::eErrorReflexAPI,"eErrorReflexAPI"},
-            {sl::Result::eErrorNGXFailed,"eErrorNGXFailed"},
-            {sl::Result::eErrorJSONParsing,"eErrorJSONParsing"},
-            {sl::Result::eErrorMissingProxy,"eErrorMissingProxy"},
-            {sl::Result::eErrorMissingResourceState,"eErrorMissingResourceState"},
-            {sl::Result::eErrorInvalidIntegration,"eErrorInvalidIntegration"},
-            {sl::Result::eErrorMissingInputParameter,"eErrorMissingInputParameter"},
-            {sl::Result::eErrorNotInitialized,"eErrorNotInitialized"},
-            {sl::Result::eErrorComputeFailed,"eErrorComputeFailed"},
-            {sl::Result::eErrorInitNotCalled,"eErrorInitNotCalled"},
-            {sl::Result::eErrorExceptionHandler,"eErrorExceptionHandler"},
-            {sl::Result::eErrorInvalidParameter,"eErrorInvalidParameter"},
-            {sl::Result::eErrorMissingConstants,"eErrorMissingConstants"},
-            {sl::Result::eErrorDuplicatedConstants,"eErrorDuplicatedConstants"},
-            {sl::Result::eErrorMissingOrInvalidAPI,"eErrorMissingOrInvalidAPI"},
-            {sl::Result::eErrorCommonConstantsMissing,"eErrorCommonConstantsMissing"},
-            {sl::Result::eErrorUnsupportedInterface,"eErrorUnsupportedInterface"},
-            {sl::Result::eErrorFeatureMissing,"eErrorFeatureMissing"},
-            {sl::Result::eErrorFeatureNotSupported,"eErrorFeatureNotSupported"},
-            {sl::Result::eErrorFeatureMissingHooks,"eErrorFeatureMissingHooks"},
-            {sl::Result::eErrorFeatureFailedToLoad,"eErrorFeatureFailedToLoad"},
-            {sl::Result::eErrorFeatureWrongPriority,"eErrorFeatureWrongPriority"},
-            {sl::Result::eErrorFeatureMissingDependency,"eErrorFeatureMissingDependency"},
-            {sl::Result::eErrorFeatureManagerInvalidState,"eErrorFeatureManagerInvalidState"},
-            {sl::Result::eErrorInvalidState,"eErrorInvalidState"}, 
-            {sl::Result::eWarnOutOfVRAM,"eWarnOutOfVRAM"} };
 
     auto a = errors.find(result);
     if (a != errors.end())
@@ -274,7 +274,7 @@ bool SLWrapper::Initialize_preDevice(nvrhi::GraphicsAPI api)
     return true;
 }
 
-bool SLWrapper::Initialize_postDevice()
+bool SLWrapper::Initialize_postDevice(donut::app::DeviceManager* deviceManager)
 {
 
     // We set reflex consts to a default config. This can be changed at runtime in the UI.
@@ -411,14 +411,14 @@ void SLWrapper::UpdateFeatureAvailable(donut::app::DeviceManager* deviceManager)
     else log::warning("DLSS-G is not fully functional on this system.");
 #endif
 
+    m_pcl_available = successCheck(slIsFeatureSupported(sl::kFeaturePCL, adapterInfo), "slIsFeatureSupported_PCL");
+    if (m_pcl_available) log::info("PCL is supported on this system.");
+    else log::warning("PCL is not fully functional on this system.");
+
 #ifdef STREAMLINE_FEATURE_REFLEX
     m_reflex_available = slIsFeatureSupported(sl::kFeatureReflex, adapterInfo) == sl::Result::eOk;
     if (m_reflex_available) log::info("Reflex is supported on this system.");
     else log::warning("Reflex is not fully functional on this system.");
-
-    m_pcl_available = successCheck(slIsFeatureSupported(sl::kFeaturePCL, adapterInfo), "slIsFeatureSupported_PCL");
-    if (m_pcl_available) log::info("PCL is supported on this system.");
-    else log::warning("PCL is not fully functional on this system.");
 #endif
 
 #ifdef STREAMLINE_FEATURE_DEEPDVC
@@ -549,6 +549,12 @@ void SLWrapper::CleanupDLSS(bool wfi) {
         return;
     }
 
+    if (!m_dlss_available)
+    {
+        log::warning("DLSS not available.");
+        return;
+    }
+    
     if (wfi) {
         m_Device->waitForIdle();
     }
@@ -575,8 +581,10 @@ void SLWrapper::CleanupNIS(bool wfi) {
         log::warning("SL not initialised.");
         return;
     }
+
     if (!m_nis_available)
     {
+        log::warning("NIS not available.");
         return;
     }
 
@@ -604,10 +612,13 @@ void SLWrapper::CleanupDeepDVC() {
         log::warning("SL not initialised.");
         return;
     }
+
     if (!m_deepdvc_available)
     {
+        log::warning("DeepDVC not available.");
         return;
     }
+
     m_Device->waitForIdle();
     successCheck(slFreeResources(sl::kFeatureDeepDVC, m_viewport), "slFreeResources_DeepDVC");
 }
@@ -647,6 +658,8 @@ void SLWrapper::QueryDLSSGState(uint64_t& estimatedVRamUsage, int& fps_multiplie
     fenceValue = m_dlssg_settings.lastPresentInputsProcessingCompletionFenceValue;
 }
 
+uint64_t SLWrapper::GetDLSSGLastFenceValue() { return m_dlssg_settings.lastPresentInputsProcessingCompletionFenceValue; }
+
 bool SLWrapper::Get_DLSSG_SwapChainRecreation(bool& turn_on) const {
     turn_on = m_dlssg_shoudLoad;
     auto tmp = m_dlssg_triggerswapchainRecreation;
@@ -658,8 +671,10 @@ void SLWrapper::CleanupDLSSG(bool wfi) {
         log::warning("SL not initialised.");
         return;
     }
+
     if (!m_dlssg_available)
     {
+        log::warning("DLSSG not available.");
         return;
     }
 
@@ -671,7 +686,27 @@ void SLWrapper::CleanupDLSSG(bool wfi) {
     // if we've never ran the feature on this viewport, this call may return 'eErrorInvalidParameter'
     assert(status == sl::Result::eOk || status == sl::Result::eErrorInvalidParameter || status == sl::Result::eErrorFeatureMissing);
 }
+#if STREAMLINE_FEATURE_LATEWARP
+void SLWrapper::CleanupLatewarp(bool wfi) {
+    if (!m_sl_initialised) {
+        log::warning("SL not initialised.");
+        return;
+    }
 
+    if (!m_latewarp_available)
+    {
+        log::warning("Latewarp not available.");
+        return;
+    }
+
+    if (wfi) {
+        m_Device->waitForIdle();
+    }
+
+    sl::Result status = slFreeResources(sl::kFeatureLatewarp, m_viewport);
+    assert(status == sl::Result::eOk || status == sl::Result::eErrorFeatureMissing);
+}
+#endif
 sl::Resource SLWrapper::allocateResourceCallback(const sl::ResourceAllocationDesc* resDesc, void* device) {
 
     sl::Resource res = {};
@@ -956,7 +991,7 @@ void SLWrapper::TagResources_General(
     GetSLResource(commandList, finalColorHudlessResource, finalColorHudless, view);
 
     sl::ResourceTag motionVectorsResourceTag = sl::ResourceTag{ &motionVectorsResource, sl::kBufferTypeMotionVectors, sl::ResourceLifecycle::eValidUntilPresent, &renderExtent };
-    sl::ResourceTag depthResourceTag = sl::ResourceTag{ &depthResource, sl::kBufferTypeDepth, sl::ResourceLifecycle::eValidUntilPresent, &renderExtent };
+    sl::ResourceTag depthResourceTag = sl::ResourceTag{ &depthResource, sl::kBufferTypeDepth, sl::ResourceLifecycle::eOnlyValidNow, &renderExtent }; // VK render path depth does not last until present
     sl::ResourceTag finalColorHudlessResourceTag = sl::ResourceTag{ &finalColorHudlessResource, sl::kBufferTypeHUDLessColor, sl::ResourceLifecycle::eValidUntilPresent, &fullExtent };
 
     sl::ResourceTag inputs[] = {motionVectorsResourceTag, depthResourceTag, finalColorHudlessResourceTag };
@@ -1313,6 +1348,7 @@ void SLWrapper::QueryReflexStats(bool& reflex_lowLatencyAvailable, bool& reflex_
     }
 
 }
+
 #if STREAMLINE_FEATURE_LATEWARP
 void SLWrapper::SetLatewarpOptions(const sl::LatewarpOptions& options) {
     static bool toggle = options.latewarpActive;
@@ -1323,6 +1359,13 @@ void SLWrapper::SetLatewarpOptions(const sl::LatewarpOptions& options) {
     }
 }
 #endif
+
+bool SLWrapper::Get_Latewarp_SwapChainRecreation(bool& turn_on) const {
+    turn_on = m_latewarp_shouldLoad;
+    auto tmp = m_latewarp_triggerswapchainRecreation;
+    return tmp;
+}
+
 void SLWrapper::SetReflexCameraData(sl::FrameToken &frameToken, const sl::ReflexCameraData& cameraData) {
     slReflexSetCameraData(m_viewport, frameToken, cameraData);
 }

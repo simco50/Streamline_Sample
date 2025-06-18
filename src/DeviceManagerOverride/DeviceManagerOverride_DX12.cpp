@@ -59,15 +59,15 @@ freely, subject to the following restrictions:
 #include <dxgi1_5.h>
 #include <dxgidebug.h>
 
+#include <nvrhi/nvrhi.h>
 #include <nvrhi/d3d12.h>
 #include <nvrhi/validation.h>
 
 #include <sstream>
 
+#include "../NVWrapper.h"
 #include "DeviceManagerOverride.h"
 
-// STREAMLINE
-#include "../SLWrapper.h"
 using nvrhi::RefCountPtr;
 using namespace donut::app;
 
@@ -102,7 +102,6 @@ static IDXGIAdapter* FindAdapter(int adapterID)
     unsigned int adapterNo = 0;
     while (SUCCEEDED(hres))
     {
-        if (adapterID >= 0 && adapterNo != adapterID) continue;
         IDXGIAdapter* pAdapter;
         hres = DXGIFactory->EnumAdapters(adapterNo, &pAdapter);
 
@@ -112,9 +111,15 @@ static IDXGIAdapter* FindAdapter(int adapterID)
             pAdapter->GetDesc(&aDesc);
 
             std::wstring aName = aDesc.Description;
-            std::wstring aLuid = std::to_wstring(aDesc.AdapterLuid.HighPart) + std::to_wstring(aDesc.AdapterLuid.LowPart);
-
-            if (IsNvDeviceID(aDesc.VendorId))
+            donut::log::info("EnumAdapter[%d] = {vendor=%08x luid=(%08x,%08x) desc=%S}", adapterNo, aDesc.VendorId, aDesc.AdapterLuid.HighPart, aDesc.AdapterLuid.LowPart, aName.c_str());
+            if (adapterID >= 0)
+            {
+                if (adapterNo == adapterID)
+                {
+                    return pAdapter;
+                }
+            }
+            else if (IsNvDeviceID(aDesc.VendorId))
             {
                 return pAdapter;
             }
@@ -187,8 +192,8 @@ bool DeviceManagerOverride_DX12::CreateDevice()
         }
     }
 
-    SLWrapper::Get().ProxyToNative(m_Device12, (void**)&m_Device_native);
-    SLWrapper::Get().SetDevice_raw(m_Device_native);
+    NVWrapper::Get().ProxyToNative(m_Device12, (void**)&m_Device_native);
+    NVWrapper::Get().SetDevice_raw(m_Device_native);
 
     D3D12_COMMAND_QUEUE_DESC queueDesc;
     ZeroMemory(&queueDesc, sizeof(queueDesc));
@@ -235,20 +240,9 @@ bool DeviceManagerOverride_DX12::CreateDevice()
     return true;
 }
 
-bool DeviceManagerOverride_DX12::CreateSwapChain()
-{
-    bool success = DeviceManager_DX12::CreateSwapChain();
-    if (success)
-    {
-        SLWrapper::Get().ProxyToNative(m_SwapChain, (void**) &m_SwapChain_native);
-    }
-    return success;
-}
-
 void DeviceManagerOverride_DX12::DestroyDeviceAndSwapChain()
 {
     DeviceManager_DX12::DestroyDeviceAndSwapChain();
-    m_SwapChain_native = nullptr;
     m_Device_native = nullptr;
 }
 
@@ -261,19 +255,18 @@ void DeviceManagerOverride_DX12::waitForQueue() {
 
 bool DeviceManagerOverride_DX12::BeginFrame()
 {
-
-    bool turn_on;
-
-    // STREAMLINE
-    if (SLWrapper::Get().Get_DLSSG_SwapChainRecreation(turn_on)) {
-
+    DeviceManager_DX12::BeginFrame();
+#if STREAMLINE_FEATURE_DLSS_FG
+    bool turn_on_dlssg;
+    if (NVWrapper::Get().Get_DLSSG_SwapChainRecreation(turn_on_dlssg))
+    {
         waitForQueue();
 
-        SLWrapper::Get().CleanupDLSSG(true);
+        NVWrapper::Get().CleanupDLSSG(true);
 
         // Get new sizes
         DXGI_SWAP_CHAIN_DESC1 newSwapChainDesc;
-        if (SUCCEEDED(m_SwapChain_native->GetDesc1(&newSwapChainDesc))) {
+        if (SUCCEEDED(m_SwapChain->GetDesc1(&newSwapChainDesc))) {
             m_SwapChainDesc.Width = newSwapChainDesc.Width;
             m_SwapChainDesc.Height = newSwapChainDesc.Height;
             m_DeviceParams.backBufferWidth = newSwapChainDesc.Width;
@@ -287,24 +280,21 @@ bool DeviceManagerOverride_DX12::BeginFrame()
         ReleaseRenderTargets();
 
         m_SwapChain = nullptr;
-        m_SwapChain_native = nullptr;
 
-        // If we turn off dlssg, then unload dlssg featuree
-        if (turn_on) 
-            SLWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, true);
+        // If we turn off dlssg, then unload dlssg feature
+        if (turn_on_dlssg) 
+            NVWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, true);
         else {
-            SLWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, false);
+            NVWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, false);
         }
 
-        m_UseProxySwapchain = turn_on;
-
         // Recreate Swapchain and resources 
+
         RefCountPtr<IDXGISwapChain1> pSwapChain1_base;
         auto hr = m_DxgiFactory2->CreateSwapChainForHwnd(m_GraphicsQueue, m_hWnd, &m_SwapChainDesc, &m_FullScreenDesc, nullptr, &pSwapChain1_base);
         if (hr != S_OK)  donut::log::fatal("CreateSwapChainForHwnd failed");
         hr = pSwapChain1_base->QueryInterface(IID_PPV_ARGS(&m_SwapChain));
         if (hr != S_OK)  donut::log::fatal("QueryInterface failed");
-        SLWrapper::Get().ProxyToNative(m_SwapChain, (void**)&m_SwapChain_native);
 
         if (!CreateRenderTargets()) 
             donut::log::fatal("CreateRenderTarget failed");
@@ -312,17 +302,19 @@ bool DeviceManagerOverride_DX12::BeginFrame()
         BackBufferResized();
 
         // Reload DLSSG
-        SLWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, true); 
-        SLWrapper::Get().Quiet_DLSSG_SwapChainRecreation();
-
-    } 
-    else if (SLWrapper::Get().Get_Latewarp_SwapChainRecreation(turn_on)) {
-
+        NVWrapper::Get().FeatureLoad(sl::kFeatureDLSS_G, true); 
+        NVWrapper::Get().Quiet_DLSSG_SwapChainRecreation();
+    }
+#endif
+#if STREAMLINE_FEATURE_LATEWARP
+    bool turn_on_latewarp;
+    if (NVWrapper::Get().Get_Latewarp_SwapChainRecreation(turn_on_latewarp))
+    {
         waitForQueue();
 
         // Get new sizes
         DXGI_SWAP_CHAIN_DESC1 newSwapChainDesc;
-        if (SUCCEEDED(m_SwapChain_native->GetDesc1(&newSwapChainDesc))) {
+        if (SUCCEEDED(m_SwapChain->GetDesc1(&newSwapChainDesc))) {
             m_SwapChainDesc.Width = newSwapChainDesc.Width;
             m_SwapChainDesc.Height = newSwapChainDesc.Height;
             m_DeviceParams.backBufferWidth = newSwapChainDesc.Width;
@@ -336,16 +328,6 @@ bool DeviceManagerOverride_DX12::BeginFrame()
         ReleaseRenderTargets();
 
         m_SwapChain = nullptr;
-        m_SwapChain_native = nullptr;
-
-        // If we turn off Latewarp, then unload Latewarp feature
-        if (turn_on) {
-            SLWrapper::Get().FeatureLoad(sl::kFeatureLatewarp, true);
-        } else {
-            SLWrapper::Get().FeatureLoad(sl::kFeatureLatewarp, false);
-        }
-
-        m_UseProxySwapchain = turn_on;
 
         // Recreate Swapchain and resources 
         RefCountPtr<IDXGISwapChain1> pSwapChain1_base;
@@ -353,47 +335,15 @@ bool DeviceManagerOverride_DX12::BeginFrame()
         if (hr != S_OK)  donut::log::fatal("CreateSwapChainForHwnd failed");
         hr = pSwapChain1_base->QueryInterface(IID_PPV_ARGS(&m_SwapChain));
         if (hr != S_OK)  donut::log::fatal("QueryInterface failed");
-        SLWrapper::Get().ProxyToNative(m_SwapChain, (void**)&m_SwapChain_native);
 
         if (!CreateRenderTargets()) 
             donut::log::fatal("CreateRenderTarget failed");
 
         BackBufferResized();
 
-        // Reload Latewarp
-        SLWrapper::Get().FeatureLoad(sl::kFeatureLatewarp, true); 
-        SLWrapper::Get().Quiet_Latewarp_SwapChainRecreation();
+        NVWrapper::Get().Quiet_Latewarp_SwapChainRecreation();
     }
-    else
-    {
-        DXGI_SWAP_CHAIN_DESC1 newSwapChainDesc;
-        DXGI_SWAP_CHAIN_FULLSCREEN_DESC newFullScreenDesc;
-        if (SUCCEEDED(m_SwapChain->GetDesc1(&newSwapChainDesc)) && SUCCEEDED(m_SwapChain->GetFullscreenDesc(&newFullScreenDesc)))
-        {
-            if (m_FullScreenDesc.Windowed != newFullScreenDesc.Windowed)
-            {
-
-                waitForQueue();
-
-                BackBufferResizing();
-
-                m_FullScreenDesc = newFullScreenDesc;
-                m_SwapChainDesc = newSwapChainDesc;
-                m_DeviceParams.backBufferWidth = newSwapChainDesc.Width;
-                m_DeviceParams.backBufferHeight = newSwapChainDesc.Height;
-
-                if (newFullScreenDesc.Windowed)
-                    glfwSetWindowMonitor(m_Window, nullptr, 50, 50, newSwapChainDesc.Width, newSwapChainDesc.Height, 0);
-
-                ResizeSwapChain();
-                BackBufferResized();
-            }
-
-        }
-
-    }
-    // STREAMLINE: hook function using proxy api object
-    auto bufferIndex = m_SwapChain->GetCurrentBackBufferIndex();
+#endif
     return true;
 }
 

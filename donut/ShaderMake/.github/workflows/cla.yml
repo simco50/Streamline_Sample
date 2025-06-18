@@ -17,9 +17,9 @@ jobs:
           PERSONAL_ACCESS_TOKEN : ${{ secrets.CLA_ACCESS_TOKEN }}
         with:
           path-to-signatures: 'signatures/ShaderMake.json'
-          path-to-document: 'https://github.com/NVIDIAGameWorks/ShaderMake/blob/main/CLA.txt'
+          path-to-document: 'https://github.com/NVIDIA-RTX/ShaderMake/blob/main/CLA.txt'
           branch: 'ShaderMake'
           allowlist: nobody
           lock-pullrequest-aftermerge: true
-          remote-organization-name: NVIDIAGameWorks
+          remote-organization-name: NVIDIA-RTX
           remote-repository-name: CLAs

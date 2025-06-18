@@ -64,6 +64,10 @@ freely, subject to the following restrictions:
 
 #include <sstream>
 
+#if DONUT_WITH_STREAMLINE
+#include <StreamlineIntegration.h>
+#endif
+
 using nvrhi::RefCountPtr;
 
 using namespace donut::app;
@@ -185,6 +189,11 @@ bool DeviceManager_DX12::EnumerateAdapters(std::vector<AdapterInfo>& outAdapters
 
 bool DeviceManager_DX12::CreateDevice()
 {
+#if DONUT_WITH_STREAMLINE
+    const bool kCheckSig = true;
+    StreamlineIntegration::Get().InitializePreDevice(nvrhi::GraphicsAPI::D3D12, m_DeviceParams.streamlineAppId, kCheckSig, m_DeviceParams.enableStreamlineLog);
+#endif
+
     if (m_DeviceParams.enableDebugRuntime)
     {
         RefCountPtr<ID3D12Debug> pDebug;
@@ -208,6 +217,13 @@ bool DeviceManager_DX12::CreateDevice()
     }
     
     int adapterIndex = m_DeviceParams.adapterIndex;
+
+#if DONUT_WITH_STREAMLINE
+    // Auto select best adapter for streamline features
+    if (adapterIndex < 0)
+        adapterIndex = StreamlineIntegration::Get().FindBestAdapter();
+#endif
+
     if (adapterIndex < 0)
         adapterIndex = 0;
 
@@ -249,12 +265,15 @@ bool DeviceManager_DX12::CreateDevice()
         if (pInfoQueue)
         {
 #ifdef _DEBUG
+            if (m_DeviceParams.enableWarningsAsErrors)
+                pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
             pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
             pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
 #endif
 
             D3D12_MESSAGE_ID disableMessageIDs[] = {
                 D3D12_MESSAGE_ID_CLEARDEPTHSTENCILVIEW_MISMATCHINGCLEARVALUE,
+                D3D12_MESSAGE_ID_CLEARRENDERTARGETVIEW_MISMATCHINGCLEARVALUE,
                 D3D12_MESSAGE_ID_COMMAND_LIST_STATIC_DESCRIPTOR_RESOURCE_DIMENSION_MISMATCH, // descriptor validation doesn't understand acceleration structures
             };
 
@@ -291,7 +310,7 @@ bool DeviceManager_DX12::CreateDevice()
     }
 
     nvrhi::d3d12::DeviceDesc deviceDesc;
-    deviceDesc.errorCB = &DefaultMessageCallback::GetInstance();
+    deviceDesc.errorCB = m_DeviceParams.messageCallback ? m_DeviceParams.messageCallback : &DefaultMessageCallback::GetInstance();
     deviceDesc.pDevice = m_Device12;
     deviceDesc.pGraphicsCommandQueue = m_GraphicsQueue;
     deviceDesc.pComputeCommandQueue = m_ComputeQueue;
@@ -299,6 +318,8 @@ bool DeviceManager_DX12::CreateDevice()
 #if DONUT_WITH_AFTERMATH
     deviceDesc.aftermathEnabled = m_DeviceParams.enableAftermath;
 #endif
+    deviceDesc.logBufferLifetime = m_DeviceParams.logBufferLifetime;
+    deviceDesc.enableHeapDirectlyIndexed = m_DeviceParams.enableHeapDirectlyIndexed;
 
     m_NvrhiDevice = nvrhi::d3d12::createDevice(deviceDesc);
 
@@ -306,6 +327,10 @@ bool DeviceManager_DX12::CreateDevice()
     {
         m_NvrhiDevice = nvrhi::validation::createValidationLayer(m_NvrhiDevice);
     }
+
+#if DONUT_WITH_STREAMLINE
+    StreamlineIntegration::Get().InitializeDeviceDX(m_NvrhiDevice);
+#endif
 
     return true;
 }
@@ -464,11 +489,14 @@ bool DeviceManager_DX12::CreateRenderTargets()
 
 void DeviceManager_DX12::ReleaseRenderTargets()
 {
-    // Make sure that all frames have finished rendering
-    m_NvrhiDevice->waitForIdle();
+    if (m_NvrhiDevice)
+    {
+        // Make sure that all frames have finished rendering
+        m_NvrhiDevice->waitForIdle();
 
-    // Release all in-flight references to the render targets
-    m_NvrhiDevice->runGarbageCollection();
+        // Release all in-flight references to the render targets
+        m_NvrhiDevice->runGarbageCollection();
+    }
 
     // Set the events so that WaitForSingleObject in OneFrame will not hang later
     for(auto e : m_FrameFenceEvents)

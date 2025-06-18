@@ -58,8 +58,12 @@ freely, subject to the following restrictions:
 #include <nvrhi/validation.h>
 #include <donut/app/DeviceManager_VK.h>
 
-// STREAMLINE
-#include "../SLWrapper.h"
+#if USE_SL
+#include "../NVWrapper.h"
+#include <sl_helpers_vk.h>
+#else
+#include "../NGXWrapper.h"
+#endif
 
 #ifndef VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
 #define VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE

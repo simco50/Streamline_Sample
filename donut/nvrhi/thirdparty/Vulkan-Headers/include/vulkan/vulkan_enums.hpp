@@ -1,4 +1,4 @@
-// Copyright 2015-2024 The Khronos Group Inc.
+// Copyright 2015-2025 The Khronos Group Inc.
 //
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 //
@@ -256,8 +256,11 @@ namespace VULKAN_HPP_NAMESPACE
     eErrorInvalidDeviceAddressEXT                = VK_ERROR_INVALID_DEVICE_ADDRESS_EXT,
     eErrorInvalidOpaqueCaptureAddressKHR         = VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR,
     ePipelineCompileRequired                     = VK_PIPELINE_COMPILE_REQUIRED,
-    eErrorPipelineCompileRequiredEXT             = VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT,
     ePipelineCompileRequiredEXT                  = VK_PIPELINE_COMPILE_REQUIRED_EXT,
+    eErrorPipelineCompileRequiredEXT             = VK_ERROR_PIPELINE_COMPILE_REQUIRED_EXT,
+    eErrorNotPermitted                           = VK_ERROR_NOT_PERMITTED,
+    eErrorNotPermittedEXT                        = VK_ERROR_NOT_PERMITTED_EXT,
+    eErrorNotPermittedKHR                        = VK_ERROR_NOT_PERMITTED_KHR,
     eErrorSurfaceLostKHR                         = VK_ERROR_SURFACE_LOST_KHR,
     eErrorNativeWindowInUseKHR                   = VK_ERROR_NATIVE_WINDOW_IN_USE_KHR,
     eSuboptimalKHR                               = VK_SUBOPTIMAL_KHR,
@@ -272,8 +275,6 @@ namespace VULKAN_HPP_NAMESPACE
     eErrorVideoProfileCodecNotSupportedKHR       = VK_ERROR_VIDEO_PROFILE_CODEC_NOT_SUPPORTED_KHR,
     eErrorVideoStdVersionNotSupportedKHR         = VK_ERROR_VIDEO_STD_VERSION_NOT_SUPPORTED_KHR,
     eErrorInvalidDrmFormatModifierPlaneLayoutEXT = VK_ERROR_INVALID_DRM_FORMAT_MODIFIER_PLANE_LAYOUT_EXT,
-    eErrorNotPermittedKHR                        = VK_ERROR_NOT_PERMITTED_KHR,
-    eErrorNotPermittedEXT                        = VK_ERROR_NOT_PERMITTED_EXT,
 #if defined( VK_USE_PLATFORM_WIN32_KHR )
     eErrorFullScreenExclusiveModeLostEXT = VK_ERROR_FULL_SCREEN_EXCLUSIVE_MODE_LOST_EXT,
 #endif /*VK_USE_PLATFORM_WIN32_KHR*/
@@ -412,8 +413,8 @@ namespace VULKAN_HPP_NAMESPACE
     ePhysicalDeviceMultiviewProperties                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES,
     ePhysicalDeviceMultiviewPropertiesKHR                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PROPERTIES_KHR,
     ePhysicalDeviceVariablePointersFeatures                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES,
-    ePhysicalDeviceVariablePointersFeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR,
     ePhysicalDeviceVariablePointerFeatures                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES,
+    ePhysicalDeviceVariablePointersFeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTERS_FEATURES_KHR,
     ePhysicalDeviceVariablePointerFeaturesKHR                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VARIABLE_POINTER_FEATURES_KHR,
     eProtectedSubmitInfo                                     = VK_STRUCTURE_TYPE_PROTECTED_SUBMIT_INFO,
     ePhysicalDeviceProtectedMemoryFeatures                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROTECTED_MEMORY_FEATURES,
@@ -494,8 +495,8 @@ namespace VULKAN_HPP_NAMESPACE
     ePhysicalDeviceShaderAtomicInt64Features                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES,
     ePhysicalDeviceShaderAtomicInt64FeaturesKHR              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_INT64_FEATURES_KHR,
     ePhysicalDeviceShaderFloat16Int8Features                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES,
-    ePhysicalDeviceFloat16Int8FeaturesKHR                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR,
     ePhysicalDeviceShaderFloat16Int8FeaturesKHR              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT16_INT8_FEATURES_KHR,
+    ePhysicalDeviceFloat16Int8FeaturesKHR                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT16_INT8_FEATURES_KHR,
     ePhysicalDeviceFloatControlsProperties                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES,
     ePhysicalDeviceFloatControlsPropertiesKHR                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FLOAT_CONTROLS_PROPERTIES_KHR,
     eDescriptorSetLayoutBindingFlagsCreateInfo               = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_BINDING_FLAGS_CREATE_INFO,
@@ -668,6 +669,115 @@ namespace VULKAN_HPP_NAMESPACE
     eDeviceBufferMemoryRequirementsKHR                       = VK_STRUCTURE_TYPE_DEVICE_BUFFER_MEMORY_REQUIREMENTS_KHR,
     eDeviceImageMemoryRequirements                           = VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS,
     eDeviceImageMemoryRequirementsKHR                        = VK_STRUCTURE_TYPE_DEVICE_IMAGE_MEMORY_REQUIREMENTS_KHR,
+    ePhysicalDeviceVulkan14Features                          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_FEATURES,
+    ePhysicalDeviceVulkan14Properties                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_4_PROPERTIES,
+    eDeviceQueueGlobalPriorityCreateInfo                     = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO,
+    eDeviceQueueGlobalPriorityCreateInfoEXT                  = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT,
+    eDeviceQueueGlobalPriorityCreateInfoKHR                  = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR,
+    ePhysicalDeviceGlobalPriorityQueryFeatures               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES,
+    ePhysicalDeviceGlobalPriorityQueryFeaturesKHR            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR,
+    ePhysicalDeviceGlobalPriorityQueryFeaturesEXT            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_EXT,
+    eQueueFamilyGlobalPriorityProperties                     = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES,
+    eQueueFamilyGlobalPriorityPropertiesKHR                  = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR,
+    eQueueFamilyGlobalPriorityPropertiesEXT                  = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_EXT,
+    ePhysicalDeviceShaderSubgroupRotateFeatures              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES,
+    ePhysicalDeviceShaderSubgroupRotateFeaturesKHR           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES_KHR,
+    ePhysicalDeviceShaderFloatControls2Features              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES,
+    ePhysicalDeviceShaderFloatControls2FeaturesKHR           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR,
+    ePhysicalDeviceShaderExpectAssumeFeatures                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES,
+    ePhysicalDeviceShaderExpectAssumeFeaturesKHR             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR,
+    ePhysicalDeviceLineRasterizationFeatures                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES,
+    ePhysicalDeviceLineRasterizationFeaturesEXT              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
+    ePhysicalDeviceLineRasterizationFeaturesKHR              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
+    ePipelineRasterizationLineStateCreateInfo                = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO,
+    ePipelineRasterizationLineStateCreateInfoEXT             = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT,
+    ePipelineRasterizationLineStateCreateInfoKHR             = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR,
+    ePhysicalDeviceLineRasterizationProperties               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES,
+    ePhysicalDeviceLineRasterizationPropertiesEXT            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT,
+    ePhysicalDeviceLineRasterizationPropertiesKHR            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR,
+    ePhysicalDeviceVertexAttributeDivisorProperties          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES,
+    ePhysicalDeviceVertexAttributeDivisorPropertiesKHR       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR,
+    ePipelineVertexInputDivisorStateCreateInfo               = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO,
+    ePipelineVertexInputDivisorStateCreateInfoEXT            = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT,
+    ePipelineVertexInputDivisorStateCreateInfoKHR            = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR,
+    ePhysicalDeviceVertexAttributeDivisorFeatures            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES,
+    ePhysicalDeviceVertexAttributeDivisorFeaturesEXT         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT,
+    ePhysicalDeviceVertexAttributeDivisorFeaturesKHR         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR,
+    ePhysicalDeviceIndexTypeUint8Features                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES,
+    ePhysicalDeviceIndexTypeUint8FeaturesEXT                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
+    ePhysicalDeviceIndexTypeUint8FeaturesKHR                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR,
+    eMemoryMapInfo                                           = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO,
+    eMemoryMapInfoKHR                                        = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR,
+    eMemoryUnmapInfo                                         = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO,
+    eMemoryUnmapInfoKHR                                      = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO_KHR,
+    ePhysicalDeviceMaintenance5Features                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES,
+    ePhysicalDeviceMaintenance5FeaturesKHR                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR,
+    ePhysicalDeviceMaintenance5Properties                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES,
+    ePhysicalDeviceMaintenance5PropertiesKHR                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR,
+    eRenderingAreaInfo                                       = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO,
+    eRenderingAreaInfoKHR                                    = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR,
+    eDeviceImageSubresourceInfo                              = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO,
+    eDeviceImageSubresourceInfoKHR                           = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR,
+    eSubresourceLayout2                                      = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2,
+    eSubresourceLayout2EXT                                   = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT,
+    eSubresourceLayout2KHR                                   = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR,
+    eImageSubresource2                                       = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2,
+    eImageSubresource2EXT                                    = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT,
+    eImageSubresource2KHR                                    = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR,
+    ePipelineCreateFlags2CreateInfo                          = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO,
+    ePipelineCreateFlags2CreateInfoKHR                       = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR,
+    eBufferUsageFlags2CreateInfo                             = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO,
+    eBufferUsageFlags2CreateInfoKHR                          = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR,
+    ePhysicalDevicePushDescriptorProperties                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES,
+    ePhysicalDevicePushDescriptorPropertiesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
+    ePhysicalDeviceDynamicRenderingLocalReadFeatures         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES,
+    ePhysicalDeviceDynamicRenderingLocalReadFeaturesKHR      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR,
+    eRenderingAttachmentLocationInfo                         = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO,
+    eRenderingAttachmentLocationInfoKHR                      = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR,
+    eRenderingInputAttachmentIndexInfo                       = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO,
+    eRenderingInputAttachmentIndexInfoKHR                    = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR,
+    ePhysicalDeviceMaintenance6Features                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES,
+    ePhysicalDeviceMaintenance6FeaturesKHR                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR,
+    ePhysicalDeviceMaintenance6Properties                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES,
+    ePhysicalDeviceMaintenance6PropertiesKHR                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR,
+    eBindMemoryStatus                                        = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS,
+    eBindMemoryStatusKHR                                     = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR,
+    eBindDescriptorSetsInfo                                  = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO,
+    eBindDescriptorSetsInfoKHR                               = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR,
+    ePushConstantsInfo                                       = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO,
+    ePushConstantsInfoKHR                                    = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR,
+    ePushDescriptorSetInfo                                   = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO,
+    ePushDescriptorSetInfoKHR                                = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR,
+    ePushDescriptorSetWithTemplateInfo                       = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO,
+    ePushDescriptorSetWithTemplateInfoKHR                    = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR,
+    ePhysicalDevicePipelineProtectedAccessFeatures           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES,
+    ePhysicalDevicePipelineProtectedAccessFeaturesEXT        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT,
+    ePipelineRobustnessCreateInfo                            = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO,
+    ePipelineRobustnessCreateInfoEXT                         = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT,
+    ePhysicalDevicePipelineRobustnessFeatures                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES,
+    ePhysicalDevicePipelineRobustnessFeaturesEXT             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT,
+    ePhysicalDevicePipelineRobustnessProperties              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES,
+    ePhysicalDevicePipelineRobustnessPropertiesEXT           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT,
+    ePhysicalDeviceHostImageCopyFeatures                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES,
+    ePhysicalDeviceHostImageCopyFeaturesEXT                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT,
+    ePhysicalDeviceHostImageCopyProperties                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES,
+    ePhysicalDeviceHostImageCopyPropertiesEXT                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT,
+    eMemoryToImageCopy                                       = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY,
+    eMemoryToImageCopyEXT                                    = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT,
+    eImageToMemoryCopy                                       = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY,
+    eImageToMemoryCopyEXT                                    = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT,
+    eCopyImageToMemoryInfo                                   = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO,
+    eCopyImageToMemoryInfoEXT                                = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT,
+    eCopyMemoryToImageInfo                                   = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO,
+    eCopyMemoryToImageInfoEXT                                = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT,
+    eHostImageLayoutTransitionInfo                           = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO,
+    eHostImageLayoutTransitionInfoEXT                        = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO_EXT,
+    eCopyImageToImageInfo                                    = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO,
+    eCopyImageToImageInfoEXT                                 = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO_EXT,
+    eSubresourceHostMemcpySize                               = VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE,
+    eSubresourceHostMemcpySizeEXT                            = VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT,
+    eHostImageCopyDevicePerformanceQuery                     = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY,
+    eHostImageCopyDevicePerformanceQueryEXT                  = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT,
     eSwapchainCreateInfoKHR                                  = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
     ePresentInfoKHR                                          = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
     eDeviceGroupPresentCapabilitiesKHR                       = VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR,
@@ -782,11 +892,8 @@ namespace VULKAN_HPP_NAMESPACE
 #if defined( VK_USE_PLATFORM_VI_NN )
     eViSurfaceCreateInfoNN = VK_STRUCTURE_TYPE_VI_SURFACE_CREATE_INFO_NN,
 #endif /*VK_USE_PLATFORM_VI_NN*/
-    eImageViewAstcDecodeModeEXT                    = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
-    ePhysicalDeviceAstcDecodeFeaturesEXT           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
-    ePipelineRobustnessCreateInfoEXT               = VK_STRUCTURE_TYPE_PIPELINE_ROBUSTNESS_CREATE_INFO_EXT,
-    ePhysicalDevicePipelineRobustnessFeaturesEXT   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_FEATURES_EXT,
-    ePhysicalDevicePipelineRobustnessPropertiesEXT = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_ROBUSTNESS_PROPERTIES_EXT,
+    eImageViewAstcDecodeModeEXT          = VK_STRUCTURE_TYPE_IMAGE_VIEW_ASTC_DECODE_MODE_EXT,
+    ePhysicalDeviceAstcDecodeFeaturesEXT = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ASTC_DECODE_FEATURES_EXT,
 #if defined( VK_USE_PLATFORM_WIN32_KHR )
     eImportMemoryWin32HandleInfoKHR = VK_STRUCTURE_TYPE_IMPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
     eExportMemoryWin32HandleInfoKHR = VK_STRUCTURE_TYPE_EXPORT_MEMORY_WIN32_HANDLE_INFO_KHR,
@@ -805,7 +912,6 @@ namespace VULKAN_HPP_NAMESPACE
 #endif /*VK_USE_PLATFORM_WIN32_KHR*/
     eImportSemaphoreFdInfoKHR                              = VK_STRUCTURE_TYPE_IMPORT_SEMAPHORE_FD_INFO_KHR,
     eSemaphoreGetFdInfoKHR                                 = VK_STRUCTURE_TYPE_SEMAPHORE_GET_FD_INFO_KHR,
-    ePhysicalDevicePushDescriptorPropertiesKHR             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PUSH_DESCRIPTOR_PROPERTIES_KHR,
     eCommandBufferInheritanceConditionalRenderingInfoEXT   = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_CONDITIONAL_RENDERING_INFO_EXT,
     ePhysicalDeviceConditionalRenderingFeaturesEXT         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CONDITIONAL_RENDERING_FEATURES_EXT,
     eConditionalRenderingBeginInfoEXT                      = VK_STRUCTURE_TYPE_CONDITIONAL_RENDERING_BEGIN_INFO_EXT,
@@ -956,12 +1062,6 @@ namespace VULKAN_HPP_NAMESPACE
     eVideoDecodeH265ProfileInfoKHR                       = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PROFILE_INFO_KHR,
     eVideoDecodeH265PictureInfoKHR                       = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_PICTURE_INFO_KHR,
     eVideoDecodeH265DpbSlotInfoKHR                       = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_DPB_SLOT_INFO_KHR,
-    eDeviceQueueGlobalPriorityCreateInfoKHR              = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_KHR,
-    eDeviceQueueGlobalPriorityCreateInfoEXT              = VK_STRUCTURE_TYPE_DEVICE_QUEUE_GLOBAL_PRIORITY_CREATE_INFO_EXT,
-    ePhysicalDeviceGlobalPriorityQueryFeaturesKHR        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_KHR,
-    ePhysicalDeviceGlobalPriorityQueryFeaturesEXT        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_GLOBAL_PRIORITY_QUERY_FEATURES_EXT,
-    eQueueFamilyGlobalPriorityPropertiesKHR              = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_KHR,
-    eQueueFamilyGlobalPriorityPropertiesEXT              = VK_STRUCTURE_TYPE_QUEUE_FAMILY_GLOBAL_PRIORITY_PROPERTIES_EXT,
     eDeviceMemoryOverallocationCreateInfoAMD             = VK_STRUCTURE_TYPE_DEVICE_MEMORY_OVERALLOCATION_CREATE_INFO_AMD,
     ePhysicalDeviceVertexAttributeDivisorPropertiesEXT   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_EXT,
 #if defined( VK_USE_PLATFORM_GGP )
@@ -1005,9 +1105,6 @@ namespace VULKAN_HPP_NAMESPACE
     eRenderingFragmentShadingRateAttachmentInfoKHR            = VK_STRUCTURE_TYPE_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_INFO_KHR,
     ePhysicalDeviceShaderCoreProperties2AMD                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_2_AMD,
     ePhysicalDeviceCoherentMemoryFeaturesAMD                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COHERENT_MEMORY_FEATURES_AMD,
-    ePhysicalDeviceDynamicRenderingLocalReadFeaturesKHR       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_LOCAL_READ_FEATURES_KHR,
-    eRenderingAttachmentLocationInfoKHR                       = VK_STRUCTURE_TYPE_RENDERING_ATTACHMENT_LOCATION_INFO_KHR,
-    eRenderingInputAttachmentIndexInfoKHR                     = VK_STRUCTURE_TYPE_RENDERING_INPUT_ATTACHMENT_INDEX_INFO_KHR,
     ePhysicalDeviceShaderImageAtomicInt64FeaturesEXT          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_IMAGE_ATOMIC_INT64_FEATURES_EXT,
     ePhysicalDeviceShaderQuadControlFeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_QUAD_CONTROL_FEATURES_KHR,
     ePhysicalDeviceMemoryBudgetPropertiesEXT                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
@@ -1046,18 +1143,6 @@ namespace VULKAN_HPP_NAMESPACE
     ePipelineExecutableInfoKHR                             = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INFO_KHR,
     ePipelineExecutableStatisticKHR                        = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_STATISTIC_KHR,
     ePipelineExecutableInternalRepresentationKHR           = VK_STRUCTURE_TYPE_PIPELINE_EXECUTABLE_INTERNAL_REPRESENTATION_KHR,
-    ePhysicalDeviceHostImageCopyFeaturesEXT                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_FEATURES_EXT,
-    ePhysicalDeviceHostImageCopyPropertiesEXT              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HOST_IMAGE_COPY_PROPERTIES_EXT,
-    eMemoryToImageCopyEXT                                  = VK_STRUCTURE_TYPE_MEMORY_TO_IMAGE_COPY_EXT,
-    eImageToMemoryCopyEXT                                  = VK_STRUCTURE_TYPE_IMAGE_TO_MEMORY_COPY_EXT,
-    eCopyImageToMemoryInfoEXT                              = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_MEMORY_INFO_EXT,
-    eCopyMemoryToImageInfoEXT                              = VK_STRUCTURE_TYPE_COPY_MEMORY_TO_IMAGE_INFO_EXT,
-    eHostImageLayoutTransitionInfoEXT                      = VK_STRUCTURE_TYPE_HOST_IMAGE_LAYOUT_TRANSITION_INFO_EXT,
-    eCopyImageToImageInfoEXT                               = VK_STRUCTURE_TYPE_COPY_IMAGE_TO_IMAGE_INFO_EXT,
-    eSubresourceHostMemcpySizeEXT                          = VK_STRUCTURE_TYPE_SUBRESOURCE_HOST_MEMCPY_SIZE_EXT,
-    eHostImageCopyDevicePerformanceQueryEXT                = VK_STRUCTURE_TYPE_HOST_IMAGE_COPY_DEVICE_PERFORMANCE_QUERY_EXT,
-    eMemoryMapInfoKHR                                      = VK_STRUCTURE_TYPE_MEMORY_MAP_INFO_KHR,
-    eMemoryUnmapInfoKHR                                    = VK_STRUCTURE_TYPE_MEMORY_UNMAP_INFO_KHR,
     ePhysicalDeviceMapMemoryPlacedFeaturesEXT              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_FEATURES_EXT,
     ePhysicalDeviceMapMemoryPlacedPropertiesEXT            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAP_MEMORY_PLACED_PROPERTIES_EXT,
     eMemoryMapPlacedInfoEXT                                = VK_STRUCTURE_TYPE_MEMORY_MAP_PLACED_INFO_EXT,
@@ -1259,7 +1344,6 @@ namespace VULKAN_HPP_NAMESPACE
     eSamplerBorderColorComponentMappingCreateInfoEXT             = VK_STRUCTURE_TYPE_SAMPLER_BORDER_COLOR_COMPONENT_MAPPING_CREATE_INFO_EXT,
     ePhysicalDevicePageableDeviceLocalMemoryFeaturesEXT          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PAGEABLE_DEVICE_LOCAL_MEMORY_FEATURES_EXT,
     ePhysicalDeviceShaderCorePropertiesARM                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_CORE_PROPERTIES_ARM,
-    ePhysicalDeviceShaderSubgroupRotateFeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_SUBGROUP_ROTATE_FEATURES_KHR,
     eDeviceQueueShaderCoreControlCreateInfoARM                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_SHADER_CORE_CONTROL_CREATE_INFO_ARM,
     ePhysicalDeviceSchedulingControlsFeaturesARM                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_FEATURES_ARM,
     ePhysicalDeviceSchedulingControlsPropertiesARM               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SCHEDULING_CONTROLS_PROPERTIES_ARM,
@@ -1268,7 +1352,6 @@ namespace VULKAN_HPP_NAMESPACE
     ePhysicalDeviceDescriptorSetHostMappingFeaturesVALVE         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_SET_HOST_MAPPING_FEATURES_VALVE,
     eDescriptorSetBindingReferenceVALVE                          = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_BINDING_REFERENCE_VALVE,
     eDescriptorSetLayoutHostMappingInfoVALVE                     = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_HOST_MAPPING_INFO_VALVE,
-    ePhysicalDeviceDepthClampZeroOneFeaturesEXT                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT,
     ePhysicalDeviceNonSeamlessCubeMapFeaturesEXT                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_NON_SEAMLESS_CUBE_MAP_FEATURES_EXT,
     ePhysicalDeviceRenderPassStripedFeaturesARM                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_FEATURES_ARM,
     ePhysicalDeviceRenderPassStripedPropertiesARM                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RENDER_PASS_STRIPED_PROPERTIES_ARM,
@@ -1285,6 +1368,9 @@ namespace VULKAN_HPP_NAMESPACE
     ePhysicalDeviceDeviceGeneratedCommandsComputeFeaturesNV      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_COMPUTE_FEATURES_NV,
     eComputePipelineIndirectBufferInfoNV                         = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_INDIRECT_BUFFER_INFO_NV,
     ePipelineIndirectDeviceAddressInfoNV                         = VK_STRUCTURE_TYPE_PIPELINE_INDIRECT_DEVICE_ADDRESS_INFO_NV,
+    ePhysicalDeviceRayTracingLinearSweptSpheresFeaturesNV        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_LINEAR_SWEPT_SPHERES_FEATURES_NV,
+    eAccelerationStructureGeometryLinearSweptSpheresDataNV       = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_LINEAR_SWEPT_SPHERES_DATA_NV,
+    eAccelerationStructureGeometrySpheresDataNV                  = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_SPHERES_DATA_NV,
     ePhysicalDeviceLinearColorAttachmentFeaturesNV               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINEAR_COLOR_ATTACHMENT_FEATURES_NV,
     ePhysicalDeviceShaderMaximalReconvergenceFeaturesKHR         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_MAXIMAL_RECONVERGENCE_FEATURES_KHR,
     ePhysicalDeviceImageCompressionControlSwapchainFeaturesEXT   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_COMPRESSION_CONTROL_SWAPCHAIN_FEATURES_EXT,
@@ -1316,22 +1402,11 @@ namespace VULKAN_HPP_NAMESPACE
     eOpticalFlowExecuteInfoNV                                    = VK_STRUCTURE_TYPE_OPTICAL_FLOW_EXECUTE_INFO_NV,
     eOpticalFlowSessionCreatePrivateDataInfoNV                   = VK_STRUCTURE_TYPE_OPTICAL_FLOW_SESSION_CREATE_PRIVATE_DATA_INFO_NV,
     ePhysicalDeviceLegacyDitheringFeaturesEXT                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LEGACY_DITHERING_FEATURES_EXT,
-    ePhysicalDevicePipelineProtectedAccessFeaturesEXT            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_PROTECTED_ACCESS_FEATURES_EXT,
 #if defined( VK_USE_PLATFORM_ANDROID_KHR )
     ePhysicalDeviceExternalFormatResolveFeaturesANDROID   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_FEATURES_ANDROID,
     ePhysicalDeviceExternalFormatResolvePropertiesANDROID = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_FORMAT_RESOLVE_PROPERTIES_ANDROID,
     eAndroidHardwareBufferFormatResolvePropertiesANDROID  = VK_STRUCTURE_TYPE_ANDROID_HARDWARE_BUFFER_FORMAT_RESOLVE_PROPERTIES_ANDROID,
 #endif /*VK_USE_PLATFORM_ANDROID_KHR*/
-    ePhysicalDeviceMaintenance5FeaturesKHR                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_FEATURES_KHR,
-    ePhysicalDeviceMaintenance5PropertiesKHR                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_5_PROPERTIES_KHR,
-    eRenderingAreaInfoKHR                                        = VK_STRUCTURE_TYPE_RENDERING_AREA_INFO_KHR,
-    eDeviceImageSubresourceInfoKHR                               = VK_STRUCTURE_TYPE_DEVICE_IMAGE_SUBRESOURCE_INFO_KHR,
-    eSubresourceLayout2KHR                                       = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_KHR,
-    eSubresourceLayout2EXT                                       = VK_STRUCTURE_TYPE_SUBRESOURCE_LAYOUT_2_EXT,
-    eImageSubresource2KHR                                        = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_KHR,
-    eImageSubresource2EXT                                        = VK_STRUCTURE_TYPE_IMAGE_SUBRESOURCE_2_EXT,
-    ePipelineCreateFlags2CreateInfoKHR                           = VK_STRUCTURE_TYPE_PIPELINE_CREATE_FLAGS_2_CREATE_INFO_KHR,
-    eBufferUsageFlags2CreateInfoKHR                              = VK_STRUCTURE_TYPE_BUFFER_USAGE_FLAGS_2_CREATE_INFO_KHR,
     ePhysicalDeviceAntiLagFeaturesAMD                            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ANTI_LAG_FEATURES_AMD,
     eAntiLagDataAMD                                              = VK_STRUCTURE_TYPE_ANTI_LAG_DATA_AMD,
     eAntiLagPresentationInfoAMD                                  = VK_STRUCTURE_TYPE_ANTI_LAG_PRESENTATION_INFO_AMD,
@@ -1356,6 +1431,10 @@ namespace VULKAN_HPP_NAMESPACE
     ePhysicalDeviceMultiviewPerViewViewportsFeaturesQCOM         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MULTIVIEW_PER_VIEW_VIEWPORTS_FEATURES_QCOM,
     ePhysicalDeviceRayTracingInvocationReorderFeaturesNV         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_FEATURES_NV,
     ePhysicalDeviceRayTracingInvocationReorderPropertiesNV       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_INVOCATION_REORDER_PROPERTIES_NV,
+    ePhysicalDeviceCooperativeVectorFeaturesNV                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_FEATURES_NV,
+    ePhysicalDeviceCooperativeVectorPropertiesNV                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_VECTOR_PROPERTIES_NV,
+    eCooperativeVectorPropertiesNV                               = VK_STRUCTURE_TYPE_COOPERATIVE_VECTOR_PROPERTIES_NV,
+    eConvertCooperativeVectorMatrixInfoNV                        = VK_STRUCTURE_TYPE_CONVERT_COOPERATIVE_VECTOR_MATRIX_INFO_NV,
     ePhysicalDeviceExtendedSparseAddressSpaceFeaturesNV          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_FEATURES_NV,
     ePhysicalDeviceExtendedSparseAddressSpacePropertiesNV        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTENDED_SPARSE_ADDRESS_SPACE_PROPERTIES_NV,
     ePhysicalDeviceMutableDescriptorTypeFeaturesEXT              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MUTABLE_DESCRIPTOR_TYPE_FEATURES_EXT,
@@ -1415,12 +1494,6 @@ namespace VULKAN_HPP_NAMESPACE
     eSamplerYcbcrConversionYcbcrDegammaCreateInfoQCOM            = VK_STRUCTURE_TYPE_SAMPLER_YCBCR_CONVERSION_YCBCR_DEGAMMA_CREATE_INFO_QCOM,
     ePhysicalDeviceCubicClampFeaturesQCOM                        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CUBIC_CLAMP_FEATURES_QCOM,
     ePhysicalDeviceAttachmentFeedbackLoopDynamicStateFeaturesEXT = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ATTACHMENT_FEEDBACK_LOOP_DYNAMIC_STATE_FEATURES_EXT,
-    ePhysicalDeviceVertexAttributeDivisorPropertiesKHR           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_PROPERTIES_KHR,
-    ePipelineVertexInputDivisorStateCreateInfoKHR                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_KHR,
-    ePipelineVertexInputDivisorStateCreateInfoEXT                = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_DIVISOR_STATE_CREATE_INFO_EXT,
-    ePhysicalDeviceVertexAttributeDivisorFeaturesKHR             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_KHR,
-    ePhysicalDeviceVertexAttributeDivisorFeaturesEXT             = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_DIVISOR_FEATURES_EXT,
-    ePhysicalDeviceShaderFloatControls2FeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_FLOAT_CONTROLS_2_FEATURES_KHR,
 #if defined( VK_USE_PLATFORM_SCREEN_QNX )
     eScreenBufferPropertiesQNX                           = VK_STRUCTURE_TYPE_SCREEN_BUFFER_PROPERTIES_QNX,
     eScreenBufferFormatPropertiesQNX                     = VK_STRUCTURE_TYPE_SCREEN_BUFFER_FORMAT_PROPERTIES_QNX,
@@ -1428,76 +1501,88 @@ namespace VULKAN_HPP_NAMESPACE
     eExternalFormatQNX                                   = VK_STRUCTURE_TYPE_EXTERNAL_FORMAT_QNX,
     ePhysicalDeviceExternalMemoryScreenBufferFeaturesQNX = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_EXTERNAL_MEMORY_SCREEN_BUFFER_FEATURES_QNX,
 #endif /*VK_USE_PLATFORM_SCREEN_QNX*/
-    ePhysicalDeviceLayeredDriverPropertiesMSFT                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT,
-    ePhysicalDeviceIndexTypeUint8FeaturesKHR                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_KHR,
-    ePhysicalDeviceIndexTypeUint8FeaturesEXT                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_INDEX_TYPE_UINT8_FEATURES_EXT,
-    ePhysicalDeviceLineRasterizationFeaturesKHR                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_KHR,
-    ePhysicalDeviceLineRasterizationFeaturesEXT                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_FEATURES_EXT,
-    ePipelineRasterizationLineStateCreateInfoKHR               = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_KHR,
-    ePipelineRasterizationLineStateCreateInfoEXT               = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_LINE_STATE_CREATE_INFO_EXT,
-    ePhysicalDeviceLineRasterizationPropertiesKHR              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_KHR,
-    ePhysicalDeviceLineRasterizationPropertiesEXT              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LINE_RASTERIZATION_PROPERTIES_EXT,
-    eCalibratedTimestampInfoKHR                                = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR,
-    eCalibratedTimestampInfoEXT                                = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_EXT,
-    ePhysicalDeviceShaderExpectAssumeFeaturesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_EXPECT_ASSUME_FEATURES_KHR,
-    ePhysicalDeviceMaintenance6FeaturesKHR                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_FEATURES_KHR,
-    ePhysicalDeviceMaintenance6PropertiesKHR                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_6_PROPERTIES_KHR,
-    eBindMemoryStatusKHR                                       = VK_STRUCTURE_TYPE_BIND_MEMORY_STATUS_KHR,
-    eBindDescriptorSetsInfoKHR                                 = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_SETS_INFO_KHR,
-    ePushConstantsInfoKHR                                      = VK_STRUCTURE_TYPE_PUSH_CONSTANTS_INFO_KHR,
-    ePushDescriptorSetInfoKHR                                  = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_INFO_KHR,
-    ePushDescriptorSetWithTemplateInfoKHR                      = VK_STRUCTURE_TYPE_PUSH_DESCRIPTOR_SET_WITH_TEMPLATE_INFO_KHR,
-    eSetDescriptorBufferOffsetsInfoEXT                         = VK_STRUCTURE_TYPE_SET_DESCRIPTOR_BUFFER_OFFSETS_INFO_EXT,
-    eBindDescriptorBufferEmbeddedSamplersInfoEXT               = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT,
-    ePhysicalDeviceDescriptorPoolOverallocationFeaturesNV      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV,
-    eDisplaySurfaceStereoCreateInfoNV                          = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV,
-    eDisplayModeStereoPropertiesNV                             = VK_STRUCTURE_TYPE_DISPLAY_MODE_STEREO_PROPERTIES_NV,
-    eVideoEncodeQuantizationMapCapabilitiesKHR                 = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR,
-    eVideoFormatQuantizationMapPropertiesKHR                   = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR,
-    eVideoEncodeQuantizationMapInfoKHR                         = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR,
-    eVideoEncodeQuantizationMapSessionParametersCreateInfoKHR  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR,
-    ePhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR,
-    eVideoEncodeH264QuantizationMapCapabilitiesKHR             = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR,
-    eVideoEncodeH265QuantizationMapCapabilitiesKHR             = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR,
-    eVideoFormatH265QuantizationMapPropertiesKHR               = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR,
-    eVideoEncodeAv1QuantizationMapCapabilitiesKHR              = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR,
-    eVideoFormatAv1QuantizationMapPropertiesKHR                = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR,
-    ePhysicalDeviceRawAccessChainsFeaturesNV                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV,
-    ePhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR,
-    ePhysicalDeviceCommandBufferInheritanceFeaturesNV          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV,
-    ePhysicalDeviceMaintenance7FeaturesKHR                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
-    ePhysicalDeviceMaintenance7PropertiesKHR                   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR,
-    ePhysicalDeviceLayeredApiPropertiesListKHR                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR,
-    ePhysicalDeviceLayeredApiPropertiesKHR                     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR,
-    ePhysicalDeviceLayeredApiVulkanPropertiesKHR               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR,
-    ePhysicalDeviceShaderAtomicFloat16VectorFeaturesNV         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV,
-    ePhysicalDeviceShaderReplicatedCompositesFeaturesEXT       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT,
-    ePhysicalDeviceRayTracingValidationFeaturesNV              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV,
-    ePhysicalDeviceDeviceGeneratedCommandsFeaturesEXT          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT,
-    ePhysicalDeviceDeviceGeneratedCommandsPropertiesEXT        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT,
-    eGeneratedCommandsMemoryRequirementsInfoEXT                = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT,
-    eIndirectExecutionSetCreateInfoEXT                         = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT,
-    eGeneratedCommandsInfoEXT                                  = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT,
-    eIndirectCommandsLayoutCreateInfoEXT                       = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT,
-    eIndirectCommandsLayoutTokenEXT                            = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT,
-    eWriteIndirectExecutionSetPipelineEXT                      = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT,
-    eWriteIndirectExecutionSetShaderEXT                        = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT,
-    eIndirectExecutionSetPipelineInfoEXT                       = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT,
-    eIndirectExecutionSetShaderInfoEXT                         = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT,
-    eIndirectExecutionSetShaderLayoutInfoEXT                   = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT,
-    eGeneratedCommandsPipelineInfoEXT                          = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT,
-    eGeneratedCommandsShaderInfoEXT                            = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT,
-    ePhysicalDeviceImageAlignmentControlFeaturesMESA           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA,
-    ePhysicalDeviceImageAlignmentControlPropertiesMESA         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA,
-    eImageAlignmentControlCreateInfoMESA                       = VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA,
-    ePhysicalDeviceDepthClampControlFeaturesEXT                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT,
-    ePipelineViewportDepthClampControlCreateInfoEXT            = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT,
-    ePhysicalDeviceHdrVividFeaturesHUAWEI                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI,
-    eHdrVividDynamicMetadataHUAWEI                             = VK_STRUCTURE_TYPE_HDR_VIVID_DYNAMIC_METADATA_HUAWEI,
-    ePhysicalDeviceCooperativeMatrix2FeaturesNV                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV,
-    eCooperativeMatrixFlexibleDimensionsPropertiesNV           = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV,
-    ePhysicalDeviceCooperativeMatrix2PropertiesNV              = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV,
-    ePhysicalDeviceVertexAttributeRobustnessFeaturesEXT        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
+    ePhysicalDeviceLayeredDriverPropertiesMSFT                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_DRIVER_PROPERTIES_MSFT,
+    eCalibratedTimestampInfoKHR                                 = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_KHR,
+    eCalibratedTimestampInfoEXT                                 = VK_STRUCTURE_TYPE_CALIBRATED_TIMESTAMP_INFO_EXT,
+    eSetDescriptorBufferOffsetsInfoEXT                          = VK_STRUCTURE_TYPE_SET_DESCRIPTOR_BUFFER_OFFSETS_INFO_EXT,
+    eBindDescriptorBufferEmbeddedSamplersInfoEXT                = VK_STRUCTURE_TYPE_BIND_DESCRIPTOR_BUFFER_EMBEDDED_SAMPLERS_INFO_EXT,
+    ePhysicalDeviceDescriptorPoolOverallocationFeaturesNV       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_POOL_OVERALLOCATION_FEATURES_NV,
+    eDisplaySurfaceStereoCreateInfoNV                           = VK_STRUCTURE_TYPE_DISPLAY_SURFACE_STEREO_CREATE_INFO_NV,
+    eDisplayModeStereoPropertiesNV                              = VK_STRUCTURE_TYPE_DISPLAY_MODE_STEREO_PROPERTIES_NV,
+    eVideoEncodeQuantizationMapCapabilitiesKHR                  = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_CAPABILITIES_KHR,
+    eVideoFormatQuantizationMapPropertiesKHR                    = VK_STRUCTURE_TYPE_VIDEO_FORMAT_QUANTIZATION_MAP_PROPERTIES_KHR,
+    eVideoEncodeQuantizationMapInfoKHR                          = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_INFO_KHR,
+    eVideoEncodeQuantizationMapSessionParametersCreateInfoKHR   = VK_STRUCTURE_TYPE_VIDEO_ENCODE_QUANTIZATION_MAP_SESSION_PARAMETERS_CREATE_INFO_KHR,
+    ePhysicalDeviceVideoEncodeQuantizationMapFeaturesKHR        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_ENCODE_QUANTIZATION_MAP_FEATURES_KHR,
+    eVideoEncodeH264QuantizationMapCapabilitiesKHR              = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H264_QUANTIZATION_MAP_CAPABILITIES_KHR,
+    eVideoEncodeH265QuantizationMapCapabilitiesKHR              = VK_STRUCTURE_TYPE_VIDEO_ENCODE_H265_QUANTIZATION_MAP_CAPABILITIES_KHR,
+    eVideoFormatH265QuantizationMapPropertiesKHR                = VK_STRUCTURE_TYPE_VIDEO_FORMAT_H265_QUANTIZATION_MAP_PROPERTIES_KHR,
+    eVideoEncodeAv1QuantizationMapCapabilitiesKHR               = VK_STRUCTURE_TYPE_VIDEO_ENCODE_AV1_QUANTIZATION_MAP_CAPABILITIES_KHR,
+    eVideoFormatAv1QuantizationMapPropertiesKHR                 = VK_STRUCTURE_TYPE_VIDEO_FORMAT_AV1_QUANTIZATION_MAP_PROPERTIES_KHR,
+    ePhysicalDeviceRawAccessChainsFeaturesNV                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAW_ACCESS_CHAINS_FEATURES_NV,
+    ePhysicalDeviceShaderRelaxedExtendedInstructionFeaturesKHR  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_RELAXED_EXTENDED_INSTRUCTION_FEATURES_KHR,
+    ePhysicalDeviceCommandBufferInheritanceFeaturesNV           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COMMAND_BUFFER_INHERITANCE_FEATURES_NV,
+    ePhysicalDeviceMaintenance7FeaturesKHR                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_FEATURES_KHR,
+    ePhysicalDeviceMaintenance7PropertiesKHR                    = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_7_PROPERTIES_KHR,
+    ePhysicalDeviceLayeredApiPropertiesListKHR                  = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_LIST_KHR,
+    ePhysicalDeviceLayeredApiPropertiesKHR                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_PROPERTIES_KHR,
+    ePhysicalDeviceLayeredApiVulkanPropertiesKHR                = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_LAYERED_API_VULKAN_PROPERTIES_KHR,
+    ePhysicalDeviceShaderAtomicFloat16VectorFeaturesNV          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_ATOMIC_FLOAT16_VECTOR_FEATURES_NV,
+    ePhysicalDeviceShaderReplicatedCompositesFeaturesEXT        = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_SHADER_REPLICATED_COMPOSITES_FEATURES_EXT,
+    ePhysicalDeviceRayTracingValidationFeaturesNV               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_VALIDATION_FEATURES_NV,
+    ePhysicalDeviceClusterAccelerationStructureFeaturesNV       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_FEATURES_NV,
+    ePhysicalDeviceClusterAccelerationStructurePropertiesNV     = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_CLUSTER_ACCELERATION_STRUCTURE_PROPERTIES_NV,
+    eClusterAccelerationStructureClustersBottomLevelInputNV     = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_CLUSTERS_BOTTOM_LEVEL_INPUT_NV,
+    eClusterAccelerationStructureTriangleClusterInputNV         = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_TRIANGLE_CLUSTER_INPUT_NV,
+    eClusterAccelerationStructureMoveObjectsInputNV             = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_MOVE_OBJECTS_INPUT_NV,
+    eClusterAccelerationStructureInputInfoNV                    = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_INPUT_INFO_NV,
+    eClusterAccelerationStructureCommandsInfoNV                 = VK_STRUCTURE_TYPE_CLUSTER_ACCELERATION_STRUCTURE_COMMANDS_INFO_NV,
+    eRayTracingPipelineClusterAccelerationStructureCreateInfoNV = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CLUSTER_ACCELERATION_STRUCTURE_CREATE_INFO_NV,
+    ePhysicalDevicePartitionedAccelerationStructureFeaturesNV   = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_FEATURES_NV,
+    ePhysicalDevicePartitionedAccelerationStructurePropertiesNV = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PARTITIONED_ACCELERATION_STRUCTURE_PROPERTIES_NV,
+    eWriteDescriptorSetPartitionedAccelerationStructureNV       = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_PARTITIONED_ACCELERATION_STRUCTURE_NV,
+    ePartitionedAccelerationStructureInstancesInputNV           = VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCES_INPUT_NV,
+    eBuildPartitionedAccelerationStructureInfoNV                = VK_STRUCTURE_TYPE_BUILD_PARTITIONED_ACCELERATION_STRUCTURE_INFO_NV,
+    ePartitionedAccelerationStructureFlagsNV                    = VK_STRUCTURE_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_FLAGS_NV,
+    ePhysicalDeviceDeviceGeneratedCommandsFeaturesEXT           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_FEATURES_EXT,
+    ePhysicalDeviceDeviceGeneratedCommandsPropertiesEXT         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEVICE_GENERATED_COMMANDS_PROPERTIES_EXT,
+    eGeneratedCommandsMemoryRequirementsInfoEXT                 = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_MEMORY_REQUIREMENTS_INFO_EXT,
+    eIndirectExecutionSetCreateInfoEXT                          = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_CREATE_INFO_EXT,
+    eGeneratedCommandsInfoEXT                                   = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_INFO_EXT,
+    eIndirectCommandsLayoutCreateInfoEXT                        = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_CREATE_INFO_EXT,
+    eIndirectCommandsLayoutTokenEXT                             = VK_STRUCTURE_TYPE_INDIRECT_COMMANDS_LAYOUT_TOKEN_EXT,
+    eWriteIndirectExecutionSetPipelineEXT                       = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_PIPELINE_EXT,
+    eWriteIndirectExecutionSetShaderEXT                         = VK_STRUCTURE_TYPE_WRITE_INDIRECT_EXECUTION_SET_SHADER_EXT,
+    eIndirectExecutionSetPipelineInfoEXT                        = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_PIPELINE_INFO_EXT,
+    eIndirectExecutionSetShaderInfoEXT                          = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_INFO_EXT,
+    eIndirectExecutionSetShaderLayoutInfoEXT                    = VK_STRUCTURE_TYPE_INDIRECT_EXECUTION_SET_SHADER_LAYOUT_INFO_EXT,
+    eGeneratedCommandsPipelineInfoEXT                           = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_PIPELINE_INFO_EXT,
+    eGeneratedCommandsShaderInfoEXT                             = VK_STRUCTURE_TYPE_GENERATED_COMMANDS_SHADER_INFO_EXT,
+    ePhysicalDeviceMaintenance8FeaturesKHR                      = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MAINTENANCE_8_FEATURES_KHR,
+    eMemoryBarrierAccessFlags3KHR                               = VK_STRUCTURE_TYPE_MEMORY_BARRIER_ACCESS_FLAGS_3_KHR,
+    ePhysicalDeviceImageAlignmentControlFeaturesMESA            = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_FEATURES_MESA,
+    ePhysicalDeviceImageAlignmentControlPropertiesMESA          = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_IMAGE_ALIGNMENT_CONTROL_PROPERTIES_MESA,
+    eImageAlignmentControlCreateInfoMESA                        = VK_STRUCTURE_TYPE_IMAGE_ALIGNMENT_CONTROL_CREATE_INFO_MESA,
+    ePhysicalDeviceDepthClampControlFeaturesEXT                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_CONTROL_FEATURES_EXT,
+    ePipelineViewportDepthClampControlCreateInfoEXT             = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_DEPTH_CLAMP_CONTROL_CREATE_INFO_EXT,
+    ePhysicalDeviceVideoMaintenance2FeaturesKHR                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VIDEO_MAINTENANCE_2_FEATURES_KHR,
+    eVideoDecodeH264InlineSessionParametersInfoKHR              = VK_STRUCTURE_TYPE_VIDEO_DECODE_H264_INLINE_SESSION_PARAMETERS_INFO_KHR,
+    eVideoDecodeH265InlineSessionParametersInfoKHR              = VK_STRUCTURE_TYPE_VIDEO_DECODE_H265_INLINE_SESSION_PARAMETERS_INFO_KHR,
+    eVideoDecodeAv1InlineSessionParametersInfoKHR               = VK_STRUCTURE_TYPE_VIDEO_DECODE_AV1_INLINE_SESSION_PARAMETERS_INFO_KHR,
+    ePhysicalDeviceHdrVividFeaturesHUAWEI                       = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_HDR_VIVID_FEATURES_HUAWEI,
+    eHdrVividDynamicMetadataHUAWEI                              = VK_STRUCTURE_TYPE_HDR_VIVID_DYNAMIC_METADATA_HUAWEI,
+    ePhysicalDeviceCooperativeMatrix2FeaturesNV                 = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_FEATURES_NV,
+    eCooperativeMatrixFlexibleDimensionsPropertiesNV            = VK_STRUCTURE_TYPE_COOPERATIVE_MATRIX_FLEXIBLE_DIMENSIONS_PROPERTIES_NV,
+    ePhysicalDeviceCooperativeMatrix2PropertiesNV               = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_COOPERATIVE_MATRIX_2_PROPERTIES_NV,
+    ePhysicalDevicePipelineOpacityMicromapFeaturesARM           = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PIPELINE_OPACITY_MICROMAP_FEATURES_ARM,
+#if defined( VK_USE_PLATFORM_METAL_EXT )
+    eImportMemoryMetalHandleInfoEXT = VK_STRUCTURE_TYPE_IMPORT_MEMORY_METAL_HANDLE_INFO_EXT,
+    eMemoryMetalHandlePropertiesEXT = VK_STRUCTURE_TYPE_MEMORY_METAL_HANDLE_PROPERTIES_EXT,
+    eMemoryGetMetalHandleInfoEXT    = VK_STRUCTURE_TYPE_MEMORY_GET_METAL_HANDLE_INFO_EXT,
+#endif /*VK_USE_PLATFORM_METAL_EXT*/
+    ePhysicalDeviceDepthClampZeroOneFeaturesKHR         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_KHR,
+    ePhysicalDeviceDepthClampZeroOneFeaturesEXT         = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_CLAMP_ZERO_ONE_FEATURES_EXT,
+    ePhysicalDeviceVertexAttributeRobustnessFeaturesEXT = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VERTEX_ATTRIBUTE_ROBUSTNESS_FEATURES_EXT
   };
 
   enum class PipelineCacheHeaderVersion
@@ -1877,6 +1962,10 @@ namespace VULKAN_HPP_NAMESPACE
     eAstc12x10SfloatBlockEXT                 = VK_FORMAT_ASTC_12x10_SFLOAT_BLOCK_EXT,
     eAstc12x12SfloatBlock                    = VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK,
     eAstc12x12SfloatBlockEXT                 = VK_FORMAT_ASTC_12x12_SFLOAT_BLOCK_EXT,
+    eA1B5G5R5UnormPack16                     = VK_FORMAT_A1B5G5R5_UNORM_PACK16,
+    eA1B5G5R5UnormPack16KHR                  = VK_FORMAT_A1B5G5R5_UNORM_PACK16_KHR,
+    eA8Unorm                                 = VK_FORMAT_A8_UNORM,
+    eA8UnormKHR                              = VK_FORMAT_A8_UNORM_KHR,
     ePvrtc12BppUnormBlockIMG                 = VK_FORMAT_PVRTC1_2BPP_UNORM_BLOCK_IMG,
     ePvrtc14BppUnormBlockIMG                 = VK_FORMAT_PVRTC1_4BPP_UNORM_BLOCK_IMG,
     ePvrtc22BppUnormBlockIMG                 = VK_FORMAT_PVRTC2_2BPP_UNORM_BLOCK_IMG,
@@ -1886,9 +1975,7 @@ namespace VULKAN_HPP_NAMESPACE
     ePvrtc22BppSrgbBlockIMG                  = VK_FORMAT_PVRTC2_2BPP_SRGB_BLOCK_IMG,
     ePvrtc24BppSrgbBlockIMG                  = VK_FORMAT_PVRTC2_4BPP_SRGB_BLOCK_IMG,
     eR16G16Sfixed5NV                         = VK_FORMAT_R16G16_SFIXED5_NV,
-    eR16G16S105NV                            = VK_FORMAT_R16G16_S10_5_NV,
-    eA1B5G5R5UnormPack16KHR                  = VK_FORMAT_A1B5G5R5_UNORM_PACK16_KHR,
-    eA8UnormKHR                              = VK_FORMAT_A8_UNORM_KHR
+    eR16G16S105NV                            = VK_FORMAT_R16G16_S10_5_NV
   };
 
   enum class FormatFeatureFlagBits : VkFormatFeatureFlags
@@ -2031,13 +2118,14 @@ namespace VULKAN_HPP_NAMESPACE
     eDepthStencilAttachment             = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
     eTransientAttachment                = VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT_BIT,
     eInputAttachment                    = VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT,
+    eHostTransfer                       = VK_IMAGE_USAGE_HOST_TRANSFER_BIT,
+    eHostTransferEXT                    = VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT,
     eVideoDecodeDstKHR                  = VK_IMAGE_USAGE_VIDEO_DECODE_DST_BIT_KHR,
     eVideoDecodeSrcKHR                  = VK_IMAGE_USAGE_VIDEO_DECODE_SRC_BIT_KHR,
     eVideoDecodeDpbKHR                  = VK_IMAGE_USAGE_VIDEO_DECODE_DPB_BIT_KHR,
     eFragmentDensityMapEXT              = VK_IMAGE_USAGE_FRAGMENT_DENSITY_MAP_BIT_EXT,
     eFragmentShadingRateAttachmentKHR   = VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
     eShadingRateImageNV                 = VK_IMAGE_USAGE_SHADING_RATE_IMAGE_BIT_NV,
-    eHostTransferEXT                    = VK_IMAGE_USAGE_HOST_TRANSFER_BIT_EXT,
     eVideoEncodeDstKHR                  = VK_IMAGE_USAGE_VIDEO_ENCODE_DST_BIT_KHR,
     eVideoEncodeSrcKHR                  = VK_IMAGE_USAGE_VIDEO_ENCODE_SRC_BIT_KHR,
     eVideoEncodeDpbKHR                  = VK_IMAGE_USAGE_VIDEO_ENCODE_DPB_BIT_KHR,
@@ -2058,9 +2146,9 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR ImageUsageFlags allFlags =
       ImageUsageFlagBits::eTransferSrc | ImageUsageFlagBits::eTransferDst | ImageUsageFlagBits::eSampled | ImageUsageFlagBits::eStorage |
       ImageUsageFlagBits::eColorAttachment | ImageUsageFlagBits::eDepthStencilAttachment | ImageUsageFlagBits::eTransientAttachment |
-      ImageUsageFlagBits::eInputAttachment | ImageUsageFlagBits::eVideoDecodeDstKHR | ImageUsageFlagBits::eVideoDecodeSrcKHR |
-      ImageUsageFlagBits::eVideoDecodeDpbKHR | ImageUsageFlagBits::eFragmentDensityMapEXT | ImageUsageFlagBits::eFragmentShadingRateAttachmentKHR |
-      ImageUsageFlagBits::eHostTransferEXT | ImageUsageFlagBits::eVideoEncodeDstKHR | ImageUsageFlagBits::eVideoEncodeSrcKHR |
+      ImageUsageFlagBits::eInputAttachment | ImageUsageFlagBits::eHostTransfer | ImageUsageFlagBits::eVideoDecodeDstKHR |
+      ImageUsageFlagBits::eVideoDecodeSrcKHR | ImageUsageFlagBits::eVideoDecodeDpbKHR | ImageUsageFlagBits::eFragmentDensityMapEXT |
+      ImageUsageFlagBits::eFragmentShadingRateAttachmentKHR | ImageUsageFlagBits::eVideoEncodeDstKHR | ImageUsageFlagBits::eVideoEncodeSrcKHR |
       ImageUsageFlagBits::eVideoEncodeDpbKHR | ImageUsageFlagBits::eAttachmentFeedbackLoopEXT | ImageUsageFlagBits::eInvocationMaskHUAWEI |
       ImageUsageFlagBits::eSampleWeightQCOM | ImageUsageFlagBits::eSampleBlockMatchQCOM | ImageUsageFlagBits::eVideoEncodeQuantizationDeltaMapKHR |
       ImageUsageFlagBits::eVideoEncodeEmphasisMapKHR;
@@ -2607,6 +2695,8 @@ namespace VULKAN_HPP_NAMESPACE
     eReadOnlyOptimalKHR                       = VK_IMAGE_LAYOUT_READ_ONLY_OPTIMAL_KHR,
     eAttachmentOptimal                        = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL,
     eAttachmentOptimalKHR                     = VK_IMAGE_LAYOUT_ATTACHMENT_OPTIMAL_KHR,
+    eRenderingLocalRead                       = VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ,
+    eRenderingLocalReadKHR                    = VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ_KHR,
     ePresentSrcKHR                            = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
     eVideoDecodeDstKHR                        = VK_IMAGE_LAYOUT_VIDEO_DECODE_DST_KHR,
     eVideoDecodeSrcKHR                        = VK_IMAGE_LAYOUT_VIDEO_DECODE_SRC_KHR,
@@ -2615,7 +2705,6 @@ namespace VULKAN_HPP_NAMESPACE
     eFragmentDensityMapOptimalEXT             = VK_IMAGE_LAYOUT_FRAGMENT_DENSITY_MAP_OPTIMAL_EXT,
     eFragmentShadingRateAttachmentOptimalKHR  = VK_IMAGE_LAYOUT_FRAGMENT_SHADING_RATE_ATTACHMENT_OPTIMAL_KHR,
     eShadingRateOptimalNV                     = VK_IMAGE_LAYOUT_SHADING_RATE_OPTIMAL_NV,
-    eRenderingLocalReadKHR                    = VK_IMAGE_LAYOUT_RENDERING_LOCAL_READ_KHR,
     eVideoEncodeDstKHR                        = VK_IMAGE_LAYOUT_VIDEO_ENCODE_DST_KHR,
     eVideoEncodeSrcKHR                        = VK_IMAGE_LAYOUT_VIDEO_ENCODE_SRC_KHR,
     eVideoEncodeDpbKHR                        = VK_IMAGE_LAYOUT_VIDEO_ENCODE_DPB_KHR,
@@ -2678,8 +2767,9 @@ namespace VULKAN_HPP_NAMESPACE
 
   enum class PipelineCacheCreateFlagBits : VkPipelineCacheCreateFlags
   {
-    eExternallySynchronized    = VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT,
-    eExternallySynchronizedEXT = VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT
+    eExternallySynchronized         = VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT,
+    eExternallySynchronizedEXT      = VK_PIPELINE_CACHE_CREATE_EXTERNALLY_SYNCHRONIZED_BIT_EXT,
+    eInternallySynchronizedMergeKHR = VK_PIPELINE_CACHE_CREATE_INTERNALLY_SYNCHRONIZED_MERGE_BIT_KHR
   };
 
   using PipelineCacheCreateFlags = Flags<PipelineCacheCreateFlagBits>;
@@ -2688,7 +2778,8 @@ namespace VULKAN_HPP_NAMESPACE
   struct FlagTraits<PipelineCacheCreateFlagBits>
   {
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool                     isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCacheCreateFlags allFlags  = PipelineCacheCreateFlagBits::eExternallySynchronized;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCacheCreateFlags allFlags =
+      PipelineCacheCreateFlagBits::eExternallySynchronized | PipelineCacheCreateFlagBits::eInternallySynchronizedMergeKHR;
   };
 
   enum class BlendFactor
@@ -2858,6 +2949,9 @@ namespace VULKAN_HPP_NAMESPACE
     eDepthBiasEnableEXT                  = VK_DYNAMIC_STATE_DEPTH_BIAS_ENABLE_EXT,
     ePrimitiveRestartEnable              = VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE,
     ePrimitiveRestartEnableEXT           = VK_DYNAMIC_STATE_PRIMITIVE_RESTART_ENABLE_EXT,
+    eLineStipple                         = VK_DYNAMIC_STATE_LINE_STIPPLE,
+    eLineStippleEXT                      = VK_DYNAMIC_STATE_LINE_STIPPLE_EXT,
+    eLineStippleKHR                      = VK_DYNAMIC_STATE_LINE_STIPPLE_KHR,
     eViewportWScalingNV                  = VK_DYNAMIC_STATE_VIEWPORT_W_SCALING_NV,
     eDiscardRectangleEXT                 = VK_DYNAMIC_STATE_DISCARD_RECTANGLE_EXT,
     eDiscardRectangleEnableEXT           = VK_DYNAMIC_STATE_DISCARD_RECTANGLE_ENABLE_EXT,
@@ -2905,8 +2999,6 @@ namespace VULKAN_HPP_NAMESPACE
     eRepresentativeFragmentTestEnableNV  = VK_DYNAMIC_STATE_REPRESENTATIVE_FRAGMENT_TEST_ENABLE_NV,
     eCoverageReductionModeNV             = VK_DYNAMIC_STATE_COVERAGE_REDUCTION_MODE_NV,
     eAttachmentFeedbackLoopEnableEXT     = VK_DYNAMIC_STATE_ATTACHMENT_FEEDBACK_LOOP_ENABLE_EXT,
-    eLineStippleKHR                      = VK_DYNAMIC_STATE_LINE_STIPPLE_KHR,
-    eLineStippleEXT                      = VK_DYNAMIC_STATE_LINE_STIPPLE_EXT,
     eDepthClampRangeEXT                  = VK_DYNAMIC_STATE_DEPTH_CLAMP_RANGE_EXT
   };
 
@@ -2949,6 +3041,10 @@ namespace VULKAN_HPP_NAMESPACE
     eFailOnPipelineCompileRequiredEXT                                   = VK_PIPELINE_CREATE_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_EXT,
     eEarlyReturnOnFailure                                               = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT,
     eEarlyReturnOnFailureEXT                                            = VK_PIPELINE_CREATE_EARLY_RETURN_ON_FAILURE_BIT_EXT,
+    eNoProtectedAccess                                                  = VK_PIPELINE_CREATE_NO_PROTECTED_ACCESS_BIT,
+    eNoProtectedAccessEXT                                               = VK_PIPELINE_CREATE_NO_PROTECTED_ACCESS_BIT_EXT,
+    eProtectedAccessOnly                                                = VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT,
+    eProtectedAccessOnlyEXT                                             = VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT_EXT,
     eRayTracingNoNullAnyHitShadersKHR                                   = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR,
     eRayTracingNoNullClosestHitShadersKHR                               = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR,
     eRayTracingNoNullMissShadersKHR                                     = VK_PIPELINE_CREATE_RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR,
@@ -2973,10 +3069,8 @@ namespace VULKAN_HPP_NAMESPACE
     eDepthStencilAttachmentFeedbackLoopEXT                              = VK_PIPELINE_CREATE_DEPTH_STENCIL_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT,
     eRayTracingOpacityMicromapEXT                                       = VK_PIPELINE_CREATE_RAY_TRACING_OPACITY_MICROMAP_BIT_EXT,
 #if defined( VK_ENABLE_BETA_EXTENSIONS )
-    eRayTracingDisplacementMicromapNV = VK_PIPELINE_CREATE_RAY_TRACING_DISPLACEMENT_MICROMAP_BIT_NV,
+    eRayTracingDisplacementMicromapNV = VK_PIPELINE_CREATE_RAY_TRACING_DISPLACEMENT_MICROMAP_BIT_NV
 #endif /*VK_ENABLE_BETA_EXTENSIONS*/
-    eNoProtectedAccessEXT   = VK_PIPELINE_CREATE_NO_PROTECTED_ACCESS_BIT_EXT,
-    eProtectedAccessOnlyEXT = VK_PIPELINE_CREATE_PROTECTED_ACCESS_ONLY_BIT_EXT
   };
 
   using PipelineCreateFlags = Flags<PipelineCreateFlagBits>;
@@ -2988,21 +3082,21 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCreateFlags allFlags =
       PipelineCreateFlagBits::eDisableOptimization | PipelineCreateFlagBits::eAllowDerivatives | PipelineCreateFlagBits::eDerivative |
       PipelineCreateFlagBits::eViewIndexFromDeviceIndex | PipelineCreateFlagBits::eDispatchBase | PipelineCreateFlagBits::eFailOnPipelineCompileRequired |
-      PipelineCreateFlagBits::eEarlyReturnOnFailure | PipelineCreateFlagBits::eRayTracingNoNullAnyHitShadersKHR |
-      PipelineCreateFlagBits::eRayTracingNoNullClosestHitShadersKHR | PipelineCreateFlagBits::eRayTracingNoNullMissShadersKHR |
-      PipelineCreateFlagBits::eRayTracingNoNullIntersectionShadersKHR | PipelineCreateFlagBits::eRayTracingSkipTrianglesKHR |
-      PipelineCreateFlagBits::eRayTracingSkipAabbsKHR | PipelineCreateFlagBits::eRayTracingShaderGroupHandleCaptureReplayKHR |
-      PipelineCreateFlagBits::eDeferCompileNV | PipelineCreateFlagBits::eRenderingFragmentDensityMapAttachmentEXT |
-      PipelineCreateFlagBits::eRenderingFragmentShadingRateAttachmentKHR | PipelineCreateFlagBits::eCaptureStatisticsKHR |
-      PipelineCreateFlagBits::eCaptureInternalRepresentationsKHR | PipelineCreateFlagBits::eIndirectBindableNV | PipelineCreateFlagBits::eLibraryKHR |
-      PipelineCreateFlagBits::eDescriptorBufferEXT | PipelineCreateFlagBits::eRetainLinkTimeOptimizationInfoEXT |
+      PipelineCreateFlagBits::eEarlyReturnOnFailure | PipelineCreateFlagBits::eNoProtectedAccess | PipelineCreateFlagBits::eProtectedAccessOnly |
+      PipelineCreateFlagBits::eRayTracingNoNullAnyHitShadersKHR | PipelineCreateFlagBits::eRayTracingNoNullClosestHitShadersKHR |
+      PipelineCreateFlagBits::eRayTracingNoNullMissShadersKHR | PipelineCreateFlagBits::eRayTracingNoNullIntersectionShadersKHR |
+      PipelineCreateFlagBits::eRayTracingSkipTrianglesKHR | PipelineCreateFlagBits::eRayTracingSkipAabbsKHR |
+      PipelineCreateFlagBits::eRayTracingShaderGroupHandleCaptureReplayKHR | PipelineCreateFlagBits::eDeferCompileNV |
+      PipelineCreateFlagBits::eRenderingFragmentDensityMapAttachmentEXT | PipelineCreateFlagBits::eRenderingFragmentShadingRateAttachmentKHR |
+      PipelineCreateFlagBits::eCaptureStatisticsKHR | PipelineCreateFlagBits::eCaptureInternalRepresentationsKHR | PipelineCreateFlagBits::eIndirectBindableNV |
+      PipelineCreateFlagBits::eLibraryKHR | PipelineCreateFlagBits::eDescriptorBufferEXT | PipelineCreateFlagBits::eRetainLinkTimeOptimizationInfoEXT |
       PipelineCreateFlagBits::eLinkTimeOptimizationEXT | PipelineCreateFlagBits::eRayTracingAllowMotionNV |
       PipelineCreateFlagBits::eColorAttachmentFeedbackLoopEXT | PipelineCreateFlagBits::eDepthStencilAttachmentFeedbackLoopEXT |
       PipelineCreateFlagBits::eRayTracingOpacityMicromapEXT
 #if defined( VK_ENABLE_BETA_EXTENSIONS )
       | PipelineCreateFlagBits::eRayTracingDisplacementMicromapNV
 #endif /*VK_ENABLE_BETA_EXTENSIONS*/
-      | PipelineCreateFlagBits::eNoProtectedAccessEXT | PipelineCreateFlagBits::eProtectedAccessOnlyEXT;
+      ;
   };
 
   enum class PipelineShaderStageCreateFlagBits : VkPipelineShaderStageCreateFlags
@@ -3330,6 +3424,7 @@ namespace VULKAN_HPP_NAMESPACE
   {
     eUpdateAfterBindPool          = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT,
     eUpdateAfterBindPoolEXT       = VK_DESCRIPTOR_SET_LAYOUT_CREATE_UPDATE_AFTER_BIND_POOL_BIT_EXT,
+    ePushDescriptor               = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT,
     ePushDescriptorKHR            = VK_DESCRIPTOR_SET_LAYOUT_CREATE_PUSH_DESCRIPTOR_BIT_KHR,
     eDescriptorBufferEXT          = VK_DESCRIPTOR_SET_LAYOUT_CREATE_DESCRIPTOR_BUFFER_BIT_EXT,
     eEmbeddedImmutableSamplersEXT = VK_DESCRIPTOR_SET_LAYOUT_CREATE_EMBEDDED_IMMUTABLE_SAMPLERS_BIT_EXT,
@@ -3346,7 +3441,7 @@ namespace VULKAN_HPP_NAMESPACE
   {
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool                           isBitmask = true;
     static VULKAN_HPP_CONST_OR_CONSTEXPR DescriptorSetLayoutCreateFlags allFlags =
-      DescriptorSetLayoutCreateFlagBits::eUpdateAfterBindPool | DescriptorSetLayoutCreateFlagBits::ePushDescriptorKHR |
+      DescriptorSetLayoutCreateFlagBits::eUpdateAfterBindPool | DescriptorSetLayoutCreateFlagBits::ePushDescriptor |
       DescriptorSetLayoutCreateFlagBits::eDescriptorBufferEXT | DescriptorSetLayoutCreateFlagBits::eEmbeddedImmutableSamplersEXT |
       DescriptorSetLayoutCreateFlagBits::eIndirectBindableNV | DescriptorSetLayoutCreateFlagBits::eHostOnlyPoolEXT |
       DescriptorSetLayoutCreateFlagBits::ePerStageNV;
@@ -3354,25 +3449,26 @@ namespace VULKAN_HPP_NAMESPACE
 
   enum class DescriptorType
   {
-    eSampler                  = VK_DESCRIPTOR_TYPE_SAMPLER,
-    eCombinedImageSampler     = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-    eSampledImage             = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-    eStorageImage             = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
-    eUniformTexelBuffer       = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
-    eStorageTexelBuffer       = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,
-    eUniformBuffer            = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-    eStorageBuffer            = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
-    eUniformBufferDynamic     = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
-    eStorageBufferDynamic     = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
-    eInputAttachment          = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
-    eInlineUniformBlock       = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK,
-    eInlineUniformBlockEXT    = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
-    eAccelerationStructureKHR = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
-    eAccelerationStructureNV  = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV,
-    eSampleWeightImageQCOM    = VK_DESCRIPTOR_TYPE_SAMPLE_WEIGHT_IMAGE_QCOM,
-    eBlockMatchImageQCOM      = VK_DESCRIPTOR_TYPE_BLOCK_MATCH_IMAGE_QCOM,
-    eMutableEXT               = VK_DESCRIPTOR_TYPE_MUTABLE_EXT,
-    eMutableVALVE             = VK_DESCRIPTOR_TYPE_MUTABLE_VALVE
+    eSampler                            = VK_DESCRIPTOR_TYPE_SAMPLER,
+    eCombinedImageSampler               = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+    eSampledImage                       = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
+    eStorageImage                       = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE,
+    eUniformTexelBuffer                 = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER,
+    eStorageTexelBuffer                 = VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER,
+    eUniformBuffer                      = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+    eStorageBuffer                      = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER,
+    eUniformBufferDynamic               = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC,
+    eStorageBufferDynamic               = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC,
+    eInputAttachment                    = VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT,
+    eInlineUniformBlock                 = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK,
+    eInlineUniformBlockEXT              = VK_DESCRIPTOR_TYPE_INLINE_UNIFORM_BLOCK_EXT,
+    eAccelerationStructureKHR           = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR,
+    eAccelerationStructureNV            = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV,
+    eSampleWeightImageQCOM              = VK_DESCRIPTOR_TYPE_SAMPLE_WEIGHT_IMAGE_QCOM,
+    eBlockMatchImageQCOM                = VK_DESCRIPTOR_TYPE_BLOCK_MATCH_IMAGE_QCOM,
+    eMutableEXT                         = VK_DESCRIPTOR_TYPE_MUTABLE_EXT,
+    eMutableVALVE                       = VK_DESCRIPTOR_TYPE_MUTABLE_VALVE,
+    ePartitionedAccelerationStructureNV = VK_DESCRIPTOR_TYPE_PARTITIONED_ACCELERATION_STRUCTURE_NV
   };
 
   enum class DescriptorPoolResetFlagBits : VkDescriptorPoolResetFlags
@@ -3463,8 +3559,9 @@ namespace VULKAN_HPP_NAMESPACE
     eLoad     = VK_ATTACHMENT_LOAD_OP_LOAD,
     eClear    = VK_ATTACHMENT_LOAD_OP_CLEAR,
     eDontCare = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
-    eNoneKHR  = VK_ATTACHMENT_LOAD_OP_NONE_KHR,
-    eNoneEXT  = VK_ATTACHMENT_LOAD_OP_NONE_EXT
+    eNone     = VK_ATTACHMENT_LOAD_OP_NONE,
+    eNoneEXT  = VK_ATTACHMENT_LOAD_OP_NONE_EXT,
+    eNoneKHR  = VK_ATTACHMENT_LOAD_OP_NONE_KHR
   };
 
   enum class AttachmentStoreOp
@@ -3472,19 +3569,20 @@ namespace VULKAN_HPP_NAMESPACE
     eStore    = VK_ATTACHMENT_STORE_OP_STORE,
     eDontCare = VK_ATTACHMENT_STORE_OP_DONT_CARE,
     eNone     = VK_ATTACHMENT_STORE_OP_NONE,
-    eNoneEXT  = VK_ATTACHMENT_STORE_OP_NONE_EXT,
     eNoneKHR  = VK_ATTACHMENT_STORE_OP_NONE_KHR,
-    eNoneQCOM = VK_ATTACHMENT_STORE_OP_NONE_QCOM
+    eNoneQCOM = VK_ATTACHMENT_STORE_OP_NONE_QCOM,
+    eNoneEXT  = VK_ATTACHMENT_STORE_OP_NONE_EXT
   };
 
   enum class DependencyFlagBits : VkDependencyFlags
   {
-    eByRegion        = VK_DEPENDENCY_BY_REGION_BIT,
-    eDeviceGroup     = VK_DEPENDENCY_DEVICE_GROUP_BIT,
-    eDeviceGroupKHR  = VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR,
-    eViewLocal       = VK_DEPENDENCY_VIEW_LOCAL_BIT,
-    eViewLocalKHR    = VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR,
-    eFeedbackLoopEXT = VK_DEPENDENCY_FEEDBACK_LOOP_BIT_EXT
+    eByRegion                                    = VK_DEPENDENCY_BY_REGION_BIT,
+    eDeviceGroup                                 = VK_DEPENDENCY_DEVICE_GROUP_BIT,
+    eDeviceGroupKHR                              = VK_DEPENDENCY_DEVICE_GROUP_BIT_KHR,
+    eViewLocal                                   = VK_DEPENDENCY_VIEW_LOCAL_BIT,
+    eViewLocalKHR                                = VK_DEPENDENCY_VIEW_LOCAL_BIT_KHR,
+    eFeedbackLoopEXT                             = VK_DEPENDENCY_FEEDBACK_LOOP_BIT_EXT,
+    eQueueFamilyOwnershipTransferUseAllStagesKHR = VK_DEPENDENCY_QUEUE_FAMILY_OWNERSHIP_TRANSFER_USE_ALL_STAGES_BIT_KHR
   };
 
   using DependencyFlags = Flags<DependencyFlagBits>;
@@ -3493,8 +3591,9 @@ namespace VULKAN_HPP_NAMESPACE
   struct FlagTraits<DependencyFlagBits>
   {
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool            isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR DependencyFlags allFlags =
-      DependencyFlagBits::eByRegion | DependencyFlagBits::eDeviceGroup | DependencyFlagBits::eViewLocal | DependencyFlagBits::eFeedbackLoopEXT;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR DependencyFlags allFlags  = DependencyFlagBits::eByRegion | DependencyFlagBits::eDeviceGroup |
+                                                                    DependencyFlagBits::eViewLocal | DependencyFlagBits::eFeedbackLoopEXT |
+                                                                    DependencyFlagBits::eQueueFamilyOwnershipTransferUseAllStagesKHR;
   };
 
   enum class FramebufferCreateFlagBits : VkFramebufferCreateFlags
@@ -3652,10 +3751,11 @@ namespace VULKAN_HPP_NAMESPACE
   {
     eUint16   = VK_INDEX_TYPE_UINT16,
     eUint32   = VK_INDEX_TYPE_UINT32,
-    eNoneKHR  = VK_INDEX_TYPE_NONE_KHR,
-    eNoneNV   = VK_INDEX_TYPE_NONE_NV,
+    eUint8    = VK_INDEX_TYPE_UINT8,
+    eUint8EXT = VK_INDEX_TYPE_UINT8_EXT,
     eUint8KHR = VK_INDEX_TYPE_UINT8_KHR,
-    eUint8EXT = VK_INDEX_TYPE_UINT8_EXT
+    eNoneKHR  = VK_INDEX_TYPE_NONE_KHR,
+    eNoneNV   = VK_INDEX_TYPE_NONE_NV
   };
 
   //=========================
@@ -3694,11 +3794,11 @@ namespace VULKAN_HPP_NAMESPACE
   template <>
   struct IndexTypeValue<uint8_t>
   {
-    static VULKAN_HPP_CONST_OR_CONSTEXPR IndexType value = IndexType::eUint8KHR;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR IndexType value = IndexType::eUint8;
   };
 
   template <>
-  struct CppType<IndexType, IndexType::eUint8KHR>
+  struct CppType<IndexType, IndexType::eUint8>
   {
     using Type = uint8_t;
   };
@@ -3741,9 +3841,11 @@ namespace VULKAN_HPP_NAMESPACE
     eShuffleRelative    = VK_SUBGROUP_FEATURE_SHUFFLE_RELATIVE_BIT,
     eClustered          = VK_SUBGROUP_FEATURE_CLUSTERED_BIT,
     eQuad               = VK_SUBGROUP_FEATURE_QUAD_BIT,
-    ePartitionedNV      = VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV,
+    eRotate             = VK_SUBGROUP_FEATURE_ROTATE_BIT,
     eRotateKHR          = VK_SUBGROUP_FEATURE_ROTATE_BIT_KHR,
-    eRotateClusteredKHR = VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT_KHR
+    eRotateClustered    = VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT,
+    eRotateClusteredKHR = VK_SUBGROUP_FEATURE_ROTATE_CLUSTERED_BIT_KHR,
+    ePartitionedNV      = VK_SUBGROUP_FEATURE_PARTITIONED_BIT_NV
   };
 
   using SubgroupFeatureFlags = Flags<SubgroupFeatureFlagBits>;
@@ -3755,7 +3857,7 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR SubgroupFeatureFlags allFlags =
       SubgroupFeatureFlagBits::eBasic | SubgroupFeatureFlagBits::eVote | SubgroupFeatureFlagBits::eArithmetic | SubgroupFeatureFlagBits::eBallot |
       SubgroupFeatureFlagBits::eShuffle | SubgroupFeatureFlagBits::eShuffleRelative | SubgroupFeatureFlagBits::eClustered | SubgroupFeatureFlagBits::eQuad |
-      SubgroupFeatureFlagBits::ePartitionedNV | SubgroupFeatureFlagBits::eRotateKHR | SubgroupFeatureFlagBits::eRotateClusteredKHR;
+      SubgroupFeatureFlagBits::eRotate | SubgroupFeatureFlagBits::eRotateClustered | SubgroupFeatureFlagBits::ePartitionedNV;
   };
 
   enum class PeerMemoryFeatureFlagBits : VkPeerMemoryFeatureFlags
@@ -3851,8 +3953,8 @@ namespace VULKAN_HPP_NAMESPACE
 
   enum class DescriptorUpdateTemplateType
   {
-    eDescriptorSet      = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
-    ePushDescriptorsKHR = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS_KHR
+    eDescriptorSet   = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_DESCRIPTOR_SET,
+    ePushDescriptors = VK_DESCRIPTOR_UPDATE_TEMPLATE_TYPE_PUSH_DESCRIPTORS
   };
   using DescriptorUpdateTemplateTypeKHR = DescriptorUpdateTemplateType;
 
@@ -3890,8 +3992,13 @@ namespace VULKAN_HPP_NAMESPACE
 #endif /*VK_USE_PLATFORM_FUCHSIA*/
     eRdmaAddressNV = VK_EXTERNAL_MEMORY_HANDLE_TYPE_RDMA_ADDRESS_BIT_NV,
 #if defined( VK_USE_PLATFORM_SCREEN_QNX )
-    eScreenBufferQNX = VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX
+    eScreenBufferQNX = VK_EXTERNAL_MEMORY_HANDLE_TYPE_SCREEN_BUFFER_BIT_QNX,
 #endif /*VK_USE_PLATFORM_SCREEN_QNX*/
+#if defined( VK_USE_PLATFORM_METAL_EXT )
+    eMtlbufferEXT  = VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLBUFFER_BIT_EXT,
+    eMtltextureEXT = VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLTEXTURE_BIT_EXT,
+    eMtlheapEXT    = VK_EXTERNAL_MEMORY_HANDLE_TYPE_MTLHEAP_BIT_EXT
+#endif /*VK_USE_PLATFORM_METAL_EXT*/
   };
   using ExternalMemoryHandleTypeFlagBitsKHR = ExternalMemoryHandleTypeFlagBits;
 
@@ -3917,6 +4024,9 @@ namespace VULKAN_HPP_NAMESPACE
 #if defined( VK_USE_PLATFORM_SCREEN_QNX )
       | ExternalMemoryHandleTypeFlagBits::eScreenBufferQNX
 #endif /*VK_USE_PLATFORM_SCREEN_QNX*/
+#if defined( VK_USE_PLATFORM_METAL_EXT )
+      | ExternalMemoryHandleTypeFlagBits::eMtlbufferEXT | ExternalMemoryHandleTypeFlagBits::eMtltextureEXT | ExternalMemoryHandleTypeFlagBits::eMtlheapEXT
+#endif /*VK_USE_PLATFORM_METAL_EXT*/
       ;
   };
 
@@ -4088,7 +4198,7 @@ namespace VULKAN_HPP_NAMESPACE
     eMesaNvk                   = VK_DRIVER_ID_MESA_NVK,
     eImaginationOpenSourceMESA = VK_DRIVER_ID_IMAGINATION_OPEN_SOURCE_MESA,
     eMesaHoneykrisp            = VK_DRIVER_ID_MESA_HONEYKRISP,
-    eReserved27                = VK_DRIVER_ID_RESERVED_27
+    eVulkanScEmulationOnVulkan = VK_DRIVER_ID_VULKAN_SC_EMULATION_ON_VULKAN
   };
   using DriverIdKHR = DriverId;
 
@@ -4293,7 +4403,8 @@ namespace VULKAN_HPP_NAMESPACE
     eAccelerationStructureCopyKHR     = VK_PIPELINE_STAGE_2_ACCELERATION_STRUCTURE_COPY_BIT_KHR,
     eMicromapBuildEXT                 = VK_PIPELINE_STAGE_2_MICROMAP_BUILD_BIT_EXT,
     eClusterCullingShaderHUAWEI       = VK_PIPELINE_STAGE_2_CLUSTER_CULLING_SHADER_BIT_HUAWEI,
-    eOpticalFlowNV                    = VK_PIPELINE_STAGE_2_OPTICAL_FLOW_BIT_NV
+    eOpticalFlowNV                    = VK_PIPELINE_STAGE_2_OPTICAL_FLOW_BIT_NV,
+    eConvertCooperativeVectorMatrixNV = VK_PIPELINE_STAGE_2_CONVERT_COOPERATIVE_VECTOR_MATRIX_BIT_NV
   };
   using PipelineStageFlagBits2KHR = PipelineStageFlagBits2;
 
@@ -4318,7 +4429,7 @@ namespace VULKAN_HPP_NAMESPACE
       PipelineStageFlagBits2::eRayTracingShaderKHR | PipelineStageFlagBits2::eFragmentDensityProcessEXT | PipelineStageFlagBits2::eTaskShaderEXT |
       PipelineStageFlagBits2::eMeshShaderEXT | PipelineStageFlagBits2::eSubpassShaderHUAWEI | PipelineStageFlagBits2::eInvocationMaskHUAWEI |
       PipelineStageFlagBits2::eAccelerationStructureCopyKHR | PipelineStageFlagBits2::eMicromapBuildEXT | PipelineStageFlagBits2::eClusterCullingShaderHUAWEI |
-      PipelineStageFlagBits2::eOpticalFlowNV;
+      PipelineStageFlagBits2::eOpticalFlowNV | PipelineStageFlagBits2::eConvertCooperativeVectorMatrixNV;
   };
 
   enum class AccessFlagBits2 : VkAccessFlags2
@@ -4451,8 +4562,6 @@ namespace VULKAN_HPP_NAMESPACE
     eBlitSrc                                                 = VK_FORMAT_FEATURE_2_BLIT_SRC_BIT,
     eBlitDst                                                 = VK_FORMAT_FEATURE_2_BLIT_DST_BIT,
     eSampledImageFilterLinear                                = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_LINEAR_BIT,
-    eSampledImageFilterCubic                                 = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT,
-    eSampledImageFilterCubicEXT                              = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT,
     eTransferSrc                                             = VK_FORMAT_FEATURE_2_TRANSFER_SRC_BIT,
     eTransferDst                                             = VK_FORMAT_FEATURE_2_TRANSFER_DST_BIT,
     eSampledImageFilterMinmax                                = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_MINMAX_BIT,
@@ -4467,14 +4576,18 @@ namespace VULKAN_HPP_NAMESPACE
     eStorageReadWithoutFormat             = VK_FORMAT_FEATURE_2_STORAGE_READ_WITHOUT_FORMAT_BIT,
     eStorageWriteWithoutFormat            = VK_FORMAT_FEATURE_2_STORAGE_WRITE_WITHOUT_FORMAT_BIT,
     eSampledImageDepthComparison          = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_DEPTH_COMPARISON_BIT,
+    eSampledImageFilterCubic              = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT,
+    eSampledImageFilterCubicEXT           = VK_FORMAT_FEATURE_2_SAMPLED_IMAGE_FILTER_CUBIC_BIT_EXT,
+    eHostImageTransfer                    = VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT,
+    eHostImageTransferEXT                 = VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT,
     eVideoDecodeOutputKHR                 = VK_FORMAT_FEATURE_2_VIDEO_DECODE_OUTPUT_BIT_KHR,
     eVideoDecodeDpbKHR                    = VK_FORMAT_FEATURE_2_VIDEO_DECODE_DPB_BIT_KHR,
     eAccelerationStructureVertexBufferKHR = VK_FORMAT_FEATURE_2_ACCELERATION_STRUCTURE_VERTEX_BUFFER_BIT_KHR,
     eFragmentDensityMapEXT                = VK_FORMAT_FEATURE_2_FRAGMENT_DENSITY_MAP_BIT_EXT,
     eFragmentShadingRateAttachmentKHR     = VK_FORMAT_FEATURE_2_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-    eHostImageTransferEXT                 = VK_FORMAT_FEATURE_2_HOST_IMAGE_TRANSFER_BIT_EXT,
     eVideoEncodeInputKHR                  = VK_FORMAT_FEATURE_2_VIDEO_ENCODE_INPUT_BIT_KHR,
     eVideoEncodeDpbKHR                    = VK_FORMAT_FEATURE_2_VIDEO_ENCODE_DPB_BIT_KHR,
+    eAccelerationStructureRadiusBufferNV  = VK_FORMAT_FEATURE_2_ACCELERATION_STRUCTURE_RADIUS_BUFFER_BIT_NV,
     eLinearColorAttachmentNV              = VK_FORMAT_FEATURE_2_LINEAR_COLOR_ATTACHMENT_BIT_NV,
     eWeightImageQCOM                      = VK_FORMAT_FEATURE_2_WEIGHT_IMAGE_BIT_QCOM,
     eWeightSampledImageQCOM               = VK_FORMAT_FEATURE_2_WEIGHT_SAMPLED_IMAGE_BIT_QCOM,
@@ -4500,19 +4613,234 @@ namespace VULKAN_HPP_NAMESPACE
       FormatFeatureFlagBits2::eUniformTexelBuffer | FormatFeatureFlagBits2::eStorageTexelBuffer | FormatFeatureFlagBits2::eStorageTexelBufferAtomic |
       FormatFeatureFlagBits2::eVertexBuffer | FormatFeatureFlagBits2::eColorAttachment | FormatFeatureFlagBits2::eColorAttachmentBlend |
       FormatFeatureFlagBits2::eDepthStencilAttachment | FormatFeatureFlagBits2::eBlitSrc | FormatFeatureFlagBits2::eBlitDst |
-      FormatFeatureFlagBits2::eSampledImageFilterLinear | FormatFeatureFlagBits2::eSampledImageFilterCubic | FormatFeatureFlagBits2::eTransferSrc |
-      FormatFeatureFlagBits2::eTransferDst | FormatFeatureFlagBits2::eSampledImageFilterMinmax | FormatFeatureFlagBits2::eMidpointChromaSamples |
+      FormatFeatureFlagBits2::eSampledImageFilterLinear | FormatFeatureFlagBits2::eTransferSrc | FormatFeatureFlagBits2::eTransferDst |
+      FormatFeatureFlagBits2::eSampledImageFilterMinmax | FormatFeatureFlagBits2::eMidpointChromaSamples |
       FormatFeatureFlagBits2::eSampledImageYcbcrConversionLinearFilter | FormatFeatureFlagBits2::eSampledImageYcbcrConversionSeparateReconstructionFilter |
       FormatFeatureFlagBits2::eSampledImageYcbcrConversionChromaReconstructionExplicit |
       FormatFeatureFlagBits2::eSampledImageYcbcrConversionChromaReconstructionExplicitForceable | FormatFeatureFlagBits2::eDisjoint |
       FormatFeatureFlagBits2::eCositedChromaSamples | FormatFeatureFlagBits2::eStorageReadWithoutFormat | FormatFeatureFlagBits2::eStorageWriteWithoutFormat |
-      FormatFeatureFlagBits2::eSampledImageDepthComparison | FormatFeatureFlagBits2::eVideoDecodeOutputKHR | FormatFeatureFlagBits2::eVideoDecodeDpbKHR |
+      FormatFeatureFlagBits2::eSampledImageDepthComparison | FormatFeatureFlagBits2::eSampledImageFilterCubic | FormatFeatureFlagBits2::eHostImageTransfer |
+      FormatFeatureFlagBits2::eVideoDecodeOutputKHR | FormatFeatureFlagBits2::eVideoDecodeDpbKHR |
       FormatFeatureFlagBits2::eAccelerationStructureVertexBufferKHR | FormatFeatureFlagBits2::eFragmentDensityMapEXT |
-      FormatFeatureFlagBits2::eFragmentShadingRateAttachmentKHR | FormatFeatureFlagBits2::eHostImageTransferEXT | FormatFeatureFlagBits2::eVideoEncodeInputKHR |
-      FormatFeatureFlagBits2::eVideoEncodeDpbKHR | FormatFeatureFlagBits2::eLinearColorAttachmentNV | FormatFeatureFlagBits2::eWeightImageQCOM |
-      FormatFeatureFlagBits2::eWeightSampledImageQCOM | FormatFeatureFlagBits2::eBlockMatchingQCOM | FormatFeatureFlagBits2::eBoxFilterSampledQCOM |
-      FormatFeatureFlagBits2::eOpticalFlowImageNV | FormatFeatureFlagBits2::eOpticalFlowVectorNV | FormatFeatureFlagBits2::eOpticalFlowCostNV |
-      FormatFeatureFlagBits2::eVideoEncodeQuantizationDeltaMapKHR | FormatFeatureFlagBits2::eVideoEncodeEmphasisMapKHR;
+      FormatFeatureFlagBits2::eFragmentShadingRateAttachmentKHR | FormatFeatureFlagBits2::eVideoEncodeInputKHR | FormatFeatureFlagBits2::eVideoEncodeDpbKHR |
+      FormatFeatureFlagBits2::eAccelerationStructureRadiusBufferNV | FormatFeatureFlagBits2::eLinearColorAttachmentNV |
+      FormatFeatureFlagBits2::eWeightImageQCOM | FormatFeatureFlagBits2::eWeightSampledImageQCOM | FormatFeatureFlagBits2::eBlockMatchingQCOM |
+      FormatFeatureFlagBits2::eBoxFilterSampledQCOM | FormatFeatureFlagBits2::eOpticalFlowImageNV | FormatFeatureFlagBits2::eOpticalFlowVectorNV |
+      FormatFeatureFlagBits2::eOpticalFlowCostNV | FormatFeatureFlagBits2::eVideoEncodeQuantizationDeltaMapKHR |
+      FormatFeatureFlagBits2::eVideoEncodeEmphasisMapKHR;
+  };
+
+  //=== VK_VERSION_1_4 ===
+
+  enum class QueueGlobalPriority
+  {
+    eLow         = VK_QUEUE_GLOBAL_PRIORITY_LOW,
+    eLowKHR      = VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR,
+    eMedium      = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM,
+    eMediumKHR   = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR,
+    eHigh        = VK_QUEUE_GLOBAL_PRIORITY_HIGH,
+    eHighKHR     = VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR,
+    eRealtime    = VK_QUEUE_GLOBAL_PRIORITY_REALTIME,
+    eRealtimeKHR = VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR
+  };
+  using QueueGlobalPriorityEXT = QueueGlobalPriority;
+  using QueueGlobalPriorityKHR = QueueGlobalPriority;
+
+  enum class LineRasterizationMode
+  {
+    eDefault              = VK_LINE_RASTERIZATION_MODE_DEFAULT,
+    eDefaultKHR           = VK_LINE_RASTERIZATION_MODE_DEFAULT_KHR,
+    eRectangular          = VK_LINE_RASTERIZATION_MODE_RECTANGULAR,
+    eRectangularKHR       = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_KHR,
+    eBresenham            = VK_LINE_RASTERIZATION_MODE_BRESENHAM,
+    eBresenhamKHR         = VK_LINE_RASTERIZATION_MODE_BRESENHAM_KHR,
+    eRectangularSmooth    = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH,
+    eRectangularSmoothKHR = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR
+  };
+  using LineRasterizationModeEXT = LineRasterizationMode;
+  using LineRasterizationModeKHR = LineRasterizationMode;
+
+  enum class MemoryUnmapFlagBits : VkMemoryUnmapFlags
+  {
+    eReserveEXT = VK_MEMORY_UNMAP_RESERVE_BIT_EXT
+  };
+  using MemoryUnmapFlagBitsKHR = MemoryUnmapFlagBits;
+
+  using MemoryUnmapFlags    = Flags<MemoryUnmapFlagBits>;
+  using MemoryUnmapFlagsKHR = MemoryUnmapFlags;
+
+  template <>
+  struct FlagTraits<MemoryUnmapFlagBits>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool             isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR MemoryUnmapFlags allFlags  = MemoryUnmapFlagBits::eReserveEXT;
+  };
+
+  enum class PipelineCreateFlagBits2 : VkPipelineCreateFlags2
+  {
+    eDisableOptimization           = VK_PIPELINE_CREATE_2_DISABLE_OPTIMIZATION_BIT,
+    eAllowDerivatives              = VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT,
+    eDerivative                    = VK_PIPELINE_CREATE_2_DERIVATIVE_BIT,
+    eViewIndexFromDeviceIndex      = VK_PIPELINE_CREATE_2_VIEW_INDEX_FROM_DEVICE_INDEX_BIT,
+    eDispatchBase                  = VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT,
+    eFailOnPipelineCompileRequired = VK_PIPELINE_CREATE_2_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT,
+    eEarlyReturnOnFailure          = VK_PIPELINE_CREATE_2_EARLY_RETURN_ON_FAILURE_BIT,
+    eNoProtectedAccess             = VK_PIPELINE_CREATE_2_NO_PROTECTED_ACCESS_BIT,
+    eNoProtectedAccessEXT          = VK_PIPELINE_CREATE_2_NO_PROTECTED_ACCESS_BIT_EXT,
+    eProtectedAccessOnly           = VK_PIPELINE_CREATE_2_PROTECTED_ACCESS_ONLY_BIT,
+    eProtectedAccessOnlyEXT        = VK_PIPELINE_CREATE_2_PROTECTED_ACCESS_ONLY_BIT_EXT,
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+    eExecutionGraphAMDX = VK_PIPELINE_CREATE_2_EXECUTION_GRAPH_BIT_AMDX,
+#endif /*VK_ENABLE_BETA_EXTENSIONS*/
+    eRayTracingAllowSpheresAndLinearSweptSpheresNV = VK_PIPELINE_CREATE_2_RAY_TRACING_ALLOW_SPHERES_AND_LINEAR_SWEPT_SPHERES_BIT_NV,
+    eEnableLegacyDitheringEXT                      = VK_PIPELINE_CREATE_2_ENABLE_LEGACY_DITHERING_BIT_EXT,
+    eDeferCompileNV                                = VK_PIPELINE_CREATE_2_DEFER_COMPILE_BIT_NV,
+    eCaptureStatisticsKHR                          = VK_PIPELINE_CREATE_2_CAPTURE_STATISTICS_BIT_KHR,
+    eCaptureInternalRepresentationsKHR             = VK_PIPELINE_CREATE_2_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR,
+    eLinkTimeOptimizationEXT                       = VK_PIPELINE_CREATE_2_LINK_TIME_OPTIMIZATION_BIT_EXT,
+    eRetainLinkTimeOptimizationInfoEXT             = VK_PIPELINE_CREATE_2_RETAIN_LINK_TIME_OPTIMIZATION_INFO_BIT_EXT,
+    eLibraryKHR                                    = VK_PIPELINE_CREATE_2_LIBRARY_BIT_KHR,
+    eRayTracingSkipTrianglesKHR                    = VK_PIPELINE_CREATE_2_RAY_TRACING_SKIP_TRIANGLES_BIT_KHR,
+    eRayTracingSkipBuiltInPrimitives               = VK_PIPELINE_CREATE_2_RAY_TRACING_SKIP_BUILT_IN_PRIMITIVES_BIT_KHR,
+    eRayTracingSkipAabbsKHR                        = VK_PIPELINE_CREATE_2_RAY_TRACING_SKIP_AABBS_BIT_KHR,
+    eRayTracingNoNullAnyHitShadersKHR              = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR,
+    eRayTracingNoNullClosestHitShadersKHR          = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR,
+    eRayTracingNoNullMissShadersKHR                = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR,
+    eRayTracingNoNullIntersectionShadersKHR        = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_INTERSECTION_SHADERS_BIT_KHR,
+    eRayTracingShaderGroupHandleCaptureReplayKHR   = VK_PIPELINE_CREATE_2_RAY_TRACING_SHADER_GROUP_HANDLE_CAPTURE_REPLAY_BIT_KHR,
+    eIndirectBindableNV                            = VK_PIPELINE_CREATE_2_INDIRECT_BINDABLE_BIT_NV,
+    eRayTracingAllowMotionNV                       = VK_PIPELINE_CREATE_2_RAY_TRACING_ALLOW_MOTION_BIT_NV,
+    eRenderingFragmentShadingRateAttachmentKHR     = VK_PIPELINE_CREATE_2_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
+    eRenderingFragmentDensityMapAttachmentEXT      = VK_PIPELINE_CREATE_2_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_BIT_EXT,
+    eRayTracingOpacityMicromapEXT                  = VK_PIPELINE_CREATE_2_RAY_TRACING_OPACITY_MICROMAP_BIT_EXT,
+    eColorAttachmentFeedbackLoopEXT                = VK_PIPELINE_CREATE_2_COLOR_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT,
+    eDepthStencilAttachmentFeedbackLoopEXT         = VK_PIPELINE_CREATE_2_DEPTH_STENCIL_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT,
+    eRayTracingDisplacementMicromapNV              = VK_PIPELINE_CREATE_2_RAY_TRACING_DISPLACEMENT_MICROMAP_BIT_NV,
+    eDescriptorBufferEXT                           = VK_PIPELINE_CREATE_2_DESCRIPTOR_BUFFER_BIT_EXT,
+    eDisallowOpacityMicromapARM                    = VK_PIPELINE_CREATE_2_DISALLOW_OPACITY_MICROMAP_BIT_ARM,
+    eCaptureDataKHR                                = VK_PIPELINE_CREATE_2_CAPTURE_DATA_BIT_KHR,
+    eIndirectBindableEXT                           = VK_PIPELINE_CREATE_2_INDIRECT_BINDABLE_BIT_EXT
+  };
+  using PipelineCreateFlagBits2KHR = PipelineCreateFlagBits2;
+
+  using PipelineCreateFlags2    = Flags<PipelineCreateFlagBits2>;
+  using PipelineCreateFlags2KHR = PipelineCreateFlags2;
+
+  template <>
+  struct FlagTraits<PipelineCreateFlagBits2>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                 isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCreateFlags2 allFlags =
+      PipelineCreateFlagBits2::eDisableOptimization | PipelineCreateFlagBits2::eAllowDerivatives | PipelineCreateFlagBits2::eDerivative |
+      PipelineCreateFlagBits2::eViewIndexFromDeviceIndex | PipelineCreateFlagBits2::eDispatchBase | PipelineCreateFlagBits2::eFailOnPipelineCompileRequired |
+      PipelineCreateFlagBits2::eEarlyReturnOnFailure | PipelineCreateFlagBits2::eNoProtectedAccess | PipelineCreateFlagBits2::eProtectedAccessOnly
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+      | PipelineCreateFlagBits2::eExecutionGraphAMDX
+#endif /*VK_ENABLE_BETA_EXTENSIONS*/
+      | PipelineCreateFlagBits2::eRayTracingAllowSpheresAndLinearSweptSpheresNV | PipelineCreateFlagBits2::eEnableLegacyDitheringEXT |
+      PipelineCreateFlagBits2::eDeferCompileNV | PipelineCreateFlagBits2::eCaptureStatisticsKHR | PipelineCreateFlagBits2::eCaptureInternalRepresentationsKHR |
+      PipelineCreateFlagBits2::eLinkTimeOptimizationEXT | PipelineCreateFlagBits2::eRetainLinkTimeOptimizationInfoEXT | PipelineCreateFlagBits2::eLibraryKHR |
+      PipelineCreateFlagBits2::eRayTracingSkipTrianglesKHR | PipelineCreateFlagBits2::eRayTracingSkipAabbsKHR |
+      PipelineCreateFlagBits2::eRayTracingNoNullAnyHitShadersKHR | PipelineCreateFlagBits2::eRayTracingNoNullClosestHitShadersKHR |
+      PipelineCreateFlagBits2::eRayTracingNoNullMissShadersKHR | PipelineCreateFlagBits2::eRayTracingNoNullIntersectionShadersKHR |
+      PipelineCreateFlagBits2::eRayTracingShaderGroupHandleCaptureReplayKHR | PipelineCreateFlagBits2::eIndirectBindableNV |
+      PipelineCreateFlagBits2::eRayTracingAllowMotionNV | PipelineCreateFlagBits2::eRenderingFragmentShadingRateAttachmentKHR |
+      PipelineCreateFlagBits2::eRenderingFragmentDensityMapAttachmentEXT | PipelineCreateFlagBits2::eRayTracingOpacityMicromapEXT |
+      PipelineCreateFlagBits2::eColorAttachmentFeedbackLoopEXT | PipelineCreateFlagBits2::eDepthStencilAttachmentFeedbackLoopEXT |
+      PipelineCreateFlagBits2::eRayTracingDisplacementMicromapNV | PipelineCreateFlagBits2::eDescriptorBufferEXT |
+      PipelineCreateFlagBits2::eDisallowOpacityMicromapARM | PipelineCreateFlagBits2::eCaptureDataKHR | PipelineCreateFlagBits2::eIndirectBindableEXT;
+  };
+
+  enum class BufferUsageFlagBits2 : VkBufferUsageFlags2
+  {
+    eTransferSrc         = VK_BUFFER_USAGE_2_TRANSFER_SRC_BIT,
+    eTransferDst         = VK_BUFFER_USAGE_2_TRANSFER_DST_BIT,
+    eUniformTexelBuffer  = VK_BUFFER_USAGE_2_UNIFORM_TEXEL_BUFFER_BIT,
+    eStorageTexelBuffer  = VK_BUFFER_USAGE_2_STORAGE_TEXEL_BUFFER_BIT,
+    eUniformBuffer       = VK_BUFFER_USAGE_2_UNIFORM_BUFFER_BIT,
+    eStorageBuffer       = VK_BUFFER_USAGE_2_STORAGE_BUFFER_BIT,
+    eIndexBuffer         = VK_BUFFER_USAGE_2_INDEX_BUFFER_BIT,
+    eVertexBuffer        = VK_BUFFER_USAGE_2_VERTEX_BUFFER_BIT,
+    eIndirectBuffer      = VK_BUFFER_USAGE_2_INDIRECT_BUFFER_BIT,
+    eShaderDeviceAddress = VK_BUFFER_USAGE_2_SHADER_DEVICE_ADDRESS_BIT,
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+    eExecutionGraphScratchAMDX = VK_BUFFER_USAGE_2_EXECUTION_GRAPH_SCRATCH_BIT_AMDX,
+#endif /*VK_ENABLE_BETA_EXTENSIONS*/
+    eConditionalRenderingEXT                    = VK_BUFFER_USAGE_2_CONDITIONAL_RENDERING_BIT_EXT,
+    eShaderBindingTableKHR                      = VK_BUFFER_USAGE_2_SHADER_BINDING_TABLE_BIT_KHR,
+    eRayTracingNV                               = VK_BUFFER_USAGE_2_RAY_TRACING_BIT_NV,
+    eTransformFeedbackBufferEXT                 = VK_BUFFER_USAGE_2_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
+    eTransformFeedbackCounterBufferEXT          = VK_BUFFER_USAGE_2_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT,
+    eVideoDecodeSrcKHR                          = VK_BUFFER_USAGE_2_VIDEO_DECODE_SRC_BIT_KHR,
+    eVideoDecodeDstKHR                          = VK_BUFFER_USAGE_2_VIDEO_DECODE_DST_BIT_KHR,
+    eVideoEncodeDstKHR                          = VK_BUFFER_USAGE_2_VIDEO_ENCODE_DST_BIT_KHR,
+    eVideoEncodeSrcKHR                          = VK_BUFFER_USAGE_2_VIDEO_ENCODE_SRC_BIT_KHR,
+    eAccelerationStructureBuildInputReadOnlyKHR = VK_BUFFER_USAGE_2_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
+    eAccelerationStructureStorageKHR            = VK_BUFFER_USAGE_2_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
+    eSamplerDescriptorBufferEXT                 = VK_BUFFER_USAGE_2_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT,
+    eResourceDescriptorBufferEXT                = VK_BUFFER_USAGE_2_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT,
+    ePushDescriptorsDescriptorBufferEXT         = VK_BUFFER_USAGE_2_PUSH_DESCRIPTORS_DESCRIPTOR_BUFFER_BIT_EXT,
+    eMicromapBuildInputReadOnlyEXT              = VK_BUFFER_USAGE_2_MICROMAP_BUILD_INPUT_READ_ONLY_BIT_EXT,
+    eMicromapStorageEXT                         = VK_BUFFER_USAGE_2_MICROMAP_STORAGE_BIT_EXT,
+    ePreprocessBufferEXT                        = VK_BUFFER_USAGE_2_PREPROCESS_BUFFER_BIT_EXT
+  };
+  using BufferUsageFlagBits2KHR = BufferUsageFlagBits2;
+
+  using BufferUsageFlags2    = Flags<BufferUsageFlagBits2>;
+  using BufferUsageFlags2KHR = BufferUsageFlags2;
+
+  template <>
+  struct FlagTraits<BufferUsageFlagBits2>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool              isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR BufferUsageFlags2 allFlags =
+      BufferUsageFlagBits2::eTransferSrc | BufferUsageFlagBits2::eTransferDst | BufferUsageFlagBits2::eUniformTexelBuffer |
+      BufferUsageFlagBits2::eStorageTexelBuffer | BufferUsageFlagBits2::eUniformBuffer | BufferUsageFlagBits2::eStorageBuffer |
+      BufferUsageFlagBits2::eIndexBuffer | BufferUsageFlagBits2::eVertexBuffer | BufferUsageFlagBits2::eIndirectBuffer |
+      BufferUsageFlagBits2::eShaderDeviceAddress
+#if defined( VK_ENABLE_BETA_EXTENSIONS )
+      | BufferUsageFlagBits2::eExecutionGraphScratchAMDX
+#endif /*VK_ENABLE_BETA_EXTENSIONS*/
+      | BufferUsageFlagBits2::eConditionalRenderingEXT | BufferUsageFlagBits2::eShaderBindingTableKHR | BufferUsageFlagBits2::eTransformFeedbackBufferEXT |
+      BufferUsageFlagBits2::eTransformFeedbackCounterBufferEXT | BufferUsageFlagBits2::eVideoDecodeSrcKHR | BufferUsageFlagBits2::eVideoDecodeDstKHR |
+      BufferUsageFlagBits2::eVideoEncodeDstKHR | BufferUsageFlagBits2::eVideoEncodeSrcKHR | BufferUsageFlagBits2::eAccelerationStructureBuildInputReadOnlyKHR |
+      BufferUsageFlagBits2::eAccelerationStructureStorageKHR | BufferUsageFlagBits2::eSamplerDescriptorBufferEXT |
+      BufferUsageFlagBits2::eResourceDescriptorBufferEXT | BufferUsageFlagBits2::ePushDescriptorsDescriptorBufferEXT |
+      BufferUsageFlagBits2::eMicromapBuildInputReadOnlyEXT | BufferUsageFlagBits2::eMicromapStorageEXT | BufferUsageFlagBits2::ePreprocessBufferEXT;
+  };
+
+  enum class PipelineRobustnessBufferBehavior
+  {
+    eDeviceDefault       = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DEVICE_DEFAULT,
+    eDisabled            = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DISABLED,
+    eRobustBufferAccess  = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS,
+    eRobustBufferAccess2 = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_2
+  };
+  using PipelineRobustnessBufferBehaviorEXT = PipelineRobustnessBufferBehavior;
+
+  enum class PipelineRobustnessImageBehavior
+  {
+    eDeviceDefault      = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DEVICE_DEFAULT,
+    eDisabled           = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DISABLED,
+    eRobustImageAccess  = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS,
+    eRobustImageAccess2 = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2
+  };
+  using PipelineRobustnessImageBehaviorEXT = PipelineRobustnessImageBehavior;
+
+  enum class HostImageCopyFlagBits : VkHostImageCopyFlags
+  {
+    eMemcpy = VK_HOST_IMAGE_COPY_MEMCPY
+  };
+  using HostImageCopyFlagBitsEXT = HostImageCopyFlagBits;
+
+  using HostImageCopyFlags    = Flags<HostImageCopyFlagBits>;
+  using HostImageCopyFlagsEXT = HostImageCopyFlags;
+
+  template <>
+  struct FlagTraits<HostImageCopyFlagBits>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool               isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR HostImageCopyFlags allFlags  = HostImageCopyFlagBits::eMemcpy;
   };
 
   //=== VK_KHR_surface ===
@@ -4934,7 +5262,8 @@ namespace VULKAN_HPP_NAMESPACE
     eAllowEncodeParameterOptimizations = VK_VIDEO_SESSION_CREATE_ALLOW_ENCODE_PARAMETER_OPTIMIZATIONS_BIT_KHR,
     eInlineQueries                     = VK_VIDEO_SESSION_CREATE_INLINE_QUERIES_BIT_KHR,
     eAllowEncodeQuantizationDeltaMap   = VK_VIDEO_SESSION_CREATE_ALLOW_ENCODE_QUANTIZATION_DELTA_MAP_BIT_KHR,
-    eAllowEncodeEmphasisMap            = VK_VIDEO_SESSION_CREATE_ALLOW_ENCODE_EMPHASIS_MAP_BIT_KHR
+    eAllowEncodeEmphasisMap            = VK_VIDEO_SESSION_CREATE_ALLOW_ENCODE_EMPHASIS_MAP_BIT_KHR,
+    eInlineSessionParameters           = VK_VIDEO_SESSION_CREATE_INLINE_SESSION_PARAMETERS_BIT_KHR
   };
 
   using VideoSessionCreateFlagsKHR = Flags<VideoSessionCreateFlagBitsKHR>;
@@ -4946,7 +5275,7 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR VideoSessionCreateFlagsKHR allFlags =
       VideoSessionCreateFlagBitsKHR::eProtectedContent | VideoSessionCreateFlagBitsKHR::eAllowEncodeParameterOptimizations |
       VideoSessionCreateFlagBitsKHR::eInlineQueries | VideoSessionCreateFlagBitsKHR::eAllowEncodeQuantizationDeltaMap |
-      VideoSessionCreateFlagBitsKHR::eAllowEncodeEmphasisMap;
+      VideoSessionCreateFlagBitsKHR::eAllowEncodeEmphasisMap | VideoSessionCreateFlagBitsKHR::eInlineSessionParameters;
   };
 
   enum class VideoCodingControlFlagBitsKHR : VkVideoCodingControlFlagsKHR
@@ -5415,24 +5744,6 @@ namespace VULKAN_HPP_NAMESPACE
   };
 #endif /*VK_USE_PLATFORM_VI_NN*/
 
-  //=== VK_EXT_pipeline_robustness ===
-
-  enum class PipelineRobustnessBufferBehaviorEXT
-  {
-    eDeviceDefault       = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DEVICE_DEFAULT_EXT,
-    eDisabled            = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_DISABLED_EXT,
-    eRobustBufferAccess  = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_EXT,
-    eRobustBufferAccess2 = VK_PIPELINE_ROBUSTNESS_BUFFER_BEHAVIOR_ROBUST_BUFFER_ACCESS_2_EXT
-  };
-
-  enum class PipelineRobustnessImageBehaviorEXT
-  {
-    eDeviceDefault      = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DEVICE_DEFAULT_EXT,
-    eDisabled           = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_DISABLED_EXT,
-    eRobustImageAccess  = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_EXT,
-    eRobustImageAccess2 = VK_PIPELINE_ROBUSTNESS_IMAGE_BEHAVIOR_ROBUST_IMAGE_ACCESS_2_EXT
-  };
-
   //=== VK_EXT_conditional_rendering ===
 
   enum class ConditionalRenderingFlagBitsEXT : VkConditionalRenderingFlagsEXT
@@ -5867,9 +6178,11 @@ namespace VULKAN_HPP_NAMESPACE
 
   enum class GeometryTypeKHR
   {
-    eTriangles = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
-    eAabbs     = VK_GEOMETRY_TYPE_AABBS_KHR,
-    eInstances = VK_GEOMETRY_TYPE_INSTANCES_KHR
+    eTriangles            = VK_GEOMETRY_TYPE_TRIANGLES_KHR,
+    eAabbs                = VK_GEOMETRY_TYPE_AABBS_KHR,
+    eInstances            = VK_GEOMETRY_TYPE_INSTANCES_KHR,
+    eSpheresNV            = VK_GEOMETRY_TYPE_SPHERES_NV,
+    eLinearSweptSpheresNV = VK_GEOMETRY_TYPE_LINEAR_SWEPT_SPHERES_NV
   };
   using GeometryTypeNV = GeometryTypeKHR;
 
@@ -6013,17 +6326,6 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool                            isBitmask = true;
     static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCompilerControlFlagsAMD allFlags  = {};
   };
-
-  //=== VK_KHR_global_priority ===
-
-  enum class QueueGlobalPriorityKHR
-  {
-    eLow      = VK_QUEUE_GLOBAL_PRIORITY_LOW_KHR,
-    eMedium   = VK_QUEUE_GLOBAL_PRIORITY_MEDIUM_KHR,
-    eHigh     = VK_QUEUE_GLOBAL_PRIORITY_HIGH_KHR,
-    eRealtime = VK_QUEUE_GLOBAL_PRIORITY_REALTIME_KHR
-  };
-  using QueueGlobalPriorityEXT = QueueGlobalPriorityKHR;
 
   //=== VK_AMD_memory_overallocation_behavior ===
 
@@ -6214,38 +6516,6 @@ namespace VULKAN_HPP_NAMESPACE
     eInt64   = VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_INT64_KHR,
     eUint64  = VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_UINT64_KHR,
     eFloat64 = VK_PIPELINE_EXECUTABLE_STATISTIC_FORMAT_FLOAT64_KHR
-  };
-
-  //=== VK_EXT_host_image_copy ===
-
-  enum class HostImageCopyFlagBitsEXT : VkHostImageCopyFlagsEXT
-  {
-    eMemcpy = VK_HOST_IMAGE_COPY_MEMCPY_EXT
-  };
-
-  using HostImageCopyFlagsEXT = Flags<HostImageCopyFlagBitsEXT>;
-
-  template <>
-  struct FlagTraits<HostImageCopyFlagBitsEXT>
-  {
-    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                  isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR HostImageCopyFlagsEXT allFlags  = HostImageCopyFlagBitsEXT::eMemcpy;
-  };
-
-  //=== VK_KHR_map_memory2 ===
-
-  enum class MemoryUnmapFlagBitsKHR : VkMemoryUnmapFlagsKHR
-  {
-    eReserveEXT = VK_MEMORY_UNMAP_RESERVE_BIT_EXT
-  };
-
-  using MemoryUnmapFlagsKHR = Flags<MemoryUnmapFlagBitsKHR>;
-
-  template <>
-  struct FlagTraits<MemoryUnmapFlagBitsKHR>
-  {
-    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR MemoryUnmapFlagsKHR allFlags  = MemoryUnmapFlagBitsKHR::eReserveEXT;
   };
 
   //=== VK_EXT_surface_maintenance1 ===
@@ -6885,10 +7155,11 @@ namespace VULKAN_HPP_NAMESPACE
 
   enum class OpacityMicromapSpecialIndexEXT
   {
-    eFullyTransparent        = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_TRANSPARENT_EXT,
-    eFullyOpaque             = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_OPAQUE_EXT,
-    eFullyUnknownTransparent = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_UNKNOWN_TRANSPARENT_EXT,
-    eFullyUnknownOpaque      = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_UNKNOWN_OPAQUE_EXT
+    eFullyTransparent                        = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_TRANSPARENT_EXT,
+    eFullyOpaque                             = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_OPAQUE_EXT,
+    eFullyUnknownTransparent                 = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_UNKNOWN_TRANSPARENT_EXT,
+    eFullyUnknownOpaque                      = VK_OPACITY_MICROMAP_SPECIAL_INDEX_FULLY_UNKNOWN_OPAQUE_EXT,
+    eClusterGeometryDisableOpacityMicromapNV = VK_OPACITY_MICROMAP_SPECIAL_INDEX_CLUSTER_GEOMETRY_DISABLE_OPACITY_MICROMAP_NV
   };
 
 #if defined( VK_ENABLE_BETA_EXTENSIONS )
@@ -6932,6 +7203,20 @@ namespace VULKAN_HPP_NAMESPACE
   {
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool                             isBitmask = true;
     static VULKAN_HPP_CONST_OR_CONSTEXPR MemoryDecompressionMethodFlagsNV allFlags  = MemoryDecompressionMethodFlagBitsNV::eGdeflate10;
+  };
+
+  //=== VK_NV_ray_tracing_linear_swept_spheres ===
+
+  enum class RayTracingLssIndexingModeNV
+  {
+    eList       = VK_RAY_TRACING_LSS_INDEXING_MODE_LIST_NV,
+    eSuccessive = VK_RAY_TRACING_LSS_INDEXING_MODE_SUCCESSIVE_NV
+  };
+
+  enum class RayTracingLssPrimitiveEndCapsModeNV
+  {
+    eNone    = VK_RAY_TRACING_LSS_PRIMITIVE_END_CAPS_MODE_NONE_NV,
+    eChained = VK_RAY_TRACING_LSS_PRIMITIVE_END_CAPS_MODE_CHAINED_NV
   };
 
   //=== VK_EXT_subpass_merge_feedback ===
@@ -7074,134 +7359,6 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR OpticalFlowExecuteFlagsNV allFlags  = OpticalFlowExecuteFlagBitsNV::eDisableTemporalHints;
   };
 
-  //=== VK_KHR_maintenance5 ===
-
-  enum class PipelineCreateFlagBits2KHR : VkPipelineCreateFlags2KHR
-  {
-    eDisableOptimization = VK_PIPELINE_CREATE_2_DISABLE_OPTIMIZATION_BIT_KHR,
-    eAllowDerivatives    = VK_PIPELINE_CREATE_2_ALLOW_DERIVATIVES_BIT_KHR,
-    eDerivative          = VK_PIPELINE_CREATE_2_DERIVATIVE_BIT_KHR,
-#if defined( VK_ENABLE_BETA_EXTENSIONS )
-    eExecutionGraphAMDX = VK_PIPELINE_CREATE_2_EXECUTION_GRAPH_BIT_AMDX,
-#endif /*VK_ENABLE_BETA_EXTENSIONS*/
-    eEnableLegacyDitheringEXT                 = VK_PIPELINE_CREATE_2_ENABLE_LEGACY_DITHERING_BIT_EXT,
-    eViewIndexFromDeviceIndex                 = VK_PIPELINE_CREATE_2_VIEW_INDEX_FROM_DEVICE_INDEX_BIT_KHR,
-    eDispatchBase                             = VK_PIPELINE_CREATE_2_DISPATCH_BASE_BIT_KHR,
-    eDeferCompileNV                           = VK_PIPELINE_CREATE_2_DEFER_COMPILE_BIT_NV,
-    eCaptureStatistics                        = VK_PIPELINE_CREATE_2_CAPTURE_STATISTICS_BIT_KHR,
-    eCaptureInternalRepresentations           = VK_PIPELINE_CREATE_2_CAPTURE_INTERNAL_REPRESENTATIONS_BIT_KHR,
-    eFailOnPipelineCompileRequired            = VK_PIPELINE_CREATE_2_FAIL_ON_PIPELINE_COMPILE_REQUIRED_BIT_KHR,
-    eEarlyReturnOnFailure                     = VK_PIPELINE_CREATE_2_EARLY_RETURN_ON_FAILURE_BIT_KHR,
-    eLinkTimeOptimizationEXT                  = VK_PIPELINE_CREATE_2_LINK_TIME_OPTIMIZATION_BIT_EXT,
-    eRetainLinkTimeOptimizationInfoEXT        = VK_PIPELINE_CREATE_2_RETAIN_LINK_TIME_OPTIMIZATION_INFO_BIT_EXT,
-    eLibrary                                  = VK_PIPELINE_CREATE_2_LIBRARY_BIT_KHR,
-    eRayTracingSkipTriangles                  = VK_PIPELINE_CREATE_2_RAY_TRACING_SKIP_TRIANGLES_BIT_KHR,
-    eRayTracingSkipAabbs                      = VK_PIPELINE_CREATE_2_RAY_TRACING_SKIP_AABBS_BIT_KHR,
-    eRayTracingNoNullAnyHitShaders            = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_ANY_HIT_SHADERS_BIT_KHR,
-    eRayTracingNoNullClosestHitShaders        = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_CLOSEST_HIT_SHADERS_BIT_KHR,
-    eRayTracingNoNullMissShaders              = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_MISS_SHADERS_BIT_KHR,
-    eRayTracingNoNullIntersectionShaders      = VK_PIPELINE_CREATE_2_RAY_TRACING_NO_NULL_INTERSECTION_SHADERS_BIT_KHR,
-    eRayTracingShaderGroupHandleCaptureReplay = VK_PIPELINE_CREATE_2_RAY_TRACING_SHADER_GROUP_HANDLE_CAPTURE_REPLAY_BIT_KHR,
-    eIndirectBindableNV                       = VK_PIPELINE_CREATE_2_INDIRECT_BINDABLE_BIT_NV,
-    eRayTracingAllowMotionNV                  = VK_PIPELINE_CREATE_2_RAY_TRACING_ALLOW_MOTION_BIT_NV,
-    eRenderingFragmentShadingRateAttachment   = VK_PIPELINE_CREATE_2_RENDERING_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR,
-    eRenderingFragmentDensityMapAttachmentEXT = VK_PIPELINE_CREATE_2_RENDERING_FRAGMENT_DENSITY_MAP_ATTACHMENT_BIT_EXT,
-    eRayTracingOpacityMicromapEXT             = VK_PIPELINE_CREATE_2_RAY_TRACING_OPACITY_MICROMAP_BIT_EXT,
-    eColorAttachmentFeedbackLoopEXT           = VK_PIPELINE_CREATE_2_COLOR_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT,
-    eDepthStencilAttachmentFeedbackLoopEXT    = VK_PIPELINE_CREATE_2_DEPTH_STENCIL_ATTACHMENT_FEEDBACK_LOOP_BIT_EXT,
-    eNoProtectedAccessEXT                     = VK_PIPELINE_CREATE_2_NO_PROTECTED_ACCESS_BIT_EXT,
-    eProtectedAccessOnlyEXT                   = VK_PIPELINE_CREATE_2_PROTECTED_ACCESS_ONLY_BIT_EXT,
-    eRayTracingDisplacementMicromapNV         = VK_PIPELINE_CREATE_2_RAY_TRACING_DISPLACEMENT_MICROMAP_BIT_NV,
-    eDescriptorBufferEXT                      = VK_PIPELINE_CREATE_2_DESCRIPTOR_BUFFER_BIT_EXT,
-    eCaptureData                              = VK_PIPELINE_CREATE_2_CAPTURE_DATA_BIT_KHR,
-    eIndirectBindableEXT                      = VK_PIPELINE_CREATE_2_INDIRECT_BINDABLE_BIT_EXT
-  };
-
-  using PipelineCreateFlags2KHR = Flags<PipelineCreateFlagBits2KHR>;
-
-  template <>
-  struct FlagTraits<PipelineCreateFlagBits2KHR>
-  {
-    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                    isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR PipelineCreateFlags2KHR allFlags =
-      PipelineCreateFlagBits2KHR::eDisableOptimization | PipelineCreateFlagBits2KHR::eAllowDerivatives | PipelineCreateFlagBits2KHR::eDerivative
-#if defined( VK_ENABLE_BETA_EXTENSIONS )
-      | PipelineCreateFlagBits2KHR::eExecutionGraphAMDX
-#endif /*VK_ENABLE_BETA_EXTENSIONS*/
-      | PipelineCreateFlagBits2KHR::eEnableLegacyDitheringEXT | PipelineCreateFlagBits2KHR::eViewIndexFromDeviceIndex |
-      PipelineCreateFlagBits2KHR::eDispatchBase | PipelineCreateFlagBits2KHR::eDeferCompileNV | PipelineCreateFlagBits2KHR::eCaptureStatistics |
-      PipelineCreateFlagBits2KHR::eCaptureInternalRepresentations | PipelineCreateFlagBits2KHR::eFailOnPipelineCompileRequired |
-      PipelineCreateFlagBits2KHR::eEarlyReturnOnFailure | PipelineCreateFlagBits2KHR::eLinkTimeOptimizationEXT |
-      PipelineCreateFlagBits2KHR::eRetainLinkTimeOptimizationInfoEXT | PipelineCreateFlagBits2KHR::eLibrary |
-      PipelineCreateFlagBits2KHR::eRayTracingSkipTriangles | PipelineCreateFlagBits2KHR::eRayTracingSkipAabbs |
-      PipelineCreateFlagBits2KHR::eRayTracingNoNullAnyHitShaders | PipelineCreateFlagBits2KHR::eRayTracingNoNullClosestHitShaders |
-      PipelineCreateFlagBits2KHR::eRayTracingNoNullMissShaders | PipelineCreateFlagBits2KHR::eRayTracingNoNullIntersectionShaders |
-      PipelineCreateFlagBits2KHR::eRayTracingShaderGroupHandleCaptureReplay | PipelineCreateFlagBits2KHR::eIndirectBindableNV |
-      PipelineCreateFlagBits2KHR::eRayTracingAllowMotionNV | PipelineCreateFlagBits2KHR::eRenderingFragmentShadingRateAttachment |
-      PipelineCreateFlagBits2KHR::eRenderingFragmentDensityMapAttachmentEXT | PipelineCreateFlagBits2KHR::eRayTracingOpacityMicromapEXT |
-      PipelineCreateFlagBits2KHR::eColorAttachmentFeedbackLoopEXT | PipelineCreateFlagBits2KHR::eDepthStencilAttachmentFeedbackLoopEXT |
-      PipelineCreateFlagBits2KHR::eNoProtectedAccessEXT | PipelineCreateFlagBits2KHR::eProtectedAccessOnlyEXT |
-      PipelineCreateFlagBits2KHR::eRayTracingDisplacementMicromapNV | PipelineCreateFlagBits2KHR::eDescriptorBufferEXT |
-      PipelineCreateFlagBits2KHR::eCaptureData | PipelineCreateFlagBits2KHR::eIndirectBindableEXT;
-  };
-
-  enum class BufferUsageFlagBits2KHR : VkBufferUsageFlags2KHR
-  {
-    eTransferSrc        = VK_BUFFER_USAGE_2_TRANSFER_SRC_BIT_KHR,
-    eTransferDst        = VK_BUFFER_USAGE_2_TRANSFER_DST_BIT_KHR,
-    eUniformTexelBuffer = VK_BUFFER_USAGE_2_UNIFORM_TEXEL_BUFFER_BIT_KHR,
-    eStorageTexelBuffer = VK_BUFFER_USAGE_2_STORAGE_TEXEL_BUFFER_BIT_KHR,
-    eUniformBuffer      = VK_BUFFER_USAGE_2_UNIFORM_BUFFER_BIT_KHR,
-    eStorageBuffer      = VK_BUFFER_USAGE_2_STORAGE_BUFFER_BIT_KHR,
-    eIndexBuffer        = VK_BUFFER_USAGE_2_INDEX_BUFFER_BIT_KHR,
-    eVertexBuffer       = VK_BUFFER_USAGE_2_VERTEX_BUFFER_BIT_KHR,
-    eIndirectBuffer     = VK_BUFFER_USAGE_2_INDIRECT_BUFFER_BIT_KHR,
-#if defined( VK_ENABLE_BETA_EXTENSIONS )
-    eExecutionGraphScratchAMDX = VK_BUFFER_USAGE_2_EXECUTION_GRAPH_SCRATCH_BIT_AMDX,
-#endif /*VK_ENABLE_BETA_EXTENSIONS*/
-    eConditionalRenderingEXT                 = VK_BUFFER_USAGE_2_CONDITIONAL_RENDERING_BIT_EXT,
-    eShaderBindingTable                      = VK_BUFFER_USAGE_2_SHADER_BINDING_TABLE_BIT_KHR,
-    eRayTracingNV                            = VK_BUFFER_USAGE_2_RAY_TRACING_BIT_NV,
-    eTransformFeedbackBufferEXT              = VK_BUFFER_USAGE_2_TRANSFORM_FEEDBACK_BUFFER_BIT_EXT,
-    eTransformFeedbackCounterBufferEXT       = VK_BUFFER_USAGE_2_TRANSFORM_FEEDBACK_COUNTER_BUFFER_BIT_EXT,
-    eVideoDecodeSrc                          = VK_BUFFER_USAGE_2_VIDEO_DECODE_SRC_BIT_KHR,
-    eVideoDecodeDst                          = VK_BUFFER_USAGE_2_VIDEO_DECODE_DST_BIT_KHR,
-    eVideoEncodeDst                          = VK_BUFFER_USAGE_2_VIDEO_ENCODE_DST_BIT_KHR,
-    eVideoEncodeSrc                          = VK_BUFFER_USAGE_2_VIDEO_ENCODE_SRC_BIT_KHR,
-    eShaderDeviceAddress                     = VK_BUFFER_USAGE_2_SHADER_DEVICE_ADDRESS_BIT_KHR,
-    eAccelerationStructureBuildInputReadOnly = VK_BUFFER_USAGE_2_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR,
-    eAccelerationStructureStorage            = VK_BUFFER_USAGE_2_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR,
-    eSamplerDescriptorBufferEXT              = VK_BUFFER_USAGE_2_SAMPLER_DESCRIPTOR_BUFFER_BIT_EXT,
-    eResourceDescriptorBufferEXT             = VK_BUFFER_USAGE_2_RESOURCE_DESCRIPTOR_BUFFER_BIT_EXT,
-    ePushDescriptorsDescriptorBufferEXT      = VK_BUFFER_USAGE_2_PUSH_DESCRIPTORS_DESCRIPTOR_BUFFER_BIT_EXT,
-    eMicromapBuildInputReadOnlyEXT           = VK_BUFFER_USAGE_2_MICROMAP_BUILD_INPUT_READ_ONLY_BIT_EXT,
-    eMicromapStorageEXT                      = VK_BUFFER_USAGE_2_MICROMAP_STORAGE_BIT_EXT,
-    ePreprocessBufferEXT                     = VK_BUFFER_USAGE_2_PREPROCESS_BUFFER_BIT_EXT
-  };
-
-  using BufferUsageFlags2KHR = Flags<BufferUsageFlagBits2KHR>;
-
-  template <>
-  struct FlagTraits<BufferUsageFlagBits2KHR>
-  {
-    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                 isBitmask = true;
-    static VULKAN_HPP_CONST_OR_CONSTEXPR BufferUsageFlags2KHR allFlags =
-      BufferUsageFlagBits2KHR::eTransferSrc | BufferUsageFlagBits2KHR::eTransferDst | BufferUsageFlagBits2KHR::eUniformTexelBuffer |
-      BufferUsageFlagBits2KHR::eStorageTexelBuffer | BufferUsageFlagBits2KHR::eUniformBuffer | BufferUsageFlagBits2KHR::eStorageBuffer |
-      BufferUsageFlagBits2KHR::eIndexBuffer | BufferUsageFlagBits2KHR::eVertexBuffer | BufferUsageFlagBits2KHR::eIndirectBuffer
-#if defined( VK_ENABLE_BETA_EXTENSIONS )
-      | BufferUsageFlagBits2KHR::eExecutionGraphScratchAMDX
-#endif /*VK_ENABLE_BETA_EXTENSIONS*/
-      | BufferUsageFlagBits2KHR::eConditionalRenderingEXT | BufferUsageFlagBits2KHR::eShaderBindingTable |
-      BufferUsageFlagBits2KHR::eTransformFeedbackBufferEXT | BufferUsageFlagBits2KHR::eTransformFeedbackCounterBufferEXT |
-      BufferUsageFlagBits2KHR::eVideoDecodeSrc | BufferUsageFlagBits2KHR::eVideoDecodeDst | BufferUsageFlagBits2KHR::eVideoEncodeDst |
-      BufferUsageFlagBits2KHR::eVideoEncodeSrc | BufferUsageFlagBits2KHR::eShaderDeviceAddress |
-      BufferUsageFlagBits2KHR::eAccelerationStructureBuildInputReadOnly | BufferUsageFlagBits2KHR::eAccelerationStructureStorage |
-      BufferUsageFlagBits2KHR::eSamplerDescriptorBufferEXT | BufferUsageFlagBits2KHR::eResourceDescriptorBufferEXT |
-      BufferUsageFlagBits2KHR::ePushDescriptorsDescriptorBufferEXT | BufferUsageFlagBits2KHR::eMicromapBuildInputReadOnlyEXT |
-      BufferUsageFlagBits2KHR::eMicromapStorageEXT | BufferUsageFlagBits2KHR::ePreprocessBufferEXT;
-  };
-
   //=== VK_AMD_anti_lag ===
 
   enum class AntiLagModeAMD
@@ -7256,6 +7413,36 @@ namespace VULKAN_HPP_NAMESPACE
     eNone    = VK_RAY_TRACING_INVOCATION_REORDER_MODE_NONE_NV,
     eReorder = VK_RAY_TRACING_INVOCATION_REORDER_MODE_REORDER_NV
   };
+
+  //=== VK_NV_cooperative_vector ===
+
+  enum class CooperativeVectorMatrixLayoutNV
+  {
+    eRowMajor           = VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_ROW_MAJOR_NV,
+    eColumnMajor        = VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_COLUMN_MAJOR_NV,
+    eInferencingOptimal = VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_INFERENCING_OPTIMAL_NV,
+    eTrainingOptimal    = VK_COOPERATIVE_VECTOR_MATRIX_LAYOUT_TRAINING_OPTIMAL_NV
+  };
+
+  enum class ComponentTypeKHR
+  {
+    eFloat16       = VK_COMPONENT_TYPE_FLOAT16_KHR,
+    eFloat32       = VK_COMPONENT_TYPE_FLOAT32_KHR,
+    eFloat64       = VK_COMPONENT_TYPE_FLOAT64_KHR,
+    eSint8         = VK_COMPONENT_TYPE_SINT8_KHR,
+    eSint16        = VK_COMPONENT_TYPE_SINT16_KHR,
+    eSint32        = VK_COMPONENT_TYPE_SINT32_KHR,
+    eSint64        = VK_COMPONENT_TYPE_SINT64_KHR,
+    eUint8         = VK_COMPONENT_TYPE_UINT8_KHR,
+    eUint16        = VK_COMPONENT_TYPE_UINT16_KHR,
+    eUint32        = VK_COMPONENT_TYPE_UINT32_KHR,
+    eUint64        = VK_COMPONENT_TYPE_UINT64_KHR,
+    eSint8PackedNV = VK_COMPONENT_TYPE_SINT8_PACKED_NV,
+    eUint8PackedNV = VK_COMPONENT_TYPE_UINT8_PACKED_NV,
+    eFloatE4M3NV   = VK_COMPONENT_TYPE_FLOAT_E4M3_NV,
+    eFloatE5M2NV   = VK_COMPONENT_TYPE_FLOAT_E5M2_NV
+  };
+  using ComponentTypeNV = ComponentTypeKHR;
 
   //=== VK_EXT_layer_settings ===
 
@@ -7375,22 +7562,6 @@ namespace VULKAN_HPP_NAMESPACE
   };
   using ScopeNV = ScopeKHR;
 
-  enum class ComponentTypeKHR
-  {
-    eFloat16 = VK_COMPONENT_TYPE_FLOAT16_KHR,
-    eFloat32 = VK_COMPONENT_TYPE_FLOAT32_KHR,
-    eFloat64 = VK_COMPONENT_TYPE_FLOAT64_KHR,
-    eSint8   = VK_COMPONENT_TYPE_SINT8_KHR,
-    eSint16  = VK_COMPONENT_TYPE_SINT16_KHR,
-    eSint32  = VK_COMPONENT_TYPE_SINT32_KHR,
-    eSint64  = VK_COMPONENT_TYPE_SINT64_KHR,
-    eUint8   = VK_COMPONENT_TYPE_UINT8_KHR,
-    eUint16  = VK_COMPONENT_TYPE_UINT16_KHR,
-    eUint32  = VK_COMPONENT_TYPE_UINT32_KHR,
-    eUint64  = VK_COMPONENT_TYPE_UINT64_KHR
-  };
-  using ComponentTypeNV = ComponentTypeKHR;
-
   //=== VK_KHR_video_encode_av1 ===
 
   enum class VideoEncodeAV1PredictionModeKHR
@@ -7509,17 +7680,6 @@ namespace VULKAN_HPP_NAMESPACE
     eD3D12 = VK_LAYERED_DRIVER_UNDERLYING_API_D3D12_MSFT
   };
 
-  //=== VK_KHR_line_rasterization ===
-
-  enum class LineRasterizationModeKHR
-  {
-    eDefault           = VK_LINE_RASTERIZATION_MODE_DEFAULT_KHR,
-    eRectangular       = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_KHR,
-    eBresenham         = VK_LINE_RASTERIZATION_MODE_BRESENHAM_KHR,
-    eRectangularSmooth = VK_LINE_RASTERIZATION_MODE_RECTANGULAR_SMOOTH_KHR
-  };
-  using LineRasterizationModeEXT = LineRasterizationModeKHR;
-
   //=== VK_KHR_calibrated_timestamps ===
 
   enum class TimeDomainKHR
@@ -7550,6 +7710,138 @@ namespace VULKAN_HPP_NAMESPACE
     eMetal    = VK_PHYSICAL_DEVICE_LAYERED_API_METAL_KHR,
     eOpengl   = VK_PHYSICAL_DEVICE_LAYERED_API_OPENGL_KHR,
     eOpengles = VK_PHYSICAL_DEVICE_LAYERED_API_OPENGLES_KHR
+  };
+
+  //=== VK_NV_cluster_acceleration_structure ===
+
+  enum class ClusterAccelerationStructureClusterFlagBitsNV : VkClusterAccelerationStructureClusterFlagsNV
+  {
+    eAllowDisableOpacityMicromaps = VK_CLUSTER_ACCELERATION_STRUCTURE_CLUSTER_ALLOW_DISABLE_OPACITY_MICROMAPS_NV
+  };
+
+  using ClusterAccelerationStructureClusterFlagsNV = Flags<ClusterAccelerationStructureClusterFlagBitsNV>;
+
+  template <>
+  struct FlagTraits<ClusterAccelerationStructureClusterFlagBitsNV>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                                       isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ClusterAccelerationStructureClusterFlagsNV allFlags =
+      ClusterAccelerationStructureClusterFlagBitsNV::eAllowDisableOpacityMicromaps;
+  };
+
+  enum class ClusterAccelerationStructureGeometryFlagBitsNV : VkClusterAccelerationStructureGeometryFlagsNV
+  {
+    eCullDisable                 = VK_CLUSTER_ACCELERATION_STRUCTURE_GEOMETRY_CULL_DISABLE_BIT_NV,
+    eNoDuplicateAnyhitInvocation = VK_CLUSTER_ACCELERATION_STRUCTURE_GEOMETRY_NO_DUPLICATE_ANYHIT_INVOCATION_BIT_NV,
+    eOpaque                      = VK_CLUSTER_ACCELERATION_STRUCTURE_GEOMETRY_OPAQUE_BIT_NV
+  };
+
+  using ClusterAccelerationStructureGeometryFlagsNV = Flags<ClusterAccelerationStructureGeometryFlagBitsNV>;
+
+  template <>
+  struct FlagTraits<ClusterAccelerationStructureGeometryFlagBitsNV>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                                        isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ClusterAccelerationStructureGeometryFlagsNV allFlags =
+      ClusterAccelerationStructureGeometryFlagBitsNV::eCullDisable | ClusterAccelerationStructureGeometryFlagBitsNV::eNoDuplicateAnyhitInvocation |
+      ClusterAccelerationStructureGeometryFlagBitsNV::eOpaque;
+  };
+
+  enum class ClusterAccelerationStructureAddressResolutionFlagBitsNV : VkClusterAccelerationStructureAddressResolutionFlagsNV
+  {
+    eIndirectedDstImplicitData = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_DST_IMPLICIT_DATA_BIT_NV,
+    eIndirectedScratchData     = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_SCRATCH_DATA_BIT_NV,
+    eIndirectedDstAddressArray = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_DST_ADDRESS_ARRAY_BIT_NV,
+    eIndirectedDstSizesArray   = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_DST_SIZES_ARRAY_BIT_NV,
+    eIndirectedSrcInfosArray   = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_SRC_INFOS_ARRAY_BIT_NV,
+    eIndirectedSrcInfosCount   = VK_CLUSTER_ACCELERATION_STRUCTURE_ADDRESS_RESOLUTION_INDIRECTED_SRC_INFOS_COUNT_BIT_NV
+  };
+
+  using ClusterAccelerationStructureAddressResolutionFlagsNV = Flags<ClusterAccelerationStructureAddressResolutionFlagBitsNV>;
+
+  template <>
+  struct FlagTraits<ClusterAccelerationStructureAddressResolutionFlagBitsNV>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                                                 isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ClusterAccelerationStructureAddressResolutionFlagsNV allFlags =
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedDstImplicitData |
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedScratchData |
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedDstAddressArray |
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedDstSizesArray |
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedSrcInfosArray |
+      ClusterAccelerationStructureAddressResolutionFlagBitsNV::eIndirectedSrcInfosCount;
+  };
+
+  enum class ClusterAccelerationStructureIndexFormatFlagBitsNV : VkClusterAccelerationStructureIndexFormatFlagsNV
+  {
+    e8  = VK_CLUSTER_ACCELERATION_STRUCTURE_INDEX_FORMAT_8BIT_NV,
+    e16 = VK_CLUSTER_ACCELERATION_STRUCTURE_INDEX_FORMAT_16BIT_NV,
+    e32 = VK_CLUSTER_ACCELERATION_STRUCTURE_INDEX_FORMAT_32BIT_NV
+  };
+
+  using ClusterAccelerationStructureIndexFormatFlagsNV = Flags<ClusterAccelerationStructureIndexFormatFlagBitsNV>;
+
+  template <>
+  struct FlagTraits<ClusterAccelerationStructureIndexFormatFlagBitsNV>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                                           isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR ClusterAccelerationStructureIndexFormatFlagsNV allFlags  = ClusterAccelerationStructureIndexFormatFlagBitsNV::e8 |
+                                                                                                   ClusterAccelerationStructureIndexFormatFlagBitsNV::e16 |
+                                                                                                   ClusterAccelerationStructureIndexFormatFlagBitsNV::e32;
+  };
+
+  enum class ClusterAccelerationStructureTypeNV
+  {
+    eClustersBottomLevel     = VK_CLUSTER_ACCELERATION_STRUCTURE_TYPE_CLUSTERS_BOTTOM_LEVEL_NV,
+    eTriangleCluster         = VK_CLUSTER_ACCELERATION_STRUCTURE_TYPE_TRIANGLE_CLUSTER_NV,
+    eTriangleClusterTemplate = VK_CLUSTER_ACCELERATION_STRUCTURE_TYPE_TRIANGLE_CLUSTER_TEMPLATE_NV
+  };
+
+  enum class ClusterAccelerationStructureOpTypeNV
+  {
+    eMoveObjects                  = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_TYPE_MOVE_OBJECTS_NV,
+    eBuildClustersBottomLevel     = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_TYPE_BUILD_CLUSTERS_BOTTOM_LEVEL_NV,
+    eBuildTriangleCluster         = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_TYPE_BUILD_TRIANGLE_CLUSTER_NV,
+    eBuildTriangleClusterTemplate = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_TYPE_BUILD_TRIANGLE_CLUSTER_TEMPLATE_NV,
+    eInstantiateTriangleCluster   = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_TYPE_INSTANTIATE_TRIANGLE_CLUSTER_NV
+  };
+
+  enum class ClusterAccelerationStructureOpModeNV
+  {
+    eImplicitDestinations = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_MODE_IMPLICIT_DESTINATIONS_NV,
+    eExplicitDestinations = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_MODE_EXPLICIT_DESTINATIONS_NV,
+    eComputeSizes         = VK_CLUSTER_ACCELERATION_STRUCTURE_OP_MODE_COMPUTE_SIZES_NV
+  };
+
+  //=== VK_NV_partitioned_acceleration_structure ===
+
+  enum class PartitionedAccelerationStructureOpTypeNV
+  {
+    eWriteInstance             = VK_PARTITIONED_ACCELERATION_STRUCTURE_OP_TYPE_WRITE_INSTANCE_NV,
+    eUpdateInstance            = VK_PARTITIONED_ACCELERATION_STRUCTURE_OP_TYPE_UPDATE_INSTANCE_NV,
+    eWritePartitionTranslation = VK_PARTITIONED_ACCELERATION_STRUCTURE_OP_TYPE_WRITE_PARTITION_TRANSLATION_NV
+  };
+
+  enum class PartitionedAccelerationStructureInstanceFlagBitsNV : VkPartitionedAccelerationStructureInstanceFlagsNV
+  {
+    eFlagTriangleFacingCullDisable = VK_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCE_FLAG_TRIANGLE_FACING_CULL_DISABLE_BIT_NV,
+    eFlagTriangleFlipFacing        = VK_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCE_FLAG_TRIANGLE_FLIP_FACING_BIT_NV,
+    eFlagForceOpaque               = VK_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCE_FLAG_FORCE_OPAQUE_BIT_NV,
+    eFlagForceNoOpaque             = VK_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCE_FLAG_FORCE_NO_OPAQUE_BIT_NV,
+    eFlagEnableExplicitBoundingBox = VK_PARTITIONED_ACCELERATION_STRUCTURE_INSTANCE_FLAG_ENABLE_EXPLICIT_BOUNDING_BOX_NV
+  };
+
+  using PartitionedAccelerationStructureInstanceFlagsNV = Flags<PartitionedAccelerationStructureInstanceFlagBitsNV>;
+
+  template <>
+  struct FlagTraits<PartitionedAccelerationStructureInstanceFlagBitsNV>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool                                            isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR PartitionedAccelerationStructureInstanceFlagsNV allFlags =
+      PartitionedAccelerationStructureInstanceFlagBitsNV::eFlagTriangleFacingCullDisable |
+      PartitionedAccelerationStructureInstanceFlagBitsNV::eFlagTriangleFlipFacing | PartitionedAccelerationStructureInstanceFlagBitsNV::eFlagForceOpaque |
+      PartitionedAccelerationStructureInstanceFlagBitsNV::eFlagForceNoOpaque |
+      PartitionedAccelerationStructureInstanceFlagBitsNV::eFlagEnableExplicitBoundingBox;
   };
 
   //=== VK_EXT_device_generated_commands ===
@@ -7609,6 +7901,22 @@ namespace VULKAN_HPP_NAMESPACE
     static VULKAN_HPP_CONST_OR_CONSTEXPR bool                              isBitmask = true;
     static VULKAN_HPP_CONST_OR_CONSTEXPR IndirectCommandsInputModeFlagsEXT allFlags =
       IndirectCommandsInputModeFlagBitsEXT::eVulkanIndexBuffer | IndirectCommandsInputModeFlagBitsEXT::eDxgiIndexBuffer;
+  };
+
+  //=== VK_KHR_maintenance8 ===
+
+  enum class AccessFlagBits3KHR : VkAccessFlags3KHR
+  {
+    eNone = VK_ACCESS_3_NONE_KHR
+  };
+
+  using AccessFlags3KHR = Flags<AccessFlagBits3KHR>;
+
+  template <>
+  struct FlagTraits<AccessFlagBits3KHR>
+  {
+    static VULKAN_HPP_CONST_OR_CONSTEXPR bool            isBitmask = true;
+    static VULKAN_HPP_CONST_OR_CONSTEXPR AccessFlags3KHR allFlags  = AccessFlagBits3KHR::eNone;
   };
 
   //=== VK_EXT_depth_clamp_control ===

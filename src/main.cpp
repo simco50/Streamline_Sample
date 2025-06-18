@@ -72,7 +72,6 @@
 #include <taskflow/taskflow.hpp>
 #endif
 
-#include "SLWrapper.h"
 #include "RenderTargets.h"
 #include "StreamlineSample.h"
 #include "UIRenderer.h"
@@ -244,7 +243,7 @@ int main(int __argc, const char* const* __argv)
     {
         deviceParams.enableDebugRuntime = true;
     }
-#endif
+#endif // NDEBUG
 
     std::string sceneName;
     bool checkSig = true;
@@ -263,9 +262,9 @@ int main(int __argc, const char* const* __argv)
     checkSig = false;
 #endif
 
-    SLWrapper::Get().SetSLOptions(checkSig, SLlog, useNewSLSetTagAPI, allowSMSCG);
+    NVWrapper::Get().SetSLOptions(checkSig, SLlog, useNewSLSetTagAPI, allowSMSCG);
     // Initialise Streamline before creating the device and swapchain.
-    auto success = SLWrapper::Get().Initialize_preDevice(api);
+    auto success = NVWrapper::Get().Initialize_preDevice(api);
 
     if (!success)
         return 0;
@@ -276,17 +275,28 @@ int main(int __argc, const char* const* __argv)
 
     std::string windowTitle = "Streamline Sample (" + std::string(apiString) + ")";
 
+#if DONUT_WITH_VULKAN
+    if (api == nvrhi::GraphicsAPI::VULKAN)
+    {
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_NVX_binary_import");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_NVX_image_view_handle");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_buffer_device_address");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_push_descriptor");
+        deviceParams.requiredVulkanInstanceExtensions.push_back("VK_KHR_get_physical_device_properties2");
+    }
+#endif
+
     if (!deviceManager->CreateWindowDeviceAndSwapChain(deviceParams, windowTitle.c_str()))
     {
         donut::log::error("Cannot initialize a %s graphics device with the requested parameters", apiString);
         return 1;
     }
 
-    SLWrapper::Get().SetDevice_nvrhi(deviceManager->GetDevice());
+    NVWrapper::Get().SetDevice_nvrhi(deviceManager->GetDevice());
 
-    SLWrapper::Get().Initialize_postDevice();
+    NVWrapper::Get().Initialize_postDevice(deviceManager);
 
-    SLWrapper::Get().UpdateFeatureAvailable(deviceManager);
+    NVWrapper::Get().UpdateFeatureAvailable(deviceManager);
 
     {
         UIData uiData;
@@ -310,7 +320,7 @@ int main(int __argc, const char* const* __argv)
     Sleep(100);
 
     // Shut down Streamline before destroying swapchain and device.
-    SLWrapper::Get().Shutdown();
+    NVWrapper::Get().Shutdown();
 
     deviceManager->Shutdown();
 #ifdef _DEBUG

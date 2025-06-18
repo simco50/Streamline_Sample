@@ -40,6 +40,7 @@
 #include <donut/render/SkyPass.h>
 #include <donut/render/ToneMappingPasses.h>
 #include <nvrhi/nvrhi.h>
+#include "NVWrapper.h"
 
 /// <summary>
 /// This enum describes the available anti-aliasing modes. These can be toggled from the UI
@@ -181,6 +182,7 @@ public:
     // Latewarp
     bool                                Latewarp_Supported = false;
     int                                 Latewarp_active = 0;
+    bool                                Latewarp_cleanup_needed = false;
 
 };
 

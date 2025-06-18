@@ -1,8 +1,8 @@
 # ShaderMake
 
-[![Build Status](https://github.com/NVIDIAGameWorks/ShaderMake/actions/workflows/build.yml/badge.svg)](https://github.com/NVIDIAGameWorks/ShaderMake/actions/workflows/build.yml)
+[![Build Status](https://github.com/NVIDIA-RTX/ShaderMake/actions/workflows/build.yml/badge.svg)](https://github.com/NVIDIA-RTX/ShaderMake/actions/workflows/build.yml)
 
-ShaderMake is a frond-end tool for batch multi-threaded shader compilation developed by NVIDIA DevTech. It is compatible with Microsoft FXC and DXC compilers by calling them via API functions or executing them through command line.
+ShaderMake is a frond-end tool for batch multi-threaded shader compilation developed by NVIDIA DevTech. It is compatible with Microsoft FXC and DXC compilers by calling them via API functions or executing them through command line, and with [Slang](https://github.com/shader-slang/slang) through command line only.
 
 Features:
 

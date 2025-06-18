@@ -56,13 +56,14 @@ SkinnedMeshInstance::SkinnedMeshInstance(std::shared_ptr<SceneTypeFactory> scene
     skinnedMesh->skinPrototype = m_PrototypeMesh;
     skinnedMesh->name = m_PrototypeMesh->name;
     skinnedMesh->objectSpaceBounds = m_PrototypeMesh->objectSpaceBounds;
+    skinnedMesh->indexOffset = m_PrototypeMesh->indexOffset;
     skinnedMesh->totalVertices = m_PrototypeMesh->totalVertices;
     skinnedMesh->totalIndices = m_PrototypeMesh->totalIndices;
     skinnedMesh->geometries.reserve(m_PrototypeMesh->geometries.size());
     
     for (const auto& geometry : m_PrototypeMesh->geometries)
     {
-        std::shared_ptr<MeshGeometry> newGeometry = std::make_shared<MeshGeometry>();
+        std::shared_ptr<MeshGeometry> newGeometry = m_SceneTypeFactory->CreateMeshGeometry();
         *newGeometry = *geometry;
         skinnedMesh->geometries.push_back(newGeometry);
     }
@@ -527,8 +528,10 @@ void SceneGraph::RegisterLeaf(const std::shared_ptr<SceneGraphLeaf>& leaf)
         const auto& mesh = meshInstance->GetMesh();
         if (mesh)
         {
+            size_t geometryCount = 0;
             if (m_Meshes.AddRef(mesh))
             {
+                geometryCount += mesh->geometries.size();
                 m_GeometryCount += mesh->geometries.size();
                 if (OnMeshAdded)
                     OnMeshAdded(mesh);
@@ -544,11 +547,14 @@ void SceneGraph::RegisterLeaf(const std::shared_ptr<SceneGraphLeaf>& leaf)
             {
                 if (m_Meshes.AddRef(mesh->skinPrototype))
                 {
+                    geometryCount += mesh->skinPrototype->geometries.size();
                     m_GeometryCount += mesh->skinPrototype->geometries.size();
                     if (OnMeshAdded)
                         OnMeshAdded(mesh->skinPrototype);
                 }
             }
+
+            m_MaxGeometryCountPerMesh = std::max(m_MaxGeometryCountPerMesh, geometryCount);
         }
         m_MeshInstances.push_back(meshInstance);
 

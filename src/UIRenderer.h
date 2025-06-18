@@ -34,7 +34,7 @@
 #pragma once
 
 #include "StreamlineSample.h"
-#include "SLWrapper.h"
+#include "NVWrapper.h"
 #include "UIData.h"
 
 #include <donut/app/DeviceManager.h>
@@ -58,9 +58,6 @@ class UIRenderer : public ImGui_Renderer
 {
 private:
     std::shared_ptr<StreamlineSample> m_app;
-    ImFont* m_font_small = nullptr;
-    ImFont* m_font_medium = nullptr;
-    ImFont* m_font_large = nullptr;
     UIData& m_ui;
 
     bool    m_dev_view = false;
@@ -73,10 +70,6 @@ public:
         : ImGui_Renderer(deviceManager)
         , m_app(app)
         , m_ui(ui) {
-
-        m_font_small = this->LoadFont(*(app->GetRootFs()), "/media/fonts/DroidSans/DroidSans-Mono.ttf", 14.f);
-        m_font_medium = this->LoadFont(*(app->GetRootFs()), "/media/fonts/DroidSans/DroidSans-Mono.ttf", 25.f);
-        m_font_large = this->LoadFont(*(app->GetRootFs()), "/media/fonts/DroidSans/DroidSans-Mono.ttf", 150.f);
 
         // IMGUI by default writes in srgb colorSpace, but our back buffer is in rgb, we will simply pre-empt this by gamma shifting the colors.
         auto invGamma = 1.f / 2.2f;
@@ -135,7 +128,6 @@ protected:
 
         ImGui::SetNextWindowPos(ImVec2(width * 0.02f, height * 0.5f), 0, ImVec2(0.f, 0.5f));
         ImGui::SetNextWindowBgAlpha(m_ui.MouseOverUI ? 0.f : 0.2f);
-        ImGui::PushFont(m_font_small);
         ImGui::Begin("Settings", 0, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse);
 
         if (ImGui::IsAnyItemHovered() || ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x, ImGui::GetWindowPos().y + ImGui::GetWindowSize().y))) {
@@ -201,8 +193,8 @@ protected:
             ImGui::Separator();
             
             ImGui::Text("Nvidia Reflex Low Latency");
-            ImGui::SameLine();
             if (!m_ui.REFLEX_Supported) pushDisabled();
+            ImGui::SameLine();
 
             if (m_ui.DLSSG_mode != sl::DLSSGMode::eOff)
             {
@@ -215,12 +207,33 @@ protected:
             {
                 ImGui::Combo("##Reflex", (int*)&m_ui.REFLEX_Mode, "Off\0On\0On + Boost\0");
             }
+            if (m_ui.REFLEX_Mode != 0) {
+                ImGui::Indent();
+                bool useFrameCap = m_ui.REFLEX_CapedFPS != 0;
+                ImGui::Checkbox("Reflex FPS Capping", &useFrameCap);
+                if (useFrameCap) {
+                    if (m_ui.REFLEX_CapedFPS == 0) { m_ui.REFLEX_CapedFPS = 60; }
+                    ImGui::SameLine();
+                    ImGui::DragInt("##FPSReflexCap", &m_ui.REFLEX_CapedFPS, 1.f, 20, 240);
+                }
+                else {
+                    m_ui.REFLEX_CapedFPS = 0;
+                }
+                ImGui::Unindent();
+            }
+            if (!m_ui.REFLEX_Supported) popDisabled();
 
             ImGui::Text("Frame Warp");
             ImGui::SameLine();
-            if (!m_ui.Latewarp_Supported || !m_ui.REFLEX_Supported) pushDisabled();
-            ImGui::Combo("##Latewarp", &m_ui.Latewarp_active, "Off\0On\0");
-            if (!m_ui.Latewarp_Supported || !m_ui.REFLEX_Supported) popDisabled();
+            if (!m_ui.Latewarp_Supported) pushDisabled();
+            if (ImGui::Combo("##Latewarp", &m_ui.Latewarp_active, "Off\0On\0"))
+            {
+                if (!m_ui.Latewarp_active)
+                {
+                    m_ui.Latewarp_cleanup_needed = true;
+                }
+            }
+            if (!m_ui.Latewarp_Supported) popDisabled();
 
             //
             //  Generic DLSS
@@ -340,23 +353,6 @@ protected:
 
             
             if (ImGui::IsItemHovered()) m_ui.MouseOverUI = true;
-
-            if (m_ui.REFLEX_Mode != 0) {
-                ImGui::Indent();
-                bool useFrameCap = m_ui.REFLEX_CapedFPS != 0;
-                ImGui::Checkbox("Reflex FPS Capping", &useFrameCap);
-                if (useFrameCap) {
-                    if (m_ui.REFLEX_CapedFPS == 0) { m_ui.REFLEX_CapedFPS = 60; }
-                    ImGui::SameLine();
-                    ImGui::DragInt("##FPSReflexCap", &m_ui.REFLEX_CapedFPS, 1.f, 20, 240);
-                }
-                else {
-                    m_ui.REFLEX_CapedFPS = 0;
-                }
-                ImGui::Unindent();
-            }
-
-            if (!m_ui.REFLEX_Supported) popDisabled();
 
             if (m_dev_view_TopLevelDLSS == 0) popDisabled();
             ImGui::Unindent();
@@ -572,9 +568,15 @@ protected:
 
             ImGui::Text("Frame Warp");
             ImGui::SameLine();
-            if (!m_ui.Latewarp_Supported || !m_ui.REFLEX_Supported) pushDisabled();
-            ImGui::Combo("##Latewarp", &m_ui.Latewarp_active, "Off\0On\0");
-            if (!m_ui.Latewarp_Supported || !m_ui.REFLEX_Supported) popDisabled();
+            if (!m_ui.Latewarp_Supported) pushDisabled();
+            if (ImGui::Combo("##Latewarp", &m_ui.Latewarp_active, "Off\0On\0"))
+            {
+                if (!m_ui.Latewarp_active)
+                {
+                    m_ui.Latewarp_cleanup_needed = true;
+                }
+            }
+            if (!m_ui.Latewarp_Supported) popDisabled();
 
             //
             // DLSS Frame Generatioon
@@ -806,23 +808,17 @@ protected:
 
         ImGui::End();
 
-        ImGui::PopFont();
-
 
         if (m_ui.MouseOverUI) {
             ImGui::SetNextWindowPos(ImVec2(width * 0.5f, height * 0.5f), 0, ImVec2(0.5f, 0.5f));
             ImGui::Begin("SettingText", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize);
-            ImGui::PushFont(m_font_large);
             ImGui::Text("Settings Menu");
-            ImGui::PopFont();
-            ImGui::PushFont(m_font_medium);
             auto text = "sl::DLSSGMode::eOff is set.";
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
             ImGui::Text(text);
             text = "Streamline features may behave differently while your mouse is hovering the UI.";
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
             ImGui::Text(text);
-            ImGui::PopFont();
 
             ImGui::End();
         }

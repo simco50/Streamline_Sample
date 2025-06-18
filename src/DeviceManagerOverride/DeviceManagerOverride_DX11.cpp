@@ -62,10 +62,9 @@ freely, subject to the following restrictions:
 #include <nvrhi/d3d11.h>
 #include <nvrhi/validation.h>
 
+#include "../NVWrapper.h"
 #include "DeviceManagerOverride.h"
 
-// STREAMLINE
-#include "../SLWrapper.h"
 using nvrhi::RefCountPtr;
 using namespace donut::app;
 
@@ -83,18 +82,8 @@ bool DeviceManagerOverride_DX11::CreateDevice()
     bool success = DeviceManager_DX11::CreateDevice();
     if (success)
     {
-        SLWrapper::Get().ProxyToNative(m_Device, (void**)&m_Device_native);
-        SLWrapper::Get().SetDevice_raw(m_Device_native);
-    }
-    return success;
-}
-
-bool DeviceManagerOverride_DX11::CreateSwapChain()
-{
-    bool success = DeviceManager_DX11::CreateSwapChain();
-    if (success)
-    {
-        SLWrapper::Get().ProxyToNative(m_SwapChain, (void**) &m_SwapChain_native);
+        NVWrapper::Get().ProxyToNative(m_Device, (void**)&m_Device_native);
+        NVWrapper::Get().SetDevice_raw(m_Device_native);
     }
     return success;
 }
@@ -108,7 +97,6 @@ bool DeviceManagerOverride_DX11::BeginFrame()
 void DeviceManagerOverride_DX11::DestroyDeviceAndSwapChain()
 {
     DeviceManager_DX11::DestroyDeviceAndSwapChain();
-    m_SwapChain_native = nullptr;
     m_Device_native = nullptr;
 }
 

@@ -39,13 +39,10 @@ public:
 
 private:
     bool CreateDevice() final;
-    bool CreateSwapChain() final;
     void DestroyDeviceAndSwapChain() final;
     bool BeginFrame() final;
 
-    bool                                        m_UseProxySwapchain = false;
     nvrhi::RefCountPtr<ID3D11Device>            m_Device_native;
-    nvrhi::RefCountPtr<IDXGISwapChain>          m_SwapChain_native;
 };
 #endif
 
@@ -59,14 +56,11 @@ public:
 
 private:
     bool CreateDevice() final;
-    bool CreateSwapChain() final;
     void DestroyDeviceAndSwapChain() final;
     bool BeginFrame() final;
     void waitForQueue();
 
-    bool                                        m_UseProxySwapchain = false;
     nvrhi::RefCountPtr<ID3D12Device>            m_Device_native;
-    nvrhi::RefCountPtr<IDXGISwapChain3>         m_SwapChain_native;
 };
 #endif
 
@@ -75,6 +69,9 @@ donut::app::DeviceManager* CreateVK();
 class DeviceManagerOverride_VK : public DeviceManager_VK
 {
 public:
+    vk::Instance GetInstance() { return m_VulkanInstance; }
+    vk::PhysicalDevice GetPhysicalDevice() { return m_VulkanPhysicalDevice; }
+    const donut::app::DeviceCreationParameters& GetDeviceParams() { return m_DeviceParams; }
     DeviceManagerOverride_VK();
 };
 #endif

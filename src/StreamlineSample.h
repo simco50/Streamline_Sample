@@ -34,7 +34,7 @@
 
 #pragma once
 
-#include "SLWrapper.h"
+#include "NVWrapper.h"
 #include "RenderTargets.h"
 #include "UIData.h"
 #include <random>
@@ -80,6 +80,7 @@ struct ScriptingConfig {
     int Reflex_mode = -1;
     int Reflex_fpsCap = -1;
     int DLSSG_on = -1;
+    int DLSSG_numFrameToGenerate = -1;
     int DeepDVC_on = -1;
     int Latewarp_on = -1;
     int GpuLoad = -1;
@@ -117,7 +118,11 @@ struct ScriptingConfig {
             {
                 DLSSG_on = 1;
             }
-
+            else if (!strcmp(argv[i], "-DLSSG_numFrameToGenerate"))
+            {
+                int ret = sscanf(argv[++i], "%d", &DLSSG_numFrameToGenerate);
+                assert(ret == 1);
+            }
             // DeepDVC
             else if (!strcmp(argv[i], "-DeepDVC_on"))
             {
@@ -134,6 +139,11 @@ struct ScriptingConfig {
             {
                 int ret = sscanf(argv[++i], "(%d,%d,%dx%d)", &viewportExtent.left, &viewportExtent.top, &viewportExtent.width, &viewportExtent.height);
                 assert(ret == 4);
+            }
+            else if (!strcmp(argv[i], "-GpuLoad"))
+            {
+                int ret = sscanf(argv[++i], "%d", &GpuLoad);
+                assert(ret == 1);
             }
         }
     }
@@ -192,7 +202,7 @@ private:
     // For Streamline
     int2                                            m_RenderingRectSize = { 0, 0 };
     int2                                            m_DisplaySize;
-    SLWrapper::DLSSSettings                         m_RecommendedDLSSSettings;
+    NVWrapper::DLSSSettings                         m_RecommendedDLSSSettings;
     std::default_random_engine                      m_Generator;
     float                                           m_PreviousLodBias;
     affine3                                         m_CameraPreviousMatrix;

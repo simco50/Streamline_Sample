@@ -1,8 +1,10 @@
-# SL Version 2.7.2
+# SL Version 2.8.0
 
 # StreamlineSample
 
 This project combines Streamline (https://github.com/NVIDIAGameWorks/Streamline) and Donut (https://github.com/NVIDIAGameWorks/donut) to create a sample app demonstrating a Streamline integration.
+
+There is also an experimental option to enable NGX-only integration instead of using Streamline.
 
 ## Prerequisites
 
@@ -15,12 +17,26 @@ This project combines Streamline (https://github.com/NVIDIAGameWorks/Streamline)
 1. Ensure you have CMake 3.20+ and the vulkan sdk (https://vulkan.lunarg.com) on your system.
 2. Ensure that a VK-compatible dxc.exe is available in your system `PATH`.  The best way to do this is to install a recent (1.2.198.1 or newer) Vulkan SDK from https://www.vulkan.org/ and ensure that its `bin` directory is in the build machine's system `PATH`.
 3. Clone this repository, then run in the commandline: `git submodule update --init --recursive`
-4. Copy your streamline SDK contents (`bin`, `lib`, `include` and, optionally, `scripts`) into the `streamline` folder
-    4.a If you have built the Streamline SDK from source, you must run the SDK's package.bat script in order to prepare all the Streamline SDK files to be used within the sample app. After running the SDK's package script, the SDK files will be placed in `_sdk`  (unless you specified the -dir commandline option). Copy the entire contents of the `_sdk` folder to the sample app's `streamline` folder.
-    4.b If you are using a prebuilt Streamline SDK, copy the entire contents of the SDK to the sample app's `streamline` folder.
-5. Use Cmake to make the project solution (or use `make.bat`). Cmake will attempt to locate plugins by searching first the `streamline/bin/x64` and then the `streamline/bin/x64/development` folders for `sl.interposer.dll`. If found, it will load all SL plugin DLLs from the folder where `sl.interposer.dll` was located.
-6. Open the solution and build (or use `build.bat`)
-7. Run the executable (or use `run.bat`)
+4. Pick which integration path you want to use
+    * Streamline integration: 
+        1. Ensure the CMakeLists.txt's option "Use Streamline" is ON. 
+        2. Copy your streamline SDK contents (`bin`, `lib`, `include` and, optionally, `scripts`) into the `streamline` folder
+        - If you have built the Streamline SDK from source, you must run the SDK's package.bat script in order to prepare all the Streamline SDK files to be used within the sample app. After running the SDK's package script, the SDK files will be placed in `_sdk`  (unless you specified the -dir commandline option). Copy the entire contents of the `_sdk` folder to the sample app's `streamline` folder.
+        3. If you are using a prebuilt Streamline SDK, copy the entire contents of the SDK to the sample app's `streamline` folder.
+    * NGX integration (Only Latewarp and Reflex implementations are currently supported):
+        1. Set the CMakeLists.txt's option "Use Streamline" to OFF.
+        *** Please note the disclaimers in the USE_SL=OFF path of NVWrapper.h ***
+        *** If using Vulkan path with USE_SL=OFF, revert the patch to the donut/nvrhi/Vulkan-Headers repo ***
+        2. Copy the entire contents of the NGX Latewarp SDK (`nvngx_latewarp_sdk`, `symbols`) to the sample app's `ngx` folder. Any versions of the SDK will work.
+        3. Copy the entire contents of the nvapi SDK (`amd64`, `x86`) to the sample app's `nvapi` folder. This can be any of the public releases (version R560+)
+        4. Though Reflex Low Latency is crucial for best performance with Latewarp, it is not currently implemented in the NGX integration path, samples for Reflex integration can be found with the public SDK (any version)
+    * Be sure to clean cmake artifacts when changing configurations
+5. Pick features to enable
+    * Compile time feature enabling can be toggled in CMakeLists.txt
+    * STREAMLINE_FEATURE_LATEWARP and STREAMLINE_FEATURE_DLSS_FG are mutually exclusive, this will be enforced
+6. Use Cmake to make the project solution (or use `make.bat`). If using Streamline integration, Cmake will attempt to locate plugins by searching first the `streamline/bin/x64` and then the `streamline/bin/x64/development` folders for `sl.interposer.dll`. If found, it will load all SL plugin DLLs from the folder where `sl.interposer.dll` was located.
+7. Open the solution and build (or use `build.bat`)
+8. Run the executable (or use `run.bat`)
 
 ## Integration notes
 - D3D11 and D3D12 are integrated using the advanced 'hooking' mechanism by which we have two seperate native/proxy devices and swapchains that are passed into specific api calls. We statically link sl.interposer.lib instead of D3D libs.

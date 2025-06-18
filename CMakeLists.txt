@@ -45,6 +45,11 @@ option(JSONCPP_WITH_CMAKE_PACKAGE "" OFF)
 option(JSONCPP_WITH_PKGCONFIG_SUPPORT "" OFF)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/_extra_install")
 
+# Only Latewarp & PCL support whened USE_SL=OFF!
+# Additionally, if using Vulkan path with USE_SL=OFF, revert the patch to the donut/nvrhi/Vulkan-Headers repo
+# Be sure to clean the build and output directories when toggling this flag
+option(USE_SL "Use Streamline" ON)
+
 # Overide donut options
 option(STREAMLINE_FEATURE_DLSS_SR   "Include DLSS-SR dll"           ON)
 option(STREAMLINE_FEATURE_IMGUI     "Include Imgui dll"             ON)
@@ -57,6 +62,18 @@ option(STREAMLINE_FEATURE_DEEPDVC   "Include DEEPDVC dll"           ON)
 # Be sure to clean the output dir when toggling flags, as sl.dlss_g.dll will override sl.latewarp.dll
 option(STREAMLINE_FEATURE_DLSS_FG   "Include DLSS-FG dll"           ON)
 option(STREAMLINE_FEATURE_LATEWARP  "Include Latewarp dll"          OFF)
+if(STREAMLINE_FEATURE_DLSS_FG AND STREAMLINE_FEATURE_LATEWARP AND USE_SL)
+    message(WARNING "STREAMLINE_FEATURE_DLSS_FG is enabled and will override STREAMLINE_FEATURE_LATEWARP")
+endif()
+
+# We've got platform arch in some of our paths.  CMAKE_GENERATOR_PLATFORM/CMAKE_VS_PLATFORM_NAME contain a useful 
+# value when using Visual Studio generator (cmake -G), but not when using e.g. ninja
+if (CMAKE_GENERATOR_PLATFORM)
+    set(STREAMLINE_TARGET_ARCH "${CMAKE_GENERATOR_PLATFORM}")
+else()
+    set(STREAMLINE_TARGET_ARCH "x64")
+    message(WARNING "STREAMLINE_TARGET_ARCH defaulting to ${STREAMLINE_TARGET_ARCH}")
+endif()
 
 if(STREAMLINE_FEATURE_DLSS_SR)
     add_compile_definitions(STREAMLINE_FEATURE_DLSS_SR)
@@ -85,14 +102,22 @@ endif()
 
 set(STREAMLINE_INSTALL_DIR  "${PACKAGE_DIRECTORY}/_bin" CACHE STRING "Streamline Install Dir")
 
+if(USE_SL)
 # Override vulkan dll used by glfw
 add_compile_definitions(_GLFW_VULKAN_LIBRARY="sl.interposer.dll")
+endif()
 
 # Add libraries
 add_subdirectory(donut)
-add_subdirectory(streamline)
+if(USE_SL)
+    add_compile_definitions(USE_SL)
+    add_subdirectory(streamline)
+else()
+    add_subdirectory(ngx)
+endif()
 
 # Apply Patch for VK support
+if(USE_SL)
 set(success OFF)
 find_package(Git)
 message(STATUS "Found Git for patching: ${GIT_EXECUTABLE}")
@@ -111,34 +136,57 @@ endif()
 if(NOT success)
     message("WARNING: Failed to apply VKPatch.patch. It is possible patch has already been applied, otherwise Streamline may fail with Vulkan.")
 endif()
+endif()
 
 
+if(USE_SL)
 # Remove d3d linking from donut and relink with streamline
 get_target_property(TARGET_LIBRARIES donut_app LINK_LIBRARIES)
 LIST(REMOVE_ITEM TARGET_LIBRARIES d3d11)
 LIST(REMOVE_ITEM TARGET_LIBRARIES d3d12)
 LIST(REMOVE_ITEM TARGET_LIBRARIES dxgi)
 set_property(TARGET donut_app PROPERTY LINK_LIBRARIES  ${TARGET_LIBRARIES} )
+endif()
 
 # Collect Code
-file(GLOB src_header
-    "src/StreamlineSample.h"
-    "src/SLWrapper.h"
-    "src/UIRenderer.h"
-    "src/RenderTargets.h"
-    "src/UIData.h"
+if(USE_SL)
+    file(GLOB src_header
+        "src/StreamlineSample.h"
+        "src/SLWrapper.h"
+        "src/NVWrapper.h"
+        "src/UIRenderer.h"
+        "src/RenderTargets.h"
+        "src/UIData.h"
     )
-file(GLOB src_source
-    "src/main.cpp"
-    "src/StreamlineSample.cpp"
-    "src/SLWrapper.cpp"
+    file(GLOB src_source
+        "src/main.cpp"
+        "src/StreamlineSample.cpp"
+        "src/SLWrapper.cpp"
+        "src/NVWrapper.cpp"
     )
-file(GLOB src_overrides 
-    "src/DeviceManagerOverride/DeviceManagerOverride.h"
-    "src/DeviceManagerOverride/DeviceManagerOverride_DX11.cpp"
-    "src/DeviceManagerOverride/DeviceManagerOverride_DX12.cpp"
-    "src/DeviceManagerOverride/DeviceManagerOverride_VK.cpp"
+else()
+    file(GLOB src_header
+        "src/StreamlineSample.h"
+        "src/NVWrapper.h"
+        "src/NGXWrapper.h"
+        "src/UIRenderer.h"
+        "src/RenderTargets.h"
+        "src/UIData.h"
     )
+    file(GLOB src_source
+        "src/main.cpp"
+        "src/StreamlineSample.cpp"
+        "src/NGXWrapper.cpp"
+        "src/NVWrapper.cpp"
+    )
+endif()
+    file(GLOB src_overrides 
+        "src/DeviceManagerOverride/DeviceManagerOverride.h"
+        "src/DeviceManagerOverride/DeviceManagerOverride_DX11.cpp"
+        "src/DeviceManagerOverride/DeviceManagerOverride_DX12.cpp"
+        "src/DeviceManagerOverride/DeviceManagerOverride_VK.cpp"
+    )
+
 
 # Create exe and link
 add_executable(StreamlineSample WIN32 ${src_header} ${src_source} ${src_overrides})
@@ -175,7 +223,27 @@ if(AMD_AGS)
     endif ()
 endif()
 
-target_link_libraries(StreamlineSample donut_render donut_app donut_engine streamline)
+target_link_libraries(StreamlineSample donut_render donut_app donut_engine)
+if(USE_SL)
+    target_link_libraries(StreamlineSample streamline)
+else()
+    target_include_directories(StreamlineSample PUBLIC
+        donut_render donut_app donut_engine
+        ${CMAKE_CURRENT_SOURCE_DIR}/ngx
+        ${CMAKE_CURRENT_SOURCE_DIR}/ngx/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/nvapi/
+    )
+    if (${STREAMLINE_TARGET_ARCH} STREQUAL "x64")
+        target_link_libraries(StreamlineSample
+            ${CMAKE_CURRENT_SOURCE_DIR}/nvapi/amd64/nvapi64.lib
+            $<$<CONFIG:Debug>:${NGX_LIB_DIR}/x64/nvsdk_ngx_d_dbg_iterator1.lib>
+            $<$<NOT:$<CONFIG:Debug>>:${NGX_LIB_DIR}/x64/nvsdk_ngx_d.lib>
+        )
+    else()
+        message(FATAL_ERROR "Unsupported platform for NGX Latewarp: ${STREAMLINE_TARGET_ARCH}")
+    endif()
+endif()
+
 set_target_properties(StreamlineSample PROPERTIES FOLDER "Streamline Sample")
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT StreamlineSample)
 
