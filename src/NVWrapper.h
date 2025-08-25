@@ -55,6 +55,9 @@
 #include <sl_nis.h>
 #include <sl_dlss_g.h>
 #include <sl_deepdvc.h>
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+#include <sl_dlss_d.h>
+#endif
 #if STREAMLINE_FEATURE_LATEWARP
 #include <sl_latewarp.h>
 #endif
@@ -229,6 +232,7 @@ struct DLSSOptions
     Boolean useAutoExposure = Boolean::eFalse;
     Boolean alphaUpscalingEnabled = Boolean::eFalse;
 };
+
 enum class NISHDR : uint32_t
 {
     eNone,
@@ -420,6 +424,11 @@ protected:
     bool m_dlss_available = false;
     sl::DLSSOptions m_dlss_consts{};
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    bool m_dlssrr_available = false;
+    sl::DLSSDOptions m_dlssrr_consts{};
+#endif //STREAMLINE_FEATURE_DLSS_RR
+
     bool m_nis_available = false;
     sl::NISOptions m_nis_consts{};
 
@@ -485,6 +494,18 @@ public:
         nvrhi::ITexture *depth,
         nvrhi::ITexture *finalColorHudless) = 0;
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    virtual void TagResources_DLSS_RR(
+            nvrhi::ICommandList* commandList,
+            const donut::engine::IView *view,
+            nvrhi::ITexture* inputColor,
+            nvrhi::ITexture* diffuseAlbedo,
+            nvrhi::ITexture* specAlbedo,
+            nvrhi::ITexture* normalRoughness,
+            nvrhi::ITexture* specHitDistance,
+            nvrhi::ITexture* outputColor) = 0;
+#endif //STREAMLINE_FEATURE_DLSS_RR
+
     virtual void TagResources_DLSS_NIS(
         nvrhi::ICommandList *commandList,
         const donut::engine::IView *view,
@@ -511,7 +532,6 @@ public:
         sl::Extent backBufferExtent) = 0;
 
     virtual void UnTagResources_DeepDVC() = 0;
-
     struct DLSSSettings
     {
         donut::math::int2 optimalRenderSize;
@@ -519,12 +539,29 @@ public:
         donut::math::int2 maxRenderSize;
         float sharpness;
     };
+
     virtual void SetDLSSOptions(const sl::DLSSOptions consts) = 0;
     bool GetDLSSAvailable() { return m_dlss_available; }
     bool GetDLSSLastEnable() { return m_dlss_consts.mode != sl::DLSSMode::eOff; }
     virtual void QueryDLSSOptimalSettings(DLSSSettings &settings) = 0;
     virtual void EvaluateDLSS(nvrhi::ICommandList *commandList) = 0;
     virtual void CleanupDLSS(bool wfi) = 0;
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    struct DLSSDSettings
+    {
+        donut::math::int2 optimalRenderSize;
+        donut::math::int2 minRenderSize;
+        donut::math::int2 maxRenderSize;
+        float sharpness;
+    };
+    virtual void GetDLSSRROptions(const sl::DLSSDOptions& options, sl::DLSSDOptimalSettings& outSettings) = 0;
+    virtual void SetDLSSRROptions(const sl::DLSSDOptions& options) = 0;
+    bool GetDLSSRRAvailable() { return m_dlssrr_available; }
+    bool GetDLSSRRLastEnable() { return m_dlssrr_consts.mode != sl::DLSSMode::eOff; }
+    virtual void EvaluateDLSSRR(nvrhi::ICommandList *commandList) = 0;
+    virtual void CleanupDLSSRR(bool wfi) = 0;
+#endif //STREAMLINE_FEATURE_DLSS_RR
 
     virtual void SetNISOptions(const sl::NISOptions consts) = 0;
     bool GetNISAvailable() { return m_nis_available; }

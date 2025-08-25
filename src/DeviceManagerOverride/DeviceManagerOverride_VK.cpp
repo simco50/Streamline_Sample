@@ -52,6 +52,7 @@ freely, subject to the following restrictions:
 #include <string>
 #include <queue>
 #include <unordered_set>
+#include <memory>
 
 #include <nvrhi/vulkan.h>
 #include <vulkan/vulkan.hpp>

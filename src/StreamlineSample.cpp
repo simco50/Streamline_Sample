@@ -36,6 +36,10 @@
 #include <sstream>
 #include <thread>
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+#include "lighting_cb.h"
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
 #if DONUT_WITH_DX12
 #include <d3d12.h>
 #include <nvrhi/d3d12.h>
@@ -71,6 +75,9 @@ StreamlineSample::StreamlineSample(
     m_ui.NIS_Supported = NVWrapper::Get().GetNISAvailable();
     m_ui.DeepDVC_Supported = NVWrapper::Get().GetDeepDVCAvailable();
     m_ui.DLSSG_Supported = NVWrapper::Get().GetDLSSGAvailable();
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    m_ui.DLSSRR_Supported = NVWrapper::Get().GetDLSSRRAvailable();
+#endif // STREAMLINE_FEATURE_DLSS_RR
 #if STREAMLINE_FEATURE_LATEWARP
     m_ui.Latewarp_Supported = NVWrapper::Get().GetLatewarpAvailable();
 #endif
@@ -79,18 +86,23 @@ StreamlineSample::StreamlineSample(
 
     std::filesystem::path mediaPath = app::GetDirectoryWithExecutable().parent_path() / "media";
     std::filesystem::path frameworkShaderPath = app::GetDirectoryWithExecutable() / "shaders/framework" / app::GetShaderTypeName(GetDevice()->getGraphicsAPI());
+    std::filesystem::path appShaderPath = app::GetDirectoryWithExecutable() / "shaders/StreamlineSample" / app::GetShaderTypeName(GetDevice()->getGraphicsAPI());
+
 
     m_RootFs = std::make_shared<RootFileSystem>();
     m_RootFs->mount("/media", mediaPath);
     m_RootFs->mount("/shaders/donut", frameworkShaderPath);
     m_RootFs->mount("/native", nativeFS);
-
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    m_RootFs->mount("/shaders/app", appShaderPath);
+#endif // STREAMLINE_FEATURE_DLSS_RR
     m_TextureCache = std::make_shared<TextureCache>(GetDevice(), m_RootFs, nullptr);
 
     m_ShaderFactory = std::make_shared<ShaderFactory>(GetDevice(), m_RootFs, "/shaders");
     m_CommonPasses = std::make_shared<CommonRenderPasses>(GetDevice(), m_ShaderFactory);
 
     m_OpaqueDrawStrategy = std::make_shared<InstancedOpaqueDrawStrategy>();
+    m_TransparentDrawStrategy = std::make_unique<render::TransparentDrawStrategy>();
 
     const nvrhi::Format shadowMapFormats[] = {
         nvrhi::Format::D24S8,
@@ -128,6 +140,23 @@ StreamlineSample::StreamlineSample(
     else
         SetCurrentSceneName("/native/" + sceneName);
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    if(GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11)
+    {   
+        m_ConstantBuffer = GetDevice()->createBuffer(nvrhi::utils::CreateVolatileConstantBufferDesc(sizeof(LightingConstants), "LightingConstants", engine::c_MaxRenderPassConstantBufferVersions));
+        if (!CreateRayTracingPipeline(*m_ShaderFactory))
+        {
+            return;
+        }
+        m_CommandList->open();
+        CreateAccelStruct(m_CommandList);
+        m_CommandList->close();
+
+        GetDevice()->executeCommandList(m_CommandList);
+        GetDevice()->waitForIdle();
+    }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
     // Set the callbacks for Reflex
     deviceManager->m_callbacks.beforeFrame   = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_Sleep(m, f); };
     deviceManager->m_callbacks.beforeAnimate = [](donut::app::DeviceManager &m, uint32_t f){ NVWrapper::Get().ReflexCallback_SimStart(m, f); };
@@ -155,6 +184,16 @@ StreamlineSample::StreamlineSample(
         }
     }
     m_ui.DLSSPresetsReset();
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    if (m_ScriptingConfig.DLSSRR_mode != -1 && NVWrapper::Get().GetDLSSRRLastEnable()) {
+        static constexpr std::array<int, 6> ValidDLLSRRIndices{ 0,1,2,3,4,6 };
+        if (std::find(ValidDLLSRRIndices.begin(), ValidDLLSRRIndices.end(), m_ScriptingConfig.DLSSRR_mode) != ValidDLLSRRIndices.end()) { // CHECK IF THE DLSSRR_mode MODE IS VALID
+            m_ui.DLSSRR_Mode = static_cast<sl::DLSSMode>(m_ScriptingConfig.DLSSRR_mode);
+        }
+    }
+    m_ui.DLSSRRPresetsReset();
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
     if (m_ScriptingConfig.DLSSG_on != -1 && NVWrapper::Get().GetDLSSGAvailable() && NVWrapper::Get().GetReflexAvailable()) {
         if (m_ui.REFLEX_Mode == 0) 
@@ -186,8 +225,12 @@ StreamlineSample::~StreamlineSample()
 {
     NVWrapper::Get().SetViewportHandle(m_viewport);
     NVWrapper::Get().CleanupDLSS(true);
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    NVWrapper::Get().CleanupDLSSRR(true);
+#endif // STREAMLINE_FEATURE_DLSS_RR
     NVWrapper::Get().CleanupDLSSG(false);
-#if STREAMLINE_FEATURE_LATEWARP
+
+    #if STREAMLINE_FEATURE_LATEWARP
     NVWrapper::Get().CleanupLatewarp(true);
 #endif
 }
@@ -207,8 +250,8 @@ void StreamlineSample::SetLatewarpOptions()
 
     sl::ReflexCameraData cameraData{};
     // m_ViewPrevious is set at the end of Render(), so we need to use a local copy
-    std::shared_ptr<PlanarView> &planarView = std::dynamic_pointer_cast<PlanarView, IView>(m_View);
-    std::shared_ptr<PlanarView> &planarViewPrev = std::dynamic_pointer_cast<PlanarView, IView>(m_ViewPrevious);
+    std::shared_ptr<PlanarView> planarView = std::dynamic_pointer_cast<PlanarView, IView>(m_View);
+    std::shared_ptr<PlanarView> planarViewPrev = std::dynamic_pointer_cast<PlanarView, IView>(m_ViewPrevious);
     cameraData.worldToViewMatrix = make_sl_float4x4(affineToHomogeneous(planarView->GetViewMatrix()));
     cameraData.viewToClipMatrix = make_sl_float4x4(planarView->GetProjectionMatrix(false));
     static sl::float4x4 prevRenderedWorldToViewMatrix = cameraData.worldToViewMatrix;
@@ -222,6 +265,221 @@ void StreamlineSample::SetLatewarpOptions()
     prevRenderedWorldToViewMatrix = cameraData.worldToViewMatrix;
     prevRenderedViewToClipMatrix = cameraData.viewToClipMatrix;
 }
+
+// Functions of interest
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+bool StreamlineSample::CreateRayTracingPipeline(engine::ShaderFactory& shaderFactory)
+{   
+    std::vector<engine::ShaderMacro> macros = {{"REFLECT_MATERIALS", GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ? "0" : "1"}};
+
+    m_ShaderLibrary = shaderFactory.CreateShaderLibrary("app/StreamlineSample.hlsl", &macros);
+
+    if (!m_ShaderLibrary)
+        return false;
+
+    nvrhi::BindingLayoutDesc globalBindingLayoutDesc;
+    globalBindingLayoutDesc.visibility = nvrhi::ShaderType::All;
+    globalBindingLayoutDesc.registerSpace = 0;
+    globalBindingLayoutDesc.registerSpaceIsDescriptorSet = true;
+    globalBindingLayoutDesc.bindingOffsets.setUnorderedAccessViewOffset(400);
+    globalBindingLayoutDesc.bindingOffsets.setConstantBufferOffset(300);
+    globalBindingLayoutDesc.bindingOffsets.setShaderResourceOffset(200);
+
+    globalBindingLayoutDesc.bindings = {
+        { 0, nvrhi::ResourceType::VolatileConstantBuffer },
+        { 0, nvrhi::ResourceType::RayTracingAccelStruct },
+        { 1, nvrhi::ResourceType::Texture_SRV },
+        { 2, nvrhi::ResourceType::Texture_SRV },
+        { 3, nvrhi::ResourceType::Texture_SRV },
+        { 4, nvrhi::ResourceType::Texture_SRV },
+        { 5, nvrhi::ResourceType::Texture_SRV },
+        { 0, nvrhi::ResourceType::Texture_UAV },
+        { 1, nvrhi::ResourceType::Texture_UAV },
+        { 0, nvrhi::ResourceType::Sampler }
+    };
+
+    m_GlobalBindingLayout = GetDevice()->createBindingLayout(globalBindingLayoutDesc);
+
+    if (GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::VULKAN)
+    {
+        nvrhi::BindingLayoutDesc localBindingLayoutDesc;
+        localBindingLayoutDesc.visibility = nvrhi::ShaderType::All;
+        localBindingLayoutDesc.registerSpace = 1;
+        localBindingLayoutDesc.registerSpaceIsDescriptorSet = true;
+        localBindingLayoutDesc.bindings = {
+            { 0, nvrhi::ResourceType::TypedBuffer_SRV },
+            { 1, nvrhi::ResourceType::TypedBuffer_SRV },
+            { 2, nvrhi::ResourceType::TypedBuffer_SRV },
+            { 3, nvrhi::ResourceType::Texture_SRV },
+            { 4, nvrhi::ResourceType::Texture_SRV },
+            { 5, nvrhi::ResourceType::Texture_SRV },
+            { 6, nvrhi::ResourceType::Texture_SRV },
+            { 0, nvrhi::ResourceType::ConstantBuffer }
+        };
+
+        m_LocalBindingLayout = GetDevice()->createBindingLayout(localBindingLayoutDesc);
+    }
+
+    nvrhi::rt::PipelineDesc pipelineDesc;
+    pipelineDesc.globalBindingLayouts = { m_GlobalBindingLayout };
+    pipelineDesc.shaders = {
+        { "", m_ShaderLibrary->getShader("RayGen", nvrhi::ShaderType::RayGeneration), nullptr },
+        { "", m_ShaderLibrary->getShader("ShadowMiss", nvrhi::ShaderType::Miss), nullptr },
+        { "", m_ShaderLibrary->getShader("ReflectionMiss", nvrhi::ShaderType::Miss), nullptr }
+    };
+
+    pipelineDesc.hitGroups = { 
+        { 
+            "ShadowHitGroup",
+            nullptr, // closestHitShader
+            nullptr, // anyHitShader
+            nullptr, // intersectionShader
+            nullptr, // bindingLayout
+            false  // isProceduralPrimitive
+        },
+        { 
+            "ReflectionHitGroup", 
+            m_ShaderLibrary->getShader("ReflectionClosestHit", nvrhi::ShaderType::ClosestHit), 
+            nullptr, // anyHitShader
+            nullptr, // intersectionShader
+            GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ? nullptr : m_LocalBindingLayout, 
+            false // isProceduralPrimitive
+        },
+    };
+
+    pipelineDesc.maxPayloadSize = 2 * sizeof(dm::float4);
+    pipelineDesc.maxRecursionDepth = 2;
+
+    m_Pipeline = GetDevice()->createRayTracingPipeline(pipelineDesc);
+
+    m_ShaderTable = m_Pipeline->createShaderTable();
+    m_ShaderTable->setRayGenerationShader("RayGen");
+    m_ShaderTable->addMissShader("ShadowMiss");
+    m_ShaderTable->addMissShader("ReflectionMiss");
+
+    for (const auto& mesh : m_Scene->GetSceneGraph()->GetMeshes())
+    {
+        for (const auto& geometry : mesh->geometries)
+        {
+            int hitGroupIndex = m_ShaderTable->addHitGroup("ShadowHitGroup", nullptr);
+            assert(hitGroupIndex == geometry->globalGeometryIndex * 2);
+
+            if (GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN)
+            {
+                m_ShaderTable->addHitGroup("ReflectionHitGroup", nullptr);
+            }
+            else
+            {
+                nvrhi::BindingSetDesc bindingSetDesc;
+                bindingSetDesc.bindings = {
+                    nvrhi::BindingSetItem::TypedBuffer_SRV(
+                        0,
+                        mesh->buffers->indexBuffer,
+                        nvrhi::Format::R32_UINT,
+                        nvrhi::BufferRange((mesh->indexOffset + geometry->indexOffsetInMesh) * sizeof(uint32_t), geometry->numIndices * sizeof(uint32_t))),
+                    nvrhi::BindingSetItem::TypedBuffer_SRV(
+                        1,
+                        mesh->buffers->vertexBuffer,
+                        nvrhi::Format::RG32_FLOAT,
+                        nvrhi::BufferRange((mesh->vertexOffset + geometry->vertexOffsetInMesh) * sizeof(dm::float2) + mesh->buffers->getVertexBufferRange(engine::VertexAttribute::TexCoord1).byteOffset, geometry->numVertices * sizeof(dm::float2))),
+                    nvrhi::BindingSetItem::TypedBuffer_SRV(
+                        2,
+                        mesh->buffers->vertexBuffer,
+                        nvrhi::Format::RGBA8_SNORM,
+                        nvrhi::BufferRange((mesh->vertexOffset + geometry->vertexOffsetInMesh) * sizeof(uint32_t) + mesh->buffers->getVertexBufferRange(engine::VertexAttribute::Normal).byteOffset, geometry->numVertices * sizeof(uint32_t))),
+                    nvrhi::BindingSetItem::Texture_SRV(
+                        3,
+                        geometry->material->baseOrDiffuseTexture && geometry->material->baseOrDiffuseTexture->texture ? geometry->material->baseOrDiffuseTexture->texture : m_CommonPasses->m_WhiteTexture),
+                    nvrhi::BindingSetItem::Texture_SRV(
+                        4,
+                        geometry->material->metalRoughOrSpecularTexture && geometry->material->metalRoughOrSpecularTexture->texture ? geometry->material->metalRoughOrSpecularTexture->texture : m_CommonPasses->m_WhiteTexture),
+                    nvrhi::BindingSetItem::Texture_SRV(
+                        5,
+                        geometry->material->normalTexture && geometry->material->normalTexture->texture ? geometry->material->normalTexture->texture : m_CommonPasses->m_BlackTexture),
+                    nvrhi::BindingSetItem::Texture_SRV(
+                        6,
+                        geometry->material->occlusionTexture && geometry->material->occlusionTexture->texture ? geometry->material->occlusionTexture->texture : m_CommonPasses->m_WhiteTexture),
+                    nvrhi::BindingSetItem::ConstantBuffer(
+                        0,
+                        geometry->material->materialConstants)
+                };
+
+                nvrhi::BindingSetHandle localBindingSet = GetDevice()->createBindingSet(bindingSetDesc, m_LocalBindingLayout);
+                m_ShaderTable->addHitGroup("ReflectionHitGroup", localBindingSet);
+            }
+        }
+    }
+
+    return true;
+}
+
+void StreamlineSample::CreateAccelStruct(nvrhi::ICommandList* commandList)
+{
+
+    for (const auto& mesh : m_Scene->GetSceneGraph()->GetMeshes())
+    {
+        nvrhi::rt::AccelStructDesc blasDesc;
+        blasDesc.setBuildFlags(nvrhi::rt::AccelStructBuildFlags::AllowUpdate);
+        blasDesc.isTopLevel = false;
+
+        for (const auto& geometry : mesh->geometries)
+        {
+            nvrhi::rt::GeometryDesc geometryDesc;
+            auto& triangles = geometryDesc.geometryData.triangles;
+            triangles.indexBuffer = mesh->buffers->indexBuffer;
+            triangles.indexOffset = (mesh->indexOffset + geometry->indexOffsetInMesh) * sizeof(uint32_t);
+            triangles.indexFormat = nvrhi::Format::R32_UINT;
+            triangles.indexCount = geometry->numIndices;
+            triangles.vertexBuffer = mesh->buffers->vertexBuffer;
+            triangles.vertexOffset = (mesh->vertexOffset + geometry->vertexOffsetInMesh) * sizeof(dm::float3) + mesh->buffers->getVertexBufferRange(engine::VertexAttribute::Position).byteOffset;
+            triangles.vertexFormat = nvrhi::Format::RGB32_FLOAT;
+            triangles.vertexStride = sizeof(dm::float3);
+            triangles.vertexCount = geometry->numVertices;
+            geometryDesc.geometryType = nvrhi::rt::GeometryType::Triangles;
+            geometryDesc.flags = nvrhi::rt::GeometryFlags::Opaque;
+            blasDesc.bottomLevelGeometries.push_back(geometryDesc);
+            }
+
+        if (!mesh->accelStruct)
+            {
+                // Create new BLAS if it doesn't exist
+                mesh->accelStruct = GetDevice()->createAccelStruct(blasDesc);
+            }
+
+        // Build or update the existing BLAS
+        nvrhi::utils::BuildBottomLevelAccelStruct(commandList, mesh->accelStruct, blasDesc);
+
+    }
+
+    // Update TLAS every frame
+    nvrhi::rt::AccelStructDesc tlasDesc;
+    tlasDesc.setBuildFlags(nvrhi::rt::AccelStructBuildFlags::AllowUpdate);
+    tlasDesc.isTopLevel = true;
+
+    std::vector<nvrhi::rt::InstanceDesc> instances;
+    for (const auto& instance : m_Scene->GetSceneGraph()->GetMeshInstances())
+    {
+        const auto& mesh = instance->GetMesh();
+
+        nvrhi::rt::InstanceDesc instanceDesc;
+        instanceDesc.bottomLevelAS = mesh->accelStruct;
+        assert(instanceDesc.bottomLevelAS);
+        instanceDesc.instanceMask = 1;
+        instanceDesc.instanceContributionToHitGroupIndex = mesh->geometries[0]->globalGeometryIndex * 2;
+
+        auto node = instance->GetNode();
+        assert(node);
+        dm::affineToColumnMajor(node->GetLocalToWorldTransformFloat(), instanceDesc.transform);
+
+        instances.push_back(instanceDesc);
+    }
+
+    tlasDesc.topLevelMaxInstances = instances.size();
+    m_TopLevelAS = GetDevice()->createAccelStruct(tlasDesc);
+    commandList->buildTopLevelAccelStruct(m_TopLevelAS, instances.data(), instances.size());
+}
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
 bool StreamlineSample::SetupView()
 {
@@ -639,6 +897,15 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_ui.AAMode = AntiAliasingMode::TEMPORAL;
     }
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR 
+    //Make sure DLSSRR is available
+    if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff && !NVWrapper::Get().GetDLSSRRAvailable())
+    {
+        log::warning("DLSS RR is not available");
+        m_ui.DLSSRR_Mode = sl::DLSSMode::eOff;
+    }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
     // Reset DLSS vars if we stop using it
     if (m_ui.DLSS_Last_AA == AntiAliasingMode::DLSS && m_ui.AAMode != AntiAliasingMode::DLSS) {
         DLSS_Last_Mode = sl::DLSSMode::eOff;
@@ -757,6 +1024,30 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_RenderingRectSize = m_DisplaySize;
     }
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR 
+    // If we are using DLSS set its constants
+    if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff)
+    {   
+
+        m_RayReconstructionOptions.dlaaPreset = m_ui.DLSSRR_presets[static_cast<int>(sl::DLSSMode::eDLAA)];
+        m_RayReconstructionOptions.qualityPreset = m_ui.DLSSRR_presets[static_cast<int>(sl::DLSSMode::eMaxQuality)];
+        m_RayReconstructionOptions.balancedPreset = m_ui.DLSSRR_presets[static_cast<int>(sl::DLSSMode::eBalanced)];
+        m_RayReconstructionOptions.performancePreset = m_ui.DLSSRR_presets[static_cast<int>(sl::DLSSMode::eMaxPerformance)];
+        m_RayReconstructionOptions.ultraPerformancePreset = m_ui.DLSSRR_presets[static_cast<int>(sl::DLSSMode::eUltraPerformance)];
+
+        m_RayReconstructionOptions.mode = m_ui.DLSSRR_Mode;
+        m_RayReconstructionOptions.outputWidth = m_DisplaySize.x;
+        m_RayReconstructionOptions.outputHeight = m_DisplaySize.y;
+        m_RayReconstructionOptions.colorBuffersHDR = sl::Boolean::eTrue;
+        m_RayReconstructionOptions.normalRoughnessMode = sl::DLSSDNormalRoughnessMode::ePacked;
+
+        NVWrapper::Get().GetDLSSRROptions(m_RayReconstructionOptions, m_RayReconstructionSettings);
+        m_RenderingRectSize = {int(m_RayReconstructionSettings.optimalRenderWidth), int(m_RayReconstructionSettings.optimalRenderHeight)};
+        
+    }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
+
     // PASS SETUP
     {
         bool needNewPasses = false;
@@ -765,14 +1056,44 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         bool useFullSizeRenderingBuffers = m_ui.DLSS_always_use_extents || (m_ui.DLSS_Resolution_Mode == RenderingResolutionMode::DYNAMIC);
 
         donut::math::int2 renderSize = useFullSizeRenderingBuffers ? m_DisplaySize : m_RenderingRectSize;
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+        if(m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) renderSize = {int(m_RayReconstructionSettings.optimalRenderWidth), int(m_RayReconstructionSettings.optimalRenderHeight)};
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
-        if (!m_RenderTargets || m_RenderTargets->IsUpdateRequired(renderSize, m_DisplaySize))
+        bool IsUpdateRequired = m_RenderTargets && m_RenderTargets->IsUpdateRequired(renderSize, m_DisplaySize);
+        if (!m_RenderTargets || IsUpdateRequired)
         {
             m_BindingCache.Clear();
-
             m_RenderTargets = nullptr;
             m_RenderTargets = std::make_unique<RenderTargets>();
             m_RenderTargets->Init(GetDevice(), renderSize, m_DisplaySize, framebuffer->getDesc().colorAttachments[0].texture->getDesc().format);
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            if(GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11)
+            {
+                nvrhi::BindingSetDesc bindingSetDesc;
+                bindingSetDesc.bindings = {
+                    nvrhi::BindingSetItem::ConstantBuffer(0, m_ConstantBuffer),
+                    nvrhi::BindingSetItem::RayTracingAccelStruct(0, m_TopLevelAS),
+                    nvrhi::BindingSetItem::Texture_SRV(1, m_RenderTargets->Depth),
+                    nvrhi::BindingSetItem::Texture_SRV(2, m_RenderTargets->GBufferDiffuse),
+                    nvrhi::BindingSetItem::Texture_SRV(3, m_RenderTargets->GBufferSpecular),
+                    nvrhi::BindingSetItem::Texture_SRV(4, m_RenderTargets->GBufferNormals),
+                    nvrhi::BindingSetItem::Texture_SRV(5, m_RenderTargets->GBufferEmissive),
+                    nvrhi::BindingSetItem::Texture_UAV(0, m_RenderTargets->HdrColor),
+                    nvrhi::BindingSetItem::Texture_UAV(1, m_RenderTargets->SpecHitDistance),
+                    nvrhi::BindingSetItem::Sampler(0, m_CommonPasses->m_LinearWrapSampler)
+                };
+
+                m_BindingSet = GetDevice()->createBindingSet(bindingSetDesc, m_GlobalBindingLayout);
+            }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
+            if (IsUpdateRequired && m_ui.NIS_Mode != sl::NISMode::eOff)
+            {
+                // input and output resources to NIS are part of the render targets.
+                // Since render targets are destroyed and recreated above, we need to clean up the plugin to flash stale information.
+                NVWrapper::Get().CleanupNIS(false);
+            }
 
             needNewPasses = true;
         }
@@ -856,14 +1177,11 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         auto start = std::chrono::high_resolution_clock::now();
         while ((std::chrono::high_resolution_clock::now() - start).count() / 1e6 < m_ui.CpuLoad);
     }
-
-    // Deffered Shading
-    {
-        // DO GBUFFER
-        GBufferFillPass::Context gbufferContext;
-
-        for (auto i = 0; i <= m_ui.GpuLoad; ++i) {
-            RenderCompositeView(m_CommandList,
+    
+    // GBuffer render
+    m_RenderTargets->Clear(m_CommandList);
+    donut::render::GBufferFillPass::Context gbufferContext;
+    RenderCompositeView(m_CommandList,
                 m_View.get(), m_ViewPrevious.get(),
                 *m_RenderTargets->GBufferFramebuffer,
                 m_Scene->GetSceneGraph()->GetRootNode(),
@@ -871,7 +1189,47 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
                 *m_GBufferPass,
                 gbufferContext,
                 "GBufferFill");
-        }
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    if(m_ui.RayTracing_Mode && GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11)
+    {   
+        // Set lighting constants
+        LightingConstants constants = {};
+        constants.ambientColor = dm::float4(0.037f);
+        m_View->FillPlanarViewConstants(constants.view);
+        m_SunLight->FillLightConstants(constants.light);
+        constants.frameIndex = GetFrameIndex();
+        m_CommandList->writeBuffer(m_ConstantBuffer, &constants, sizeof(constants));
+
+        // Setup ray tracing state
+        nvrhi::rt::State state;
+        state.shaderTable = m_ShaderTable;
+        state.bindings = { m_BindingSet };
+        m_CommandList->setRayTracingState(state);
+
+        CreateAccelStruct(m_CommandList);
+
+        // Dispatch rays
+        nvrhi::rt::DispatchRaysArguments args;
+        args.width = backbufferWidth;
+        args.height = backbufferHeight;
+        m_CommandList->dispatchRays(args);
+
+        if (m_ui.EnableProceduralSky)
+        m_SkyPass->Render(m_CommandList, *m_View, *m_SunLight, m_ui.SkyParams);
+
+        // DO BLOOM
+        if (m_ui.EnableBloom) m_BloomPass->Render(m_CommandList, m_RenderTargets->HdrFramebuffer, *m_View, m_RenderTargets->HdrColor, m_ui.BloomSigma, m_ui.BloomAlpha);
+
+        // Render sky (use default params)
+        donut::render::SkyParameters skyParams{};
+        skyParams.maxLightRadiance = 0.75f;
+        m_SkyPass->Render(m_CommandList, *m_View, *m_SunLight, skyParams);
+    }
+
+    else
+#endif // STREAMLINE_FEATURE_DLSS_RR
+    {
+        // Deferred Shading
 
         // DO MOTION VECTORS
         if (m_PreviousViewsValid) m_TemporalAntiAliasingPass->RenderMotionVectors(m_CommandList, *m_View, *m_ViewPrevious);
@@ -884,7 +1242,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
             ambientOcclusionTarget = m_RenderTargets->AmbientOcclusion;
         }
 
-        // DO DEFFERED
+        // DO DEFERRED
         DeferredLightingPass::Inputs deferredInputs;
         deferredInputs.SetGBuffer(*m_RenderTargets);
         deferredInputs.ambientOcclusion = m_ui.EnableSsao ? m_RenderTargets->AmbientOcclusion : nullptr;
@@ -895,7 +1253,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
 
         m_DeferredLightingPass->Render(m_CommandList, *m_View, deferredInputs);
     }
-
+    
     if (m_ui.EnableProceduralSky)
         m_SkyPass->Render(m_CommandList, *m_View, *m_SunLight, m_ui.SkyParams);
 
@@ -948,6 +1306,20 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_RenderTargets->Depth,
         m_RenderTargets->PreUIColor);
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    // Set feature options
+    if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff)
+    {   
+        dm::float4x4 worldToView = affineToHomogeneous(m_FirstPersonCamera.GetWorldToViewMatrix());
+        m_RayReconstructionOptions.worldToCameraView = make_sl_float4x4(worldToView);
+        m_RayReconstructionOptions.cameraViewToWorld = make_sl_float4x4(inverse(worldToView));
+        NVWrapper::Get().SetDLSSRROptions(m_RayReconstructionOptions);
+        m_ui.DLSS_Mode = sl::DLSSMode::eOff;
+        
+    }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
+    
     // ANTI-ALIASING
 
     // TAG STREAMLINE RESOURCES
@@ -984,6 +1356,23 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         m_CommonPasses->BlitTexture(m_CommandList, m_RenderTargets->AAResolvedFramebuffer->GetFramebuffer(*m_View), m_RenderTargets->HdrColor, &m_BindingCache);
         m_PreviousViewsValid = false;
     }
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff)
+    {   
+        NVWrapper::Get().TagResources_DLSS_RR(
+        m_CommandList,
+        m_View->GetChildView(ViewType::PLANAR, 0),
+        m_RenderTargets->HdrColor,
+        m_RenderTargets->GBufferDiffuseRR,
+        m_RenderTargets->GBufferSpecularRR,
+        m_RenderTargets->GBufferNormalsRR,
+        m_RenderTargets->SpecHitDistance,
+        m_RenderTargets->AAResolvedColor);
+
+        NVWrapper::Get().EvaluateDLSSRR(m_CommandList);
+    }
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
     //DO TONEMAPPING
     nvrhi::ITexture* texToDisplay;

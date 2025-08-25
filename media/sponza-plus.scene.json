@@ -1,7 +1,8 @@
 {
 	"models": [
 		"glTF-Sample-Models/2.0/Sponza/glTF/Sponza.gltf",
-		"glTF-Sample-Models/2.0/BrainStem/glTF/BrainStem.gltf"
+		"glTF-Sample-Models/2.0/BrainStem/glTF/BrainStem.gltf",
+		"MetalSphere/MetalSphere.gltf"
 	],
 	"graph": [
 		{
@@ -16,9 +17,9 @@
 			"rotation": [0, 0.7071068, 0, -0.7071068]
 		},
 		{
-			"name": "DancingRobot2",
-			"model": 1,
-			"translation": [-5, 0, -0.5],
+			"name": "MetalSphere",
+			"model": 2,
+			"translation": [-5, 1, -0.5],
 			"scaling": 1.2,
 			"rotation": [0, 0.7071068, 0, 0.7071068]
 		}

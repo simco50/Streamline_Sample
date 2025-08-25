@@ -77,6 +77,7 @@ struct ScriptingConfig {
     // Control at start behavior
     int maxFrames = -1;
     int DLSS_mode = -1;
+    int DLSSRR_mode = -1;
     int Reflex_mode = -1;
     int Reflex_fpsCap = -1;
     int DLSSG_on = -1;
@@ -101,6 +102,12 @@ struct ScriptingConfig {
             else if (!strcmp(argv[i], "-DLSS_mode"))
             {
                 DLSS_mode = std::stoi(argv[++i]);
+            }
+
+            // DLSSRR
+            else if (!strcmp(argv[i], "-DLSSRR_mode"))
+            {
+                DLSSRR_mode = std::stoi(argv[++i]);
             }
 
             // Reflex
@@ -179,6 +186,7 @@ private:
     std::unique_ptr<BloomPass>                      m_BloomPass;
     std::unique_ptr<ToneMappingPass>                m_ToneMappingPass;
     std::unique_ptr<SsaoPass>                       m_SsaoPass;
+    std::shared_ptr<TransparentDrawStrategy>        m_TransparentDrawStrategy;
 
     // RenderTargets
     std::unique_ptr<RenderTargets>                  m_RenderTargets;
@@ -193,6 +201,23 @@ private:
     FirstPersonCamera                               m_FirstPersonCamera;
     float                                           m_CameraVerticalFov = 60.f;
 
+    // Ray Tracing
+    static constexpr size_t                         JITTER_SEQUENCE_LENGTH = 16;
+
+    nvrhi::ShaderLibraryHandle                      m_ShaderLibrary;
+    nvrhi::rt::PipelineHandle                       m_Pipeline;
+    nvrhi::rt::ShaderTableHandle                    m_ShaderTable;
+    nvrhi::BindingLayoutHandle                      m_GlobalBindingLayout;
+    nvrhi::BindingLayoutHandle                      m_LocalBindingLayout;
+    nvrhi::BindingSetHandle                         m_BindingSet;
+
+    nvrhi::rt::AccelStructHandle                    m_BottomLevelAS;
+    nvrhi::rt::AccelStructHandle                    m_TopLevelAS;
+
+    nvrhi::BufferHandle                             m_ConstantBuffer;
+    bool                                            CreateRayTracingPipeline(donut::engine::ShaderFactory& shaderFactory);
+    void                                            CreateAccelStruct(nvrhi::ICommandList* commandList);
+
     // UI
     UIData& m_ui;
     donut::math::int2                               m_DLSS_Last_DisplaySize = { 0,0 };
@@ -203,6 +228,10 @@ private:
     int2                                            m_RenderingRectSize = { 0, 0 };
     int2                                            m_DisplaySize;
     NVWrapper::DLSSSettings                         m_RecommendedDLSSSettings;
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    sl::DLSSDOptions                                m_RayReconstructionOptions;
+    sl::DLSSDOptimalSettings                        m_RayReconstructionSettings;
+#endif //STREAMLINE_FEATURE_DLSS_RR
     std::default_random_engine                      m_Generator;
     float                                           m_PreviousLodBias;
     affine3                                         m_CameraPreviousMatrix;
@@ -215,7 +244,9 @@ private:
     // Scripting Behavior
     ScriptingConfig                                 m_ScriptingConfig;
 
-    sl::DLSSMode DLSS_Last_Mode = sl::DLSSMode::eOff;
+    sl::DLSSMode                                    DLSS_Last_Mode = sl::DLSSMode::eOff;
+    sl::DLSSMode                                    DLSSRR_Last_Mode = sl::DLSSMode::eOff;
+    donut::math::int2                               m_DLSSRR_Last_DisplaySize = { 0,0 };
 
 public:
     StreamlineSample(DeviceManager* deviceManager, sl::ViewportHandle vpHandle, UIData& ui, const std::string& sceneName, ScriptingConfig scriptingConfig);

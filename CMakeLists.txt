@@ -57,6 +57,11 @@ option(STREAMLINE_FEATURE_NVPERF    "Include NSight Perf SDK dll"   ON)
 option(STREAMLINE_FEATURE_REFLEX    "Include Reflex dll"            ON)
 option(STREAMLINE_FEATURE_NIS       "Include NIS dll"               ON)
 option(STREAMLINE_FEATURE_DEEPDVC   "Include DEEPDVC dll"           ON)
+if(USE_SL)
+    option(STREAMLINE_FEATURE_DLSS_RR   "Include DLSS-RR dll"           ON)
+else()
+    option(STREAMLINE_FEATURE_DLSS_RR   "Include DLSS-RR dll"           OFF)
+endif()
 
 # DLSS-FG will take precedence over Latewarp if both are enabled at the same time
 # Be sure to clean the output dir when toggling flags, as sl.dlss_g.dll will override sl.latewarp.dll
@@ -99,6 +104,9 @@ endif()
 if(STREAMLINE_FEATURE_LATEWARP)
     add_compile_definitions(STREAMLINE_FEATURE_LATEWARP)
 endif()
+if (STREAMLINE_FEATURE_DLSS_RR)
+    add_compile_definitions(STREAMLINE_FEATURE_DLSS_RR)
+endif()
 
 set(STREAMLINE_INSTALL_DIR  "${PACKAGE_DIRECTORY}/_bin" CACHE STRING "Streamline Install Dir")
 
@@ -115,29 +123,6 @@ if(USE_SL)
 else()
     add_subdirectory(ngx)
 endif()
-
-# Apply Patch for VK support
-if(USE_SL)
-set(success OFF)
-find_package(Git)
-message(STATUS "Found Git for patching: ${GIT_EXECUTABLE}")
-if(Git_FOUND)
-    set(status 1)
-    execute_process(
-        COMMAND ${GIT_EXECUTABLE} apply --whitespace=fix ${CMAKE_SOURCE_DIR}/VKpatch.patch 
-        RESULT_VARIABLE status
-        ERROR_QUIET
-        )
-    if(${status} EQUAL "0")
-        set(success ON)
-        message(STATUS "Successfully applied VKPatch.patch")
-    endif()
-endif()
-if(NOT success)
-    message("WARNING: Failed to apply VKPatch.patch. It is possible patch has already been applied, otherwise Streamline may fail with Vulkan.")
-endif()
-endif()
-
 
 if(USE_SL)
 # Remove d3d linking from donut and relink with streamline
@@ -164,6 +149,17 @@ if(USE_SL)
         "src/SLWrapper.cpp"
         "src/NVWrapper.cpp"
     )
+    # Find all HLSL files in the src/shaders directory
+    set(folder "StreamlineSampleFolder")
+    file(GLOB SHADERS "src/*.hlsl")
+    # Custom shader compilation command
+    donut_compile_shaders_all_platforms(
+        TARGET StreamlineSample_shaders
+        CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/src/shaders.cfg
+        FOLDER ${folder}
+        OUTPUT_BASE ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/shaders/StreamlineSample
+    )
+
 else()
     file(GLOB src_header
         "src/StreamlineSample.h"
@@ -246,11 +242,14 @@ endif()
 
 set_target_properties(StreamlineSample PROPERTIES FOLDER "Streamline Sample")
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT StreamlineSample)
-
+if (USE_SL)
+add_dependencies(StreamlineSample StreamlineSample_shaders)
+endif()
 # Install
 install(TARGETS StreamlineSample DESTINATION "${PACKAGE_DIRECTORY}/_bin")
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/_bin/shaders" DESTINATION "${PACKAGE_DIRECTORY}/_bin")
 install(FILES "${CMAKE_SOURCE_DIR}/media/sponza-plus.scene.json" DESTINATION "${PACKAGE_DIRECTORY}/media")
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/media/MetalSphere" DESTINATION "${PACKAGE_DIRECTORY}/media")
 install(FILES "${CMAKE_SOURCE_DIR}/media/fonts/DroidSans/DroidSans-Mono.ttf" DESTINATION "${PACKAGE_DIRECTORY}/media/fonts/DroidSans")
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/media/glTF-Sample-Models/2.0/Sponza" DESTINATION "${PACKAGE_DIRECTORY}/media/glTF-Sample-Models/2.0")
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/media/glTF-Sample-Models/2.0/BrainStem" DESTINATION "${PACKAGE_DIRECTORY}/media/glTF-Sample-Models/2.0")

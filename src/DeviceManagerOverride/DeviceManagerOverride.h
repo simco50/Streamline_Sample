@@ -23,8 +23,12 @@
 #pragma once
 
 #include <donut/app/DeviceManager.h>
+#if DONUT_WITH_DX11
 #include <donut/app/DeviceManager_DX11.h>
+#endif
+#if DONUT_WITH_DX12
 #include <donut/app/DeviceManager_DX12.h>
+#endif
 #if DONUT_WITH_VULKAN
 #include <donut/app/DeviceManager_VK.h>
 #endif

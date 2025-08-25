@@ -114,6 +114,18 @@ public:
         nvrhi::ITexture* depth,
         nvrhi::ITexture* finalColorHudless) override;
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    void SLWrapper::TagResources_DLSS_RR(
+        nvrhi::ICommandList * commandList,
+        const donut::engine::IView* view,
+        nvrhi::ITexture* inputColor,
+        nvrhi::ITexture* diffuseAlbedo,
+        nvrhi::ITexture* specAlbedo,
+        nvrhi::ITexture* normalRoughness,
+        nvrhi::ITexture* specHitDistance,
+        nvrhi::ITexture* outputColor) override;
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
     void TagResources_DLSS_NIS(
         nvrhi::ICommandList* commandList,
         const donut::engine::IView* view,
@@ -144,6 +156,13 @@ public:
     void QueryDLSSOptimalSettings(DLSSSettings& settings) override;
     void EvaluateDLSS(nvrhi::ICommandList* commandList) override;
     void CleanupDLSS(bool wfi) override;
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    void GetDLSSRROptions(const sl::DLSSDOptions& options, sl::DLSSDOptimalSettings& outSettings) override;
+    void SetDLSSRROptions(const sl::DLSSDOptions& options) override;
+    void EvaluateDLSSRR(nvrhi::ICommandList* commandList) override;
+    void CleanupDLSSRR(bool wfi) override;
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
     void SetNISOptions(const sl::NISOptions consts) override;
     void EvaluateNIS(nvrhi::ICommandList* commandList) override;

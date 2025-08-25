@@ -1,4 +1,4 @@
-# SL Version 2.8.0
+# SL Version 2.9.0
 
 # StreamlineSample
 
@@ -10,7 +10,7 @@ There is also an experimental option to enable NGX-only integration instead of u
 
 - CMake 3.20+
 - Windows SDK 10.0.22000+
-- Vulkan SDK
+- Vulkan SDK 1.2.198.1+
 
 ## To get this project setup:
 
@@ -19,12 +19,11 @@ There is also an experimental option to enable NGX-only integration instead of u
 3. Clone this repository, then run in the commandline: `git submodule update --init --recursive`
 4. Pick which integration path you want to use
     * Streamline integration: 
-        1. Ensure the CMakeLists.txt's option "Use Streamline" is ON. 
-        2. Copy your streamline SDK contents (`bin`, `lib`, `include` and, optionally, `scripts`) into the `streamline` folder
+        1. Ensure the CMakeLists.txt's option "Use Streamline" is ON (`-DUSE_SL=1` - the default).
+        2. Copy the Streamline SDK into the sample's `streamline/` folder
         - If you have built the Streamline SDK from source, you must run the SDK's package.bat script in order to prepare all the Streamline SDK files to be used within the sample app. After running the SDK's package script, the SDK files will be placed in `_sdk`  (unless you specified the -dir commandline option). Copy the entire contents of the `_sdk` folder to the sample app's `streamline` folder.
-        3. If you are using a prebuilt Streamline SDK, copy the entire contents of the SDK to the sample app's `streamline` folder.
-    * NGX integration (Only Latewarp and Reflex implementations are currently supported):
-        1. Set the CMakeLists.txt's option "Use Streamline" to OFF.
+    * NGX integration (only Latewarp and Reflex implementations are currently supported):
+        1. Set the CMakeLists.txt's option "Use Streamline" to OFF (`-DUSE_SL=0`).
         *** Please note the disclaimers in the USE_SL=OFF path of NVWrapper.h ***
         *** If using Vulkan path with USE_SL=OFF, revert the patch to the donut/nvrhi/Vulkan-Headers repo ***
         2. Copy the entire contents of the NGX Latewarp SDK (`nvngx_latewarp_sdk`, `symbols`) to the sample app's `ngx` folder. Any versions of the SDK will work.
@@ -32,9 +31,15 @@ There is also an experimental option to enable NGX-only integration instead of u
         4. Though Reflex Low Latency is crucial for best performance with Latewarp, it is not currently implemented in the NGX integration path, samples for Reflex integration can be found with the public SDK (any version)
     * Be sure to clean cmake artifacts when changing configurations
 5. Pick features to enable
-    * Compile time feature enabling can be toggled in CMakeLists.txt
+    * Compile time feature enabling can be toggled in CMakeLists.txt (many are enabled by default)
     * STREAMLINE_FEATURE_LATEWARP and STREAMLINE_FEATURE_DLSS_FG are mutually exclusive, this will be enforced
-6. Use Cmake to make the project solution (or use `make.bat`). If using Streamline integration, Cmake will attempt to locate plugins by searching first the `streamline/bin/x64` and then the `streamline/bin/x64/development` folders for `sl.interposer.dll`. If found, it will load all SL plugin DLLs from the folder where `sl.interposer.dll` was located.
+    * If Donut/ShaderMake is having trouble locating DXC/FXC or a SPIR-V-enabled DXC, manually specify them (refer to `donut\ShaderMake\CMakeLists.txt`):
+        ```powershell
+        # Example path to installed Windows SDK
+        $winsdk_bin = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\10.0.22621.0\x64"
+        cmake -DSHADERMAKE_SEARCH_FOR_COMPILERS=0 -DDXC_PATH="$winsdk_bin/dxc.exe" -DDXC_SPIRV_PATH="$env:VULKAN_SDK/Bin/dxc.exe" -DFXC_PATH="$winsdk_bin/fxc.exe" ...
+        ```
+6. Use Cmake to make the project solution (or use `make.bat`). If using Streamline integration, Cmake will attempt to locate plugins by searching first the `streamline/bin/x64` and then the `streamline/bin/x64/development` folders for `sl.interposer.dll`. If found, it will copy all SL plugin DLLs from the folder where `sl.interposer.dll` was located.
 7. Open the solution and build (or use `build.bat`)
 8. Run the executable (or use `run.bat`)
 

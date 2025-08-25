@@ -278,11 +278,16 @@ int main(int __argc, const char* const* __argv)
 #if DONUT_WITH_VULKAN
     if (api == nvrhi::GraphicsAPI::VULKAN)
     {
+        deviceParams.vulkanLibraryName = "sl.interposer.dll";
         deviceParams.requiredVulkanDeviceExtensions.push_back("VK_NVX_binary_import");
         deviceParams.requiredVulkanDeviceExtensions.push_back("VK_NVX_image_view_handle");
         deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_buffer_device_address");
         deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_push_descriptor");
         deviceParams.requiredVulkanInstanceExtensions.push_back("VK_KHR_get_physical_device_properties2");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_ray_tracing_pipeline");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_ray_query");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_acceleration_structure");
+        deviceParams.requiredVulkanDeviceExtensions.push_back("VK_KHR_pipeline_library");
     }
 #endif
 
@@ -291,6 +296,22 @@ int main(int __argc, const char* const* __argv)
         donut::log::error("Cannot initialize a %s graphics device with the requested parameters", apiString);
         return 1;
     }
+
+#ifdef _WIN32
+    HWND window = glfwGetWin32Window(deviceManager->GetWindow());
+    
+    wchar_t className[256];
+    wchar_t winTitle[256];
+
+    if (!GetClassNameW(window, className, sizeof(className))) {
+        donut::log::error("Failed to get window class name");
+    } else if (!GetWindowTextW(window, winTitle, sizeof(winTitle))) {
+        donut::log::error("Failed to get window title");
+    } else {
+        donut::log::info("Window class: %ls", className);
+        donut::log::info("Window title: %ls", winTitle); 
+    }
+#endif
 
     NVWrapper::Get().SetDevice_nvrhi(deviceManager->GetDevice());
 

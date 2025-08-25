@@ -56,6 +56,11 @@ public:
     nvrhi::TextureHandle AmbientOcclusion;
     nvrhi::TextureHandle NisColor;
     nvrhi::TextureHandle PreUIColor;
+    nvrhi::TextureHandle SpecHitDistance;
+    nvrhi::TextureHandle GBufferDiffuseRR;
+    nvrhi::TextureHandle GBufferSpecularRR;
+    nvrhi::TextureHandle GBufferNormalsRR;
+    nvrhi::TextureHandle GBufferEmissiveRR;
 
     nvrhi::HeapHandle Heap;
 
@@ -64,6 +69,7 @@ public:
     std::shared_ptr<donut::engine::FramebufferFactory> LdrFramebuffer;
     std::shared_ptr<donut::engine::FramebufferFactory> AAResolvedFramebuffer;
     std::shared_ptr<donut::engine::FramebufferFactory> PreUIFramebuffer;
+    std::shared_ptr<donut::engine::FramebufferFactory> SpecHitDistanceBuffer;
 
     donut::math::int2 m_RenderSize;// size of render targets pre-DLSS
     donut::math::int2 m_DisplaySize; // size of render targets post-DLSS
@@ -78,6 +84,7 @@ public:
         bool useReverseProjection = true)
     {
         GBufferRenderTargets::Init(device, (donut::math::uint2) renderSize, sampleCount, enableMotionVectors, useReverseProjection);
+
 
         m_RenderSize = renderSize;
         m_DisplaySize = displaySize;
@@ -97,15 +104,22 @@ public:
         desc.isTypeless = false;
         desc.isUAV = sampleCount == 1;
         desc.format = nvrhi::Format::RGBA16_FLOAT;
-        desc.initialState = nvrhi::ResourceStates::RenderTarget;
+        desc.initialState = nvrhi::ResourceStates::ShaderResource;
         desc.debugName = "HdrColor";
         HdrColor = device->createTexture(desc);
+
+        desc.format = nvrhi::Format::R16_FLOAT;
+        desc.debugName = "SpecHitDistance";
+        desc.isUAV = true;
+        desc.initialState = nvrhi::ResourceStates::UnorderedAccess;
+        SpecHitDistance = device->createTexture(desc);
 
         // The render targets below this point are non-MSAA
         desc.sampleCount = 1;
         desc.dimension = nvrhi::TextureDimension::Texture2D;
         desc.format = nvrhi::Format::R8_UNORM;
         desc.isUAV = true;
+        desc.initialState = nvrhi::ResourceStates::RenderTarget;
         desc.debugName = "AmbientOcclusion";
         AmbientOcclusion = device->createTexture(desc);
 
@@ -127,6 +141,25 @@ public:
         desc.isUAV = false;
         desc.debugName = "LdrColor";
         LdrColor = device->createTexture(desc);
+
+        // Redefined these RR G-Buffer textures locally to use custom formats, 
+        // as the ones provided by Donut are not compatible with our requirements.
+        // Keeping them separate gives us more control over the format and usage.
+        desc.format = nvrhi::Format::RGBA16_FLOAT;
+        desc.debugName = "GBufferDiffuseRR";
+        GBufferDiffuseRR = device->createTexture(desc);
+
+        desc.format = nvrhi::Format::RGBA16_FLOAT;
+        desc.debugName = "GBufferSpecularRR";
+        GBufferSpecularRR = device->createTexture(desc);
+
+        desc.format = nvrhi::Format::RGBA16_FLOAT;
+        desc.debugName = "GBufferNormalsRR";
+        GBufferNormalsRR = device->createTexture(desc);
+
+        desc.format = nvrhi::Format::RGBA16_FLOAT;
+        desc.debugName = "GBufferEmissiveRR";
+        GBufferEmissiveRR = device->createTexture(desc);
 
         desc.format = nvrhi::Format::RGBA8_UNORM;
         desc.isUAV = true;
@@ -151,13 +184,20 @@ public:
             nvrhi::ITexture* const textures[] = {
                 HdrColor,
                 AAResolvedColor,
+                SpecHitDistance,
                 TemporalFeedback1,
                 TemporalFeedback2,
                 LdrColor,
+                GBufferDiffuseRR,
+                GBufferSpecularRR,
+                GBufferNormalsRR,
+                GBufferEmissiveRR,
                 ColorspaceCorrectionColor,
                 PreUIColor,
                 NisColor,
-                AmbientOcclusion
+                AmbientOcclusion,
+                GBufferSpecularRR,
+                GBufferDiffuseRR
             };
 
             for (auto texture : textures)
@@ -193,6 +233,9 @@ public:
         HdrFramebuffer = std::make_shared<donut::engine::FramebufferFactory>(device);
         HdrFramebuffer->RenderTargets = { HdrColor };
 
+        SpecHitDistanceBuffer = std::make_shared<donut::engine::FramebufferFactory>(device);
+        SpecHitDistanceBuffer->RenderTargets = { SpecHitDistance };
+
         LdrFramebuffer = std::make_shared<donut::engine::FramebufferFactory>(device);
         LdrFramebuffer->RenderTargets = { LdrColor };
 
@@ -218,5 +261,10 @@ public:
         commandList->clearTextureFloat(NisColor, nvrhi::AllSubresources, nvrhi::Color(0.f));
         commandList->clearTextureFloat(PreUIColor, nvrhi::AllSubresources, nvrhi::Color(0.f));
         commandList->clearTextureFloat(AAResolvedColor, nvrhi::AllSubresources, nvrhi::Color(0.f));
+        commandList->clearTextureFloat(SpecHitDistance, nvrhi::AllSubresources, nvrhi::Color(0.f));
+        commandList->clearTextureFloat(GBufferDiffuseRR, nvrhi::AllSubresources, nvrhi::Color(0.f));
+        commandList->clearTextureFloat(GBufferSpecularRR, nvrhi::AllSubresources, nvrhi::Color(0.f));
+        commandList->clearTextureFloat(GBufferNormalsRR, nvrhi::AllSubresources, nvrhi::Color(0.f));
+        commandList->clearTextureFloat(GBufferEmissiveRR, nvrhi::AllSubresources, nvrhi::Color(0.f));
     }
 };

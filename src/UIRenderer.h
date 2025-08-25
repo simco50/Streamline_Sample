@@ -63,6 +63,11 @@ private:
     bool    m_dev_view = false;
     int     m_dev_view_dlss_mode = 0;
     int     m_dev_view_TopLevelDLSS = 1;
+    int     m_dev_view_RayTracing = 1;
+    int     m_dev_view_dlssrr_mode = 0;
+
+    bool    m_last_rt_mode = false;
+    bool    m_rt_changed = false;
 
 
 public:
@@ -81,12 +86,24 @@ public:
         }
 
         if (m_ui.DLSS_Mode != sl::DLSSMode::eOff) {
+            m_dev_view_dlssrr_mode = 0;
             if (m_ui.DLSS_Mode == sl::DLSSMode::eMaxQuality) m_dev_view_dlss_mode = 2;
             else if (m_ui.DLSS_Mode == sl::DLSSMode::eBalanced) m_dev_view_dlss_mode = 3;
             else if (m_ui.DLSS_Mode == sl::DLSSMode::eMaxPerformance) m_dev_view_dlss_mode = 4;
             else if (m_ui.DLSS_Mode == sl::DLSSMode::eUltraPerformance) m_dev_view_dlss_mode = 5;
             else if (m_ui.DLSS_Mode == sl::DLSSMode::eDLAA) m_dev_view_dlss_mode = 6;
         }
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+        if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) {
+            m_dev_view_dlss_mode = 0;
+            if (m_ui.DLSSRR_Mode == sl::DLSSMode::eMaxQuality) m_dev_view_dlssrr_mode = 2;
+            else if (m_ui.DLSSRR_Mode == sl::DLSSMode::eBalanced) m_dev_view_dlssrr_mode = 3;
+            else if (m_ui.DLSSRR_Mode == sl::DLSSMode::eMaxPerformance) m_dev_view_dlssrr_mode = 4;
+            else if (m_ui.DLSSRR_Mode == sl::DLSSMode::eUltraPerformance) m_dev_view_dlssrr_mode = 5;
+            else if (m_ui.DLSSRR_Mode == sl::DLSSMode::eDLAA) m_dev_view_dlssrr_mode = 6;
+        }
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
     }
 
@@ -183,6 +200,19 @@ protected:
             m_ui.Resolution_changed = true;
         }
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+        if (m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11) pushDisabled();
+        ImGui::Combo("##Ray Tracing", &m_ui.RayTracing_Mode, "Off\0On\0");
+        ImGui::SameLine();
+        ImGui::Text("Ray Tracing");
+        if (m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11)
+        {
+            popDisabled();
+            ImGui::SameLine();
+            ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "(Not supported with D3D11)");
+        }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+
         ImGui::Separator();
         ImGui::Checkbox("Developer Menu", &m_dev_view);
 
@@ -255,6 +285,18 @@ protected:
                 m_ui.NIS_Mode = sl::NISMode::eOff;
             }
 
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            // Check for Ray Tracing mode changes and handle functionality
+            m_rt_changed = (m_last_rt_mode != m_dev_view_RayTracing);
+            m_last_rt_mode = m_dev_view_RayTracing;
+
+            // Automatically turn OFF DLSS-RR when RT is turned OFF
+            if (m_ui.RayTracing_Mode == 0)
+            {
+                m_ui.DLSSRR_Mode = sl::DLSSMode::eOff;
+                m_dev_view_dlssrr_mode = 0;
+            }
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
             
             //
@@ -299,6 +341,11 @@ protected:
             ImGui::Text("Super Resolution");
             ImGui::SameLine();
             if (!m_ui.DLSS_Supported) pushDisabled();
+            if (!m_ui.DLSS_Supported
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                || m_ui.DLSSRR_Mode != sl::DLSSMode::eOff
+#endif
+                ) pushDisabled();
             if (ImGui::BeginCombo("##SuperRes", DLSSModeNames[m_dev_view_dlss_mode].data()))
             {
                 for (int i = 0; i < DLSSModeNames.size(); ++i)
@@ -311,7 +358,18 @@ protected:
                 ImGui::EndCombo();
                 if (ImGui::IsItemHovered()) m_ui.MouseOverUI = true;
             }
-
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff)
+            {
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "(Ray Reconstruction is active)");
+            }
+#endif// STREAMLINE_FEATURE_DLSS_RR
+            if (!m_ui.DLSS_Supported
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                    || m_ui.DLSSRR_Mode != sl::DLSSMode::eOff
+#endif
+                ) popDisabled();
             if (!m_ui.DLSS_Supported) popDisabled();
 
             if (m_dev_view_dlss_mode == 0) m_ui.DLSS_Mode = sl::DLSSMode::eOff;
@@ -334,7 +392,60 @@ protected:
             else {
                 m_ui.AAMode = AntiAliasingMode::NONE;
             }
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            //
+            //  DLSS Ray Reconstruction
+            //
 
+            ImGui::Text("Ray Reconstruction");
+            ImGui::SameLine();
+            if (!m_ui.DLSSRR_Supported || m_ui.RayTracing_Mode == 0 || m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11) pushDisabled();
+            if (ImGui::BeginCombo("##RayReconstruction",  DLSSModeNames[m_dev_view_dlssrr_mode].data()))
+            {
+                for (int i = 0; i < DLSSModeNames.size(); ++i)
+                {
+                    bool is_selected = i == m_dev_view_dlssrr_mode;
+
+                    if (ImGui::Selectable(DLSSModeNames[i].data(), is_selected)) 
+                    {
+                        m_dev_view_dlssrr_mode = i;
+                        
+                        // Automatically turn OFF DLSS-SR when DLSS-RR is turned ON
+                        if (m_dev_view_dlssrr_mode != 0)
+                        {
+                            m_ui.DLSS_Mode = sl::DLSSMode::eOff;
+                            m_dev_view_dlss_mode = 0;
+                            m_ui.AAMode = AntiAliasingMode::NONE;
+                        }
+                    }
+                    if (is_selected) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+                if (ImGui::IsItemHovered()) m_ui.MouseOverUI = true;
+            }
+
+            if (!m_ui.DLSSRR_Supported || m_ui.RayTracing_Mode == 0 || m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11) popDisabled();
+
+            if (m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11)
+            {
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(1.0f, 0.5f, 0.0f, 1.0f), "(Not supported with D3D11)");
+            }
+
+            if (m_dev_view_dlssrr_mode == 0) m_ui.DLSSRR_Mode = sl::DLSSMode::eOff;
+            else if (m_dev_view_dlssrr_mode == 2) m_ui.DLSSRR_Mode = sl::DLSSMode::eMaxQuality;
+            else if (m_dev_view_dlssrr_mode == 3) m_ui.DLSSRR_Mode = sl::DLSSMode::eBalanced;
+            else if (m_dev_view_dlssrr_mode == 4) m_ui.DLSSRR_Mode = sl::DLSSMode::eMaxPerformance;
+            else if (m_dev_view_dlssrr_mode == 5) m_ui.DLSSRR_Mode = sl::DLSSMode::eUltraPerformance;
+            //else if (m_dev_view_dlssrr_mode == 6) m_ui.DLSSRR_Mode = sl::DLSSMode::eUltraQuality;
+            else if (m_dev_view_dlssrr_mode == 6) m_ui.DLSSRR_Mode = sl::DLSSMode::eDLAA;
+            else if (m_dev_view_dlssrr_mode == 1) {
+                if (m_ui.Resolution.x < 1920) m_ui.DLSSRR_Mode = sl::DLSSMode::eOff;
+                else if (m_ui.Resolution.x < 2560) m_ui.DLSSRR_Mode = sl::DLSSMode::eMaxQuality;
+                else if (m_ui.Resolution.x < 3840) m_ui.DLSSRR_Mode = sl::DLSSMode::eMaxPerformance;
+                else m_ui.DLSSRR_Mode = sl::DLSSMode::eUltraPerformance;
+            }
+#endif // STREAMLINE_FEATURE_DLSS_RR
             //
             //  NIS Sharpening
             //
@@ -382,7 +493,9 @@ protected:
                     ImGui::DragFloat("##Saturation Boost", &m_ui.DeepDVC_SaturationBoost, 0.01f, 0, 1);
                 }
             }
+            ImGui::Dummy(ImVec2(0.0f, 50.0f));
 
+            ImGui::Separator();
 
         }
 
@@ -400,10 +513,22 @@ protected:
             ImGui::Text("DLSS_Supported: %s", m_ui.DLSS_Supported ? "yes" : "no");
 
             if (m_ui.DLSS_Supported) {
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) pushDisabled();
+#endif
                 ImGui::Combo("AA Mode", (int*)&m_ui.AAMode, "None\0TemporalAA\0DLSS\0");
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) popDisabled();
+#endif
             }
             else {
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) pushDisabled();
+#endif
                 ImGui::Combo("TAA Fallback", (int*)&m_ui.AAMode, "None\0TemporalAA");
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) popDisabled();
+#endif
             }
 
             if (m_ui.AAMode == AntiAliasingMode::TEMPORAL) {
@@ -411,7 +536,11 @@ protected:
             }
 
 
-            if (m_ui.AAMode == AntiAliasingMode::DLSS)
+            if (m_ui.AAMode == AntiAliasingMode::DLSS
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                && m_ui.DLSSRR_Mode == sl::DLSSMode::eOff
+#endif // STREAMLINE_FEATURE_DLSS_RR
+               )
             {
                 if (m_ui.DLSS_Mode == sl::DLSSMode::eOff) m_ui.DLSS_Mode = sl::DLSSMode::eBalanced;
 
@@ -454,11 +583,6 @@ protected:
 
                 const std::map<sl::DLSSPreset,std::string> DLSSPresetToDropdownMap = {
                     {sl::DLSSPreset::eDefault, "Default##Presets"},
-                    {sl::DLSSPreset::ePresetA, "Preset A##Presets"},
-                    {sl::DLSSPreset::ePresetB, "Preset B##Presets"},
-                    {sl::DLSSPreset::ePresetC, "Preset C##Presets"},
-                    {sl::DLSSPreset::ePresetD, "Preset D##Presets"},
-                    {sl::DLSSPreset::ePresetE, "Preset E##Presets"},
                     {sl::DLSSPreset::ePresetF, "Preset F##Presets"},
                     {sl::DLSSPreset::ePresetJ, "Preset J##Presets"},
                     {sl::DLSSPreset::ePresetK, "Preset K##Presets"},
@@ -532,6 +656,126 @@ protected:
                 }
 
             }
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            else if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff) {
+                ImGui::Text("DLSS RR needs to be disabled for DLSS to be enabled");
+            }
+#endif // STREAMLINE_FEATURE_DLSS_RR
+            else if (m_ui.DLSS_Mode != sl::DLSSMode::eOff) {
+                ImGui::Text("DLSS needs to be disabled for DLSS RR to be enabled");
+            }
+
+            else {
+                ImGui::Text("DLSS is not enabled");
+            }
+
+
+
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+            // Add after the DLSS section and before Reflex section
+
+            //
+            // DLSS Ray Reconstruction
+            //
+            ImGui::Separator();
+            ImGui::PushStyleColor(ImGuiCol_Text, TITLE_COL);
+            ImGui::Text("DLSS Ray Reconstruction");
+            ImGui::PopStyleColor();
+
+            ImGui::Text("DLSS RR Supported: %s", (m_ui.DLSSRR_Supported && m_app->GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11) ? "yes" : "no");
+            if (m_ui.DLSSRR_Supported && m_app->GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11) {
+                if (m_ui.DLSS_Mode != sl::DLSSMode::eOff) {
+                    ImGui::Text("DLSS needs to be disabled for DLSS RR to be enabled");
+                    m_ui.DLSSRR_Mode = sl::DLSSMode::eOff;
+                } else {
+                    // We do not show 'eOff' 
+                    
+                    const char* DLSSRRModeNames[] = {
+                        "Off",
+                        "Performance",
+                        "Balanced",
+                        "Quality",
+                        "Ultra-Performance",
+                        "Ultra-Quality",
+                        "DLAA"
+                    };
+
+                    if (ImGui::BeginCombo("DLSS RR Mode", DLSSRRModeNames[(int)m_ui.DLSSRR_Mode])) {
+                        for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); ++i) {
+                            if ((i == static_cast<int>(sl::DLSSMode::eUltraQuality)) || 
+                                (i == static_cast<int>(sl::DLSSMode::eOff))) continue;
+
+                            bool is_selected = (i == (int)m_ui.DLSSRR_Mode);
+
+                            if (ImGui::Selectable(DLSSRRModeNames[i], is_selected)) {
+                                m_ui.DLSSRR_Mode = (sl::DLSSMode)i;
+                                
+                                // Automatically turn OFF DLSS-SR when DLSS-RR is turned ON
+                                if (m_ui.DLSSRR_Mode != sl::DLSSMode::eOff)
+                                {
+                                    m_ui.DLSS_Mode = sl::DLSSMode::eOff;
+                                    m_ui.AAMode = AntiAliasingMode::NONE;
+                                }
+                                
+                                // Add RT resource recreation trigger here
+                                // m_ui.rt_changed = true;
+                            }
+                            if (is_selected) ImGui::SetItemDefaultFocus();
+                        }
+                        ImGui::EndCombo();
+                    }
+
+                    auto PresetSlotNames = std::vector<std::string>({
+                        "Off##RRPresets",
+                        "MaxPerformance##RRPresets",
+                        "Balanced##RRPresets",
+                        "MaxQuality##RRPresets",
+                        "UltraPerformance##RRPresets",
+                        "UltraQuality##RRPresets",
+                        "DLAA##RRPresets"
+                    });
+
+                    const std::map<sl::DLSSDPreset, std::string> DLSSRRPresetToDropdownMap = {
+                        {sl::DLSSDPreset::eDefault, "Default##RRPresets"},
+                        {sl::DLSSDPreset::ePresetD, "Preset D##RRPresets"},
+                        {sl::DLSSDPreset::ePresetE, "Preset E##RRPresets"}
+                    };
+
+                    if (ImGui::CollapsingHeader("RR Presets")) {
+                        ImGui::Indent();
+
+                        for (int j = 0; j < static_cast<int>(sl::DLSSMode::eCount); j++) {
+                            if ((j == static_cast<int>(sl::DLSSMode::eUltraQuality)) || 
+                                (j == static_cast<int>(sl::DLSSMode::eOff))) continue;
+
+                            const std::string* currentPresetString = nullptr;
+                            auto currentPreset = DLSSRRPresetToDropdownMap.find(m_ui.DLSSRR_presets[j]);
+
+                            if (currentPreset != DLSSRRPresetToDropdownMap.end()) {
+                                currentPresetString = &DLSSRRPresetToDropdownMap.at(m_ui.DLSSRR_presets[j]);
+                            } else {
+                                currentPresetString = &DLSSRRPresetToDropdownMap.at(sl::DLSSDPreset::eDefault);
+                                donut::log::info("Warning: There is a mismatch in the RR preset supported by the sample and the preset selected");
+                            }
+
+                            if (ImGui::BeginCombo(PresetSlotNames[j].c_str(), currentPresetString->data())) {
+                                for (const auto& [presetEnum, presetName] : DLSSRRPresetToDropdownMap) {
+                                    bool is_selected = (presetEnum == m_ui.DLSSRR_presets[j]);
+
+                                    if (ImGui::Selectable(presetName.data(), is_selected)) {
+                                        m_ui.DLSSRR_presets[j] = presetEnum;
+                                    }
+                                    if (is_selected) ImGui::SetItemDefaultFocus();
+                                }
+                                ImGui::EndCombo();
+                                if (ImGui::IsItemHovered()) m_ui.MouseOverUI = true;
+                            }
+                        }
+                        ImGui::Unindent();
+                    }
+                }
+            }
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
             //
             // Reflex
@@ -643,6 +887,9 @@ protected:
 
                 // Scene 
                 const std::string currentScene = m_app->GetCurrentSceneName();
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+                m_ui.RayTracing_Mode = m_app->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D11 ? 0 : 1;
+#endif // STREAMLINE_FEATURE_DLSS_RR
                 if (ImGui::BeginCombo("Scene", currentScene.c_str()))
                 {
                     const std::vector<std::string>& scenes = m_app->GetAvailableScenes();
@@ -652,7 +899,7 @@ protected:
                         if (ImGui::Selectable(scene.c_str(), is_selected))
                             m_app->SetCurrentSceneName(scene);
                         if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                            ImGui::SetItemDefaultFocus(); 
                     }
                     ImGui::EndCombo();
                 }

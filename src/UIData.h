@@ -107,6 +107,47 @@ public:
     // Shadows
     bool                                EnableShadows = true;
     float                               CsmExponent = 4.f;
+#ifdef STREAMLINE_FEATURE_DLSS_RR
+    // ray tracing on
+    int                                RayTracing_Mode = 1;
+    
+    // DLSS RR specific parameters
+    bool                                DLSSRR_Supported = false;
+    bool                                DLSSRREnabled   = false;
+    sl::DLSSMode                        DLSSRR_Mode = sl::DLSSMode::eOff;
+    sl::DLSSDPreset                     DLSSRR_Preset = sl::DLSSDPreset::eDefault;
+    float                               DLSSRR_Sharpness = 0.f;
+    sl::DLSSDPreset                     DLSSRR_presets[static_cast<int>(sl::DLSSMode::eCount)] = {};
+    sl::DLSSDPreset                     DLSSRR_last_presets[static_cast<int>(sl::DLSSMode::eCount)] = {};
+    bool UIData::DLSSRRPresetsChanged()
+    {
+        for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
+        {
+            if (DLSSRR_presets[i] != DLSSRR_last_presets[i])
+                return true;
+        }
+        return false;
+    };
+    bool UIData::DLSSRRPresetsAnyNonDefault()
+    {
+        for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
+        {
+            if (DLSSRR_presets[i] != sl::DLSSDPreset::eDefault)
+                return true;
+        }
+        return false;
+    };
+    void UIData::DLSSRRPresetsUpdate()
+    {
+        for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
+            DLSSRR_last_presets[i] = DLSSRR_presets[i];
+    };
+    void UIData::DLSSRRPresetsReset()
+    {
+        for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
+            DLSSRR_last_presets[i] = DLSSRR_presets[i] = sl::DLSSDPreset::eDefault;
+    };
+#endif // STREAMLINE_FEATURE_DLSS_RR
 
     // DLSS specific parameters
     float                               DLSS_Sharpness = 0.f;
@@ -121,7 +162,7 @@ public:
     bool                                DLSS_always_use_extents = false;
     sl::DLSSPreset                      DLSS_presets[static_cast<int>(sl::DLSSMode::eCount)] = {};
     sl::DLSSPreset                      DLSS_last_presets[static_cast<int>(sl::DLSSMode::eCount)] = {};
-    bool UIData::DLSSPresetsChanged()
+    bool DLSSPresetsChanged()
     {
         for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
         {
@@ -130,7 +171,7 @@ public:
         }
         return false;
     };
-    bool UIData::DLSSPresetsAnyNonDefault()
+    bool DLSSPresetsAnyNonDefault()
     {
         for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
         {
@@ -139,12 +180,12 @@ public:
         }
         return false;
     };
-    void UIData::DLSSPresetsUpdate()
+    void DLSSPresetsUpdate()
     {
         for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
             DLSS_last_presets[i] = DLSS_presets[i];
     };
-    void UIData::DLSSPresetsReset()
+    void DLSSPresetsReset()
     {
         for (int i = 0; i < static_cast<int>(sl::DLSSMode::eCount); i++)
             DLSS_last_presets[i] = DLSS_presets[i] = sl::DLSSPreset::eDefault;
