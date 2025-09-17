@@ -1056,19 +1056,19 @@ protected:
         ImGui::End();
 
 
-        if (m_ui.MouseOverUI) {
-            ImGui::SetNextWindowPos(ImVec2(width * 0.5f, height * 0.5f), 0, ImVec2(0.5f, 0.5f));
-            ImGui::Begin("SettingText", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize);
-            ImGui::Text("Settings Menu");
-            auto text = "sl::DLSSGMode::eOff is set.";
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
-            ImGui::Text(text);
-            text = "Streamline features may behave differently while your mouse is hovering the UI.";
-            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
-            ImGui::Text(text);
-
-            ImGui::End();
-        }
+        //if (m_ui.MouseOverUI) {
+        //    ImGui::SetNextWindowPos(ImVec2(width * 0.5f, height * 0.5f), 0, ImVec2(0.5f, 0.5f));
+        //    ImGui::Begin("SettingText", 0, ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_AlwaysAutoResize);
+        //    ImGui::Text("Settings Menu");
+        //    auto text = "sl::DLSSGMode::eOff is set.";
+        //    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
+        //    ImGui::Text(text);
+        //    text = "Streamline features may behave differently while your mouse is hovering the UI.";
+        //    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetWindowWidth() / 2 - ImGui::CalcTextSize(text).x / 2);
+        //    ImGui::Text(text);
+        //
+        //    ImGui::End();
+        //}
 
     }
 };

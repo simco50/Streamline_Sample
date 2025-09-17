@@ -56,6 +56,76 @@ using namespace donut::engine;
 using namespace donut::render;
 using namespace donut::render;
 
+int gFrameIndex = 0;
+
+
+static HRESULT HookMethod(IUnknown* original, PVOID proxyMethod, PVOID* originalMethod, DWORD vtableOffset)
+{
+	PVOID* originalVtable = *(PVOID**)original;
+
+	DWORD dwOld = 0;
+	VirtualProtect(originalVtable, 128, PAGE_EXECUTE_READWRITE, &dwOld);
+	
+	if (originalVtable[vtableOffset] == proxyMethod)
+		return S_OK;
+	*originalMethod = originalVtable[vtableOffset];
+	originalVtable[vtableOffset] = proxyMethod;
+	return S_OK;
+}
+
+static ULONG(*sOriginalAddRef)(void*) = nullptr; 
+static ULONG(*sOriginalRelease)(void*) = nullptr; 
+
+
+template<typename... Args>
+void OutputDebugStringF(const char* format, Args... args)
+{
+	 char output[1024];
+    sprintf_s(output, ARRAYSIZE(output), format, args...);
+    OutputDebugString(output);
+}
+
+static std::string GetD3DObjectName(ID3D12Object* object)
+{
+    wchar_t name[256];
+    uint name_length = ARRAYSIZE(name);
+    if (SUCCEEDED(object->GetPrivateData(WKPDID_D3DDebugObjectNameW, &name_length, name)))
+    {
+        char name_char[256];
+        wcstombs(name_char, name, ARRAYSIZE(name_char));
+        return name_char;
+    }
+    return "";
+}
+
+
+static ULONG sAddRef(void* t)
+{
+	ID3D12Object* obj = static_cast<ID3D12Object*>(t);
+
+	std::string name = GetD3DObjectName(obj);
+	ULONG refs = sOriginalAddRef(t);
+    if (name.find("GBufferMotionVectors") != std::string::npos)
+    {
+        OutputDebugStringF("[%d] [%s] AddRef: %d\n", gFrameIndex, name.c_str(), (int)refs);
+    }
+	return refs;
+}
+
+static ULONG sRelease(void* t)
+{
+	ID3D12Object* obj = static_cast<ID3D12Object*>(t);
+	std::string name = GetD3DObjectName(obj);
+	ULONG refs = sOriginalRelease(t);
+    if (name.find("GBufferMotionVectors") != std::string::npos)
+    {
+        OutputDebugStringF("[%d] [%s] Release: %d\n", gFrameIndex, name.c_str(), (int)refs);
+    }
+	return refs;
+}
+
+
+
 // Constructor
 StreamlineSample::StreamlineSample(
     DeviceManager* deviceManager,
@@ -654,6 +724,8 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
 {
     // INITIALISE
 
+    ++gFrameIndex;
+
     int windowWidth, windowHeight;
     GetDeviceManager()->GetWindowDimensions(windowWidth, windowHeight);
     nvrhi::Viewport windowViewport = nvrhi::Viewport((float)windowWidth, (float)windowHeight);
@@ -763,9 +835,9 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         dlssgConst.flags |= sl::DLSSGFlags::eRetainResourcesWhenOff;
 
         // Turn off DLSSG if we are changing the UI
-        if (m_ui.MouseOverUI) {
-            dlssgConst.mode = sl::DLSSGMode::eOff;
-        }
+        //if (m_ui.MouseOverUI) {
+        //    dlssgConst.mode = sl::DLSSGMode::eOff;
+        //}
 
         if (m_ui.DLSS_Resolution_Mode == RenderingResolutionMode::DYNAMIC)
         {
@@ -1063,10 +1135,24 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
         bool IsUpdateRequired = m_RenderTargets && m_RenderTargets->IsUpdateRequired(renderSize, m_DisplaySize);
         if (!m_RenderTargets || IsUpdateRequired)
         {
+            if (m_RenderTargets)
+            {
+				ID3D12Resource* resource = m_RenderTargets->MotionVectors->getNativeObject(nvrhi::ObjectTypes::D3D12_Resource);
+                resource->AddRef();
+                ULONG refs = resource->Release();
+				OutputDebugStringF("[%d] Resize: %d\n", gFrameIndex, (int)refs);
+            }
+
+
             m_BindingCache.Clear();
             m_RenderTargets = nullptr;
             m_RenderTargets = std::make_unique<RenderTargets>();
             m_RenderTargets->Init(GetDevice(), renderSize, m_DisplaySize, framebuffer->getDesc().colorAttachments[0].texture->getDesc().format);
+
+            ID3D12Object* object = m_RenderTargets->MotionVectors->getNativeObject(nvrhi::ObjectTypes::D3D12_Resource);
+			HookMethod(object, (PVOID)sAddRef, (void**)&sOriginalAddRef, 1);
+			HookMethod(object, (PVOID)sRelease, (void**)&sOriginalRelease, 2);
+
 #ifdef STREAMLINE_FEATURE_DLSS_RR
             if(GetDevice()->getGraphicsAPI() != nvrhi::GraphicsAPI::D3D11)
             {
