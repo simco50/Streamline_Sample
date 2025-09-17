@@ -107,7 +107,7 @@ static ULONG sAddRef(void* t)
 	ULONG refs = sOriginalAddRef(t);
     if (name.find("GBufferMotionVectors") != std::string::npos)
     {
-        OutputDebugStringF("[%d] [%s] AddRef: %d\n", gFrameIndex, name.c_str(), (int)refs);
+        OutputDebugStringF("[%d] %p [%s] AddRef: %d\n", gFrameIndex, obj, name.c_str(), (int)refs);
     }
 	return refs;
 }
@@ -119,7 +119,7 @@ static ULONG sRelease(void* t)
 	ULONG refs = sOriginalRelease(t);
     if (name.find("GBufferMotionVectors") != std::string::npos)
     {
-        OutputDebugStringF("[%d] [%s] Release: %d\n", gFrameIndex, name.c_str(), (int)refs);
+        OutputDebugStringF("[%d] %p [%s] Release: %d\n", gFrameIndex, obj, name.c_str(), (int)refs);
     }
 	return refs;
 }
@@ -1140,7 +1140,7 @@ void StreamlineSample::RenderScene(nvrhi::IFramebuffer* framebuffer)
 				ID3D12Resource* resource = m_RenderTargets->MotionVectors->getNativeObject(nvrhi::ObjectTypes::D3D12_Resource);
                 resource->AddRef();
                 ULONG refs = resource->Release();
-				OutputDebugStringF("[%d] Resize: %d\n", gFrameIndex, (int)refs);
+				OutputDebugStringF("[%d] %p RESIZE: %d\n", gFrameIndex, resource, (int)refs);
             }
 
 
